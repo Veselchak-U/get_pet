@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         Align(
-          alignment: Alignment(0.97, -0.92),
+          alignment: Alignment(0.96, -0.927),
           child: _userProfile(),
         ),
       ],
@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _appBar() {
     return AppBar(
-      backgroundColor: Colors.black26,//_backgroundColor, //Colors.black26,
+      backgroundColor: _backgroundColor, //Colors.black26,
       elevation: 0.0,
       leading: IconButton(
         tooltip: 'Something',
@@ -98,12 +98,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _userProfile() {
     return FloatingActionButton(
+      tooltip: 'Your profile',
       elevation: 8.0,
       backgroundColor: _backgroundColor,
       onPressed: () {},
       child: CircleAvatar(
         radius: 26.0,
-        backgroundColor: Colors.orange,
+        backgroundColor: _backgroundColor,
         backgroundImage: NetworkImage(
             'https://images.unsplash.com/photo-1602773890240-87ce74fc752e?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80'),
       ),
