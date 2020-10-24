@@ -39,9 +39,11 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _header(),
+              _greeting(),
               _searchBar(),
-              _header(),
+              _header(index: 0, text: 'Pet Category'),
+              _header(index: 1, text: 'Newest Pet'),
+              _header(index: 2, text: 'Vets Near You'),
             ],
           ),
         ),
@@ -49,9 +51,33 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _header({@required int index, @required String text}) {
+    return Padding(
+      padding:
+          EdgeInsets.fromLTRB(_horizontalPadding, 4.0, 8.0, 4.0),
+      child: Row(
+        children: [
+          Text(text,
+              style: TextStyle(
+                  color: _iconColor,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold)),
+          Spacer(),
+          IconButton(
+            icon: Icon(
+              Icons.more_horiz,
+              color: _iconColor,
+            ),
+            onPressed: () {},
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _searchBar() {
     return Padding(
-      padding: EdgeInsets.only(left: _horizontalPadding),
+      padding: EdgeInsets.only(left: _horizontalPadding, top: 16.0),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -88,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _header() {
+  Widget _greeting() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
       child: Column(
@@ -100,12 +126,13 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Text(
             'Find Your',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: _iconColor, fontSize: 20, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8.0),
           Text(
             'Lovely pet in anywhere',
-            style: TextStyle(fontSize: 20),
+            style: TextStyle(color: _iconColor, fontSize: 20),
           ),
           SizedBox(height: 16.0),
         ],
