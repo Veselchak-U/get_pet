@@ -14,11 +14,18 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final _backgroundColor = Colors.white;
   final _iconColor = Colors.black54;
+  final _horizontalPadding = 16.0;
+  final _searchController = TextEditingController();
   HomeScreen _data;
 
   @override
   void initState() {
     _data = widget;
+    _searchController.addListener(() {
+      setState(() {
+        // put search procedure here
+      });
+    });
     super.initState();
   }
 
@@ -30,14 +37,11 @@ class _HomeScreenState extends State<HomeScreen> {
         color: _backgroundColor,
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _header(),
-              Center(
-                child: Text(
-                  'HomeScreen',
-                  style: Theme.of(context).textTheme.headline4,
-                ),
-              ),
+              _searchBar(),
+              _header(),
             ],
           ),
         ),
@@ -45,19 +49,67 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _searchBar() {
+    return Padding(
+      padding: EdgeInsets.only(left: _horizontalPadding),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(32.0),
+            bottomLeft: Radius.circular(32.0),
+          ),
+          color: Color.fromARGB(0xFF, 0xF5, 0xF5, 0xF5),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 4.0, 0.0, 4.0),
+          child: TextField(
+            controller: _searchController,
+            textInputAction: TextInputAction.search,
+            decoration: InputDecoration(
+              hintText: 'Search',
+              border: InputBorder.none,
+              prefixIcon: Icon(Icons.search, color: _iconColor),
+              suffixIcon: _searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: Icon(Icons.cancel, color: _iconColor),
+                      onPressed: () {
+                        setState(() {
+                          _searchController.clear();
+                        });
+                      },
+                    )
+                  : null,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _header() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'HomeScreen',
-          style: Theme.of(context).textTheme.headline4,
-        ),
-        Text(
-          'HomeScreen',
-          style: Theme.of(context).textTheme.headline4,
-        ),
-      ],
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            child: SizedBox(height: 16.0),
+          ),
+          Text(
+            'Find Your',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 8.0),
+          Text(
+            'Lovely pet in anywhere',
+            style: TextStyle(fontSize: 20),
+          ),
+          SizedBox(height: 16.0),
+        ],
+      ),
     );
   }
 
@@ -111,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _userProfile() {
     return Padding(
-      padding: EdgeInsets.only(right: 8.0),
+      padding: EdgeInsets.only(right: _horizontalPadding),
       child: FloatingActionButton(
         tooltip: 'Your profile',
         backgroundColor: _backgroundColor,
@@ -127,5 +179,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 }
