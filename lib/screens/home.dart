@@ -1,6 +1,5 @@
+import 'package:cats/import.dart';
 import 'package:flutter/material.dart';
-
-import '../models/import.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
@@ -67,14 +66,21 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _newestCarousel() {
-    return Container();
-    // return Padding(
-    //   padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
-    //   child: ListView.builder(
-    //     itemCount: 1,
-    //     itemBuilder: (context, index) => Container(),
-    //   ),
-    // );
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
+      child: Container(
+        height: 150,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.all(8.0),
+          itemCount: 5,
+          itemBuilder: (context, index) => Container(
+            width: 100,
+            color: Colors.yellow,
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _categoryGrid() {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'import.dart';
+import 'package:cats/import.dart';
 
 class Pet {
   Pet(
