@@ -67,12 +67,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _newestCarousel() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
-      child: ListView.builder(
-        itemBuilder: (context, index) => Container(),
-      ),
-    );
+    return Container();
+    // return Padding(
+    //   padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
+    //   child: ListView.builder(
+    //     itemCount: 1,
+    //     itemBuilder: (context, index) => Container(),
+    //   ),
+    // );
   }
 
   Widget _categoryGrid() {
