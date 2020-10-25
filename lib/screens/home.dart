@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../models/import.dart';
+
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
 
@@ -8,7 +10,7 @@ class HomeScreen extends StatefulWidget {
       'https://images.unsplash.com/photo-1602773890240-87ce74fc752e?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80';
   final List<PetCategory> petCategory = [
     PetCategory(
-        name: 'Hamster', count: 56, image: 'https://picsum.photos/id/433/100',),
+        name: 'Hamster', count: 56, image: 'https://picsum.photos/id/433/100'),
     PetCategory(
         name: 'Cats', count: 210, image: 'https://picsum.photos/id/40/100'),
     PetCategory(
@@ -16,18 +18,10 @@ class HomeScreen extends StatefulWidget {
     PetCategory(
         name: 'Dogs', count: 340, image: 'https://picsum.photos/id/1062/100'),
   ];
+  final List<Pet> newestPets = [];
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
-}
-
-class PetCategory {
-  PetCategory(
-      {@required this.name, @required this.image, @required this.count});
-
-  final String name;
-  final String image;
-  final int count;
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -64,9 +58,19 @@ class _HomeScreenState extends State<HomeScreen> {
             _header(index: 0, text: 'Pet Category'),
             _categoryGrid(),
             _header(index: 1, text: 'Newest Pet'),
+            _newestCarousel(),
             _header(index: 2, text: 'Vets Near You'),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _newestCarousel() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
+      child: ListView.builder(
+        itemBuilder: (context, index) => Container(),
       ),
     );
   }
@@ -94,7 +98,6 @@ class _HomeScreenState extends State<HomeScreen> {
       onTap: () {},
       child: Container(
         decoration: BoxDecoration(
-          // color: Colors.white,
           shape: BoxShape.rectangle,
           border: Border.all(
             color: _categoryBorderColor,
@@ -207,10 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: double.infinity,
-            child: SizedBox(height: 16.0),
-          ),
+          SizedBox(height: 16.0),
           Text(
             'Find Your',
             style: TextStyle(
@@ -271,26 +271,24 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             : SizedBox.shrink(),
         _userProfile(),
+        SizedBox(width: _horizontalPadding),
       ],
     );
   }
 
   Widget _userProfile() {
-    return Padding(
-      padding: EdgeInsets.only(right: _horizontalPadding),
-      child: FloatingActionButton(
-        tooltip: 'Your profile',
+    return FloatingActionButton(
+      tooltip: 'Your profile',
+      backgroundColor: _backgroundColor,
+      mini: true,
+      onPressed: () {},
+      child: CircleAvatar(
+        radius: 18.0,
         backgroundColor: _backgroundColor,
-        mini: true,
-        onPressed: () {},
-        child: CircleAvatar(
-          radius: 18.0,
-          backgroundColor: _backgroundColor,
-          backgroundImage: (_data.userAvatarImage != null &&
-                  _data.userAvatarImage.isNotEmpty)
-              ? NetworkImage(_data.userAvatarImage)
-              : AssetImage('assets/image/no_avatar.png'),
-        ),
+        backgroundImage:
+            (_data.userAvatarImage != null && _data.userAvatarImage.isNotEmpty)
+                ? NetworkImage(_data.userAvatarImage)
+                : AssetImage('assets/image/no_avatar.png'),
       ),
     );
   }
