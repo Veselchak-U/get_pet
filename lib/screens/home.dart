@@ -72,11 +72,13 @@ class _HomeScreenState extends State<HomeScreen> {
         height: 150,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          padding: EdgeInsets.all(8.0),
           itemCount: 5,
-          itemBuilder: (context, index) => Container(
-            width: 100,
-            color: Colors.yellow,
+          itemBuilder: (context, index) => Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              width: 100,
+              color: Colors.yellow[100],
+            ),
           ),
         ),
       ),
