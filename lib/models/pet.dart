@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:cats/import.dart';
 
 class Pet {
-  Pet(
-      {@required this.breed,
-      @required this.gender,
-      this.age,
-      @required this.coloring,
-      this.weight,
-      @required this.address,
-      this.distance,
-      @required this.action,
-      this.liked,
-      @required this.photos,
-      @required this.description,
-      @required this.contact});
+  Pet({
+    @required this.breed,
+    @required this.gender,
+    this.age,
+    @required this.coloring,
+    this.weight,
+    @required this.address,
+    this.distance,
+    @required this.action,
+    this.liked,
+    @required this.photos,
+    @required this.description,
+    @required this.contact,
+  });
 
   final String breed; // порода
   final Gender gender; // пол
@@ -30,6 +31,6 @@ class Pet {
   final Contact contact; // контактное лицо
 }
 
-enum Gender { MALE, FEMALE } // мальчик, девочка
+enum Gender { male, female } // мальчик, девочка
 
-enum Action { ADOPTION, MATING, DISAPPEAR } // приют, вязка, пропажа
+enum Action { adoption, mating, disappear } // приют, вязка, пропажа

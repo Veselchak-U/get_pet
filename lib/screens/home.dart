@@ -7,13 +7,29 @@ class HomeScreen extends StatefulWidget {
       'https://images.unsplash.com/photo-1602773890240-87ce74fc752e?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80';
   final List<PetCategory> petCategories = [
     PetCategory(
-        name: 'Hamster', count: 56, image: 'https://picsum.photos/id/433/100'),
+      name: 'Hamster',
+      count: 56,
+      image: 'assets/image/hamster.png',
+      background: Color(0xffF9EDD3),
+    ),
     PetCategory(
-        name: 'Cats', count: 210, image: 'https://picsum.photos/id/40/100'),
+      name: 'Cats',
+      count: 210,
+      image: 'assets/image/cat.png',
+      background: Color(0xffD8F1FD),
+    ),
     PetCategory(
-        name: 'Bunnies', count: 90, image: 'https://picsum.photos/id/582/100'),
+      name: 'Bunnies',
+      count: 90,
+      image: 'assets/image/rabbit.png',
+      background: Color(0xffE6F3E7),
+    ),
     PetCategory(
-        name: 'Dogs', count: 340, image: 'https://picsum.photos/id/1062/100'),
+      name: 'Dogs',
+      count: 340,
+      image: 'assets/image/dog.png',
+      background: Color(0xffFAE0D8),
+    ),
   ];
   final List<Pet> newestPets = [];
 
@@ -108,6 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return InkWell(
       borderRadius: BorderRadius.circular(16.0),
       onTap: () {},
+      // onLongPress: () {},
       child: Container(
         decoration: BoxDecoration(
           shape: BoxShape.rectangle,
@@ -123,8 +140,15 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               CircleAvatar(
                 radius: 20.0,
-                backgroundColor: Theme.of(context).backgroundColor,
-                backgroundImage: NetworkImage(item.image),
+                backgroundColor: item.background,
+                child: CircleAvatar(
+                  radius: 13.0,
+                  backgroundColor: item.background,
+                  child: Image.asset(
+                    item.image,
+                    fit: BoxFit.scaleDown,
+                  ),
+                ),
               ),
               SizedBox(width: 16.0),
               Column(
