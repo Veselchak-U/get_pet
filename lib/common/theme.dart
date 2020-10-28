@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-const double kHorizontalPadding = 16.0;
-
 final theme = ThemeData(
   visualDensity: VisualDensity.adaptivePlatformDensity,
   primarySwatch: Colors.grey,

@@ -2,6 +2,8 @@ import 'package:cats/import.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+const double _kHorizontalPadding = 16.0;
+
 class HomeScreen extends StatelessWidget {
 // class HomeScreen extends StatefulWidget {
 //   @override
@@ -121,7 +123,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
               )
             : SizedBox.shrink(),
         _UserProfile(),
-        SizedBox(width: kHorizontalPadding),
+        SizedBox(width: _kHorizontalPadding),
       ],
     );
   }
@@ -153,7 +155,7 @@ class _Greeting extends StatelessWidget {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
+      padding: EdgeInsets.symmetric(horizontal: _kHorizontalPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -208,7 +210,7 @@ class _SearchBarState extends State<_SearchBar> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     return Padding(
-      padding: EdgeInsets.only(left: kHorizontalPadding, top: 16.0),
+      padding: EdgeInsets.only(left: _kHorizontalPadding, top: 16.0),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -258,7 +260,7 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(kHorizontalPadding, 4.0, 8.0, 4.0),
+      padding: EdgeInsets.fromLTRB(_kHorizontalPadding, 4.0, 8.0, 4.0),
       child: Row(
         children: [
           Text(
@@ -284,14 +286,14 @@ class _CategoryGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     HomeState data = BlocProvider.of<HomeCubit>(context).state;
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
+      padding: EdgeInsets.symmetric(horizontal: _kHorizontalPadding),
       child: GridView.count(
         crossAxisCount: 2,
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         childAspectRatio: 5 / 2,
-        mainAxisSpacing: kHorizontalPadding,
-        crossAxisSpacing: kHorizontalPadding,
+        mainAxisSpacing: _kHorizontalPadding,
+        crossAxisSpacing: _kHorizontalPadding,
         children: data.petCategories
             .map((PetCategory element) => _CategoryGridItem(item: element))
             .toList(),
@@ -370,7 +372,7 @@ class _NewestCarousel extends StatelessWidget {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
+      padding: EdgeInsets.symmetric(horizontal: _kHorizontalPadding),
       child: Container(
         height: 150,
         child: ListView.builder(

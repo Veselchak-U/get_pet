@@ -1,47 +1,20 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:cats/import.dart';
-import 'package:flutter/material.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  HomeCubit() : super(const HomeState());
+  HomeCubit({this.repo}) : super(const HomeState());
+
+  final DatabaseRepository repo;
 
   Future<bool> load() async {
     var result = true;
     emit(state.copyWith(status: HomeStatus.busy));
     try {
-      final int notificationCount = 2;
-      final String userAvatarImage =
-          'https://images.unsplash.com/photo-1602773890240-87ce74fc752e?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80';
-      final List<PetCategory> petCategories = [
-        PetCategory(
-          name: 'Hamster',
-          count: 56,
-          image: 'assets/image/hamster.png',
-          background: Color(0xffF9EDD3),
-        ),
-        PetCategory(
-          name: 'Cats',
-          count: 210,
-          image: 'assets/image/cat.png',
-          background: Color(0xffD8F1FD),
-        ),
-        PetCategory(
-          name: 'Bunnies',
-          count: 90,
-          image: 'assets/image/rabbit.png',
-          background: Color(0xffE6F3E7),
-        ),
-        PetCategory(
-          name: 'Dogs',
-          count: 340,
-          image: 'assets/image/dog.png',
-          background: Color(0xffFAE0D8),
-        ),
-      ];
-      final List<Pet> newestPets = [];
-
-      await Future.delayed(const Duration(milliseconds: 1000));
+      final int notificationCount = await repo.loadNotificationCount();
+      final String userAvatarImage = await repo.loadUserAvatarImage();
+      final List<PetCategory> petCategories = await repo.loadPetCategories();
+      final List<Pet> newestPets = await repo.loadNewestPets();
       emit(state.copyWith(
         status: HomeStatus.ready,
         notificationCount: notificationCount,
@@ -50,6 +23,7 @@ class HomeCubit extends Cubit<HomeState> {
         newestPets: newestPets,
       ));
     } catch (error) {
+      print(error);
       result = false;
     }
     return result;
