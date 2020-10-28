@@ -84,6 +84,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     HomeState data = BlocProvider.of<HomeCubit>(context).state;
+    var theme = Theme.of(context);
     return AppBar(
       elevation: 0.0,
       leading: IconButton(
@@ -106,7 +107,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   CircleAvatar(
                     radius: 10.0,
-                    backgroundColor: Theme.of(context).backgroundColor,
+                    backgroundColor: theme.backgroundColor,
                     child: CircleAvatar(
                       radius: 8.0,
                       backgroundColor: Colors.orange,
@@ -133,14 +134,15 @@ class _UserProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HomeState data = BlocProvider.of<HomeCubit>(context).state;
+    var theme = Theme.of(context);
     return FloatingActionButton(
       tooltip: 'Your profile',
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: theme.backgroundColor,
       mini: true,
       onPressed: () {},
       child: CircleAvatar(
         radius: 18.0,
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: theme.backgroundColor,
         backgroundImage:
             (data.userAvatarImage != null && data.userAvatarImage.isNotEmpty)
                 ? NetworkImage(data.userAvatarImage)
@@ -259,6 +261,7 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     return Padding(
       padding: EdgeInsets.fromLTRB(_kHorizontalPadding, 4.0, 8.0, 4.0),
       child: Row(
@@ -266,7 +269,7 @@ class _Header extends StatelessWidget {
           Text(
             text,
             style: TextStyle(
-                color: Theme.of(context).primaryColor,
+                color: theme.primaryColor,
                 fontSize: 16.0,
                 fontWeight: FontWeight.bold),
           ),
@@ -309,6 +312,7 @@ class _CategoryGridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     return InkWell(
       borderRadius: BorderRadius.circular(16.0),
       onTap: () {},
@@ -317,7 +321,7 @@ class _CategoryGridItem extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.rectangle,
           border: Border.all(
-            color: Theme.of(context).primaryColorLight,
+            color: theme.primaryColorLight,
             width: 2.0,
           ),
           borderRadius: BorderRadius.circular(16.0),
