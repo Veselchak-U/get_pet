@@ -1,4 +1,5 @@
 export 'main.dart';
+export 'common/theme.dart';
 export 'cubits/home.dart';
 export 'models/contact.dart';
 export 'models/pet.dart';
