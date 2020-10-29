@@ -1,23 +1,26 @@
-import 'package:flutter/material.dart';
 import 'package:cats/import.dart';
 
 // Питомец
 class Pet {
   Pet({
-    @required this.breed,
-    @required this.gender,
+    this.id,
+    this.idCategory,
+    this.breed,
+    this.gender,
     this.age,
-    @required this.coloring,
+    this.coloring,
     this.weight,
-    @required this.address,
+    this.address,
     this.distance,
-    @required this.action,
+    this.action,
     this.liked,
-    @required this.photos,
-    @required this.description,
-    @required this.contact,
+    this.photos,
+    this.description,
+    this.contact,
   });
 
+  final int id; // id
+  final int idCategory; // id категории (PetCategory)
   final String breed; // порода
   final Gender gender; // пол
   final String age; // возраст
