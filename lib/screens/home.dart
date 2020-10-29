@@ -5,27 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 const double _kHorizontalPadding = 16.0;
 
 class HomeScreen extends StatelessWidget {
-// class HomeScreen extends StatefulWidget {
-//   @override
-//   _HomeScreenState createState() => _HomeScreenState();
-// }
-
-// class _HomeScreenState extends State<HomeScreen> {
-  // HomeState _data;
-
-  // @override
-  // void initState() {
-  //   _data = BlocProvider.of<HomeCubit>(context).state;
-  //   super.initState();
-  // }
-
-  // @override
-  // void dispose() {
-  //   _searchController.dispose();
-  //   super.dispose();
-  // }
-
-  // final _searchBar = _SearchBar();
+  final _searchBar = _SearchBar();
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +23,13 @@ class HomeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _Greeting(),
-                  _SearchBar(),
+                  _searchBar,
                   _Header(index: 0, text: 'Pet Category'),
                   _CategoryGrid(),
                   _Header(index: 1, text: 'Newest Pet'),
                   _NewestCarousel(),
                   _Header(index: 2, text: 'Vets Near You'),
+                  _VetsCarousel(),
                 ],
               ),
             ),
@@ -108,7 +89,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
                           'You have ${data.notificationCount} new notification(s)',
                       icon: Icon(Icons.notifications_none),
                       onPressed: () {
-                        cubit.clearNotification();
+                        cubit.clearNotifications();
                       },
                     ),
                   ),
@@ -202,7 +183,9 @@ class _SearchBarState extends State<_SearchBar> {
 
   @override
   void initState() {
+    print('_SearchBar initState()');
     _searchController.addListener(() {
+      print('_SearchBar listen: "${_searchController.text}"');
       setState(() {
         // put search procedure here
       });
@@ -212,12 +195,14 @@ class _SearchBarState extends State<_SearchBar> {
 
   @override
   void dispose() {
+    print('_SearchBar dispose()');
     _searchController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    print('_SearchBar build()');
     var theme = Theme.of(context);
     return Padding(
       padding: EdgeInsets.only(left: _kHorizontalPadding, top: 16.0),
@@ -387,6 +372,8 @@ class _CategoryGridItem extends StatelessWidget {
 class _NewestCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
+    HomeState data = cubit.state;
     var theme = Theme.of(context);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: _kHorizontalPadding),
@@ -394,17 +381,147 @@ class _NewestCarousel extends StatelessWidget {
         height: 150,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: 5,
+          itemCount: data.newestPets.length,
           itemBuilder: (context, index) => Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Container(
-              width: 100,
-              decoration: BoxDecoration(
-                color: theme.primaryColorLight,
-                border: Border.all(color: theme.primaryColorLight),
-              ),
+            child: _NewestCarouselItem(
+              item: data.newestPets[index],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NewestCarouselItem extends StatelessWidget {
+  const _NewestCarouselItem({Key key, this.item}) : super(key: key);
+  final Pet item;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 100,
+      decoration: BoxDecoration(
+        color: theme.primaryColorLight,
+        border: Border.all(color: theme.primaryColorLight),
+      ),
+      child: Text(item.breed),
+    );
+  }
+}
+
+class _VetsCarousel extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
+    HomeState data = cubit.state;
+    var theme = Theme.of(context);
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: _kHorizontalPadding),
+      child: Container(
+        height: 120,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: data.nearestVets.length,
+          itemBuilder: (context, index) => Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: _VetsCarouselItem(
+              item: data.nearestVets[index],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _VetsCarouselItem extends StatelessWidget {
+  const _VetsCarouselItem({Key key, this.item}) : super(key: key);
+  final Vet item;
+  @override
+  Widget build(BuildContext context) {
+    var borderWidth = 2.0;
+    var boxWidth = MediaQuery.of(context).size.width -
+        _kHorizontalPadding * 2 -
+        borderWidth * 4;
+    return Container(
+      width: boxWidth,
+      decoration: BoxDecoration(
+        shape: BoxShape.rectangle,
+        border: Border.all(
+          color: theme.primaryColorLight,
+          width: borderWidth,
+        ),
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Row(
+          children: [
+            Container(
+              width: 100,
+              // color: Colors.yellow[100],
+              child: Image(
+                image: NetworkImage(item.logo),
+                fit: BoxFit.scaleDown,
+              ),
+            ),
+            SizedBox(width: 16.0),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.name,
+                    maxLines: 1,
+                    softWrap: false,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        // color: _baseColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.phone,
+                        size: 20,
+                      ),
+                      SizedBox(width: 4.0),
+                      Text(
+                        item.phone,
+                        style: TextStyle(
+                          // color: _baseColor,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 4),
+                  Container(
+                    decoration: BoxDecoration(
+                      color:
+                          item.isOpenNow ? Colors.green[100] : Colors.blue[100],
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
+                      child: Text(
+                        item.timetable,
+                        style: TextStyle(
+                          color: item.isOpenNow ? Colors.green : Colors.blue,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Категория питомца
 class PetCategory {
   PetCategory({
     @required this.name,

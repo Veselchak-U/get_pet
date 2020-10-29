@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cats/import.dart';
 
+// Питомец
 class Pet {
   Pet({
     @required this.breed,
@@ -19,12 +20,12 @@ class Pet {
 
   final String breed; // порода
   final Gender gender; // пол
-  final double age; // возраст
+  final String age; // возраст
   final String coloring; // окрас
   final double weight; // вес
   final String address; // адрес
   final double distance; // расстояние до
-  final Action action; // действие
+  final PetAction action; // действие
   final bool liked; // понравилось
   final List<String> photos; // список фотографий
   final String description; // описание
@@ -33,4 +34,4 @@ class Pet {
 
 enum Gender { male, female } // мальчик, девочка
 
-enum Action { adoption, mating, disappear } // приют, вязка, пропажа
+enum PetAction { adoption, mating, disappear } // приют, вязка, пропажа

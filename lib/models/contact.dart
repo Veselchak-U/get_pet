@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Контактное лицо питомца
 class Contact {
   Contact({
     @required this.name,

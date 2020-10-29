@@ -15,12 +15,14 @@ class HomeCubit extends Cubit<HomeState> {
       final String userAvatarImage = await repo.loadUserAvatarImage();
       final List<PetCategory> petCategories = await repo.loadPetCategories();
       final List<Pet> newestPets = await repo.loadNewestPets();
+      final List<Vet> nearestVets = await repo.loadNearestVets();
       emit(state.copyWith(
         status: HomeStatus.ready,
         notificationCount: notificationCount,
         userAvatarImage: userAvatarImage,
         petCategories: petCategories,
         newestPets: newestPets,
+        nearestVets: nearestVets,
       ));
     } catch (error) {
       print(error);
@@ -33,7 +35,7 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(notificationCount: state.notificationCount + 1));
   }
 
-  void clearNotification() {
+  void clearNotifications() {
     emit(state.copyWith(notificationCount: 0));
   }
 }
@@ -47,6 +49,7 @@ class HomeState extends Equatable {
     this.userAvatarImage = '',
     this.petCategories = const [],
     this.newestPets = const [],
+    this.nearestVets = const [],
   });
 
   final HomeStatus status;
@@ -54,6 +57,7 @@ class HomeState extends Equatable {
   final String userAvatarImage;
   final List<PetCategory> petCategories;
   final List<Pet> newestPets;
+  final List<Vet> nearestVets;
 
   @override
   List<Object> get props => [
@@ -62,6 +66,7 @@ class HomeState extends Equatable {
         userAvatarImage,
         petCategories,
         newestPets,
+        nearestVets,
       ];
 
   HomeState copyWith({
@@ -70,6 +75,7 @@ class HomeState extends Equatable {
     String userAvatarImage,
     List<PetCategory> petCategories,
     List<Pet> newestPets,
+    List<Vet> nearestVets,
   }) {
     return HomeState(
       status: status ?? this.status,
@@ -77,6 +83,7 @@ class HomeState extends Equatable {
       userAvatarImage: userAvatarImage ?? this.userAvatarImage,
       petCategories: petCategories ?? this.petCategories,
       newestPets: newestPets ?? this.newestPets,
+      nearestVets: nearestVets ?? this.nearestVets,
     );
   }
 }
