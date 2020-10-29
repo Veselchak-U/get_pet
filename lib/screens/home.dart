@@ -25,6 +25,8 @@ class HomeScreen extends StatelessWidget {
   //   super.dispose();
   // }
 
+  // final _searchBar = _SearchBar();
+
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -83,7 +85,8 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    HomeState data = BlocProvider.of<HomeCubit>(context).state;
+    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
+    HomeState data = cubit.state;
     var theme = Theme.of(context);
     return AppBar(
       elevation: 0.0,
@@ -102,7 +105,9 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
                       tooltip:
                           'You have ${data.notificationCount} new notification(s)',
                       icon: Icon(Icons.notifications_none),
-                      onPressed: () {},
+                      onPressed: () {
+                        cubit.clearNotification();
+                      },
                     ),
                   ),
                   CircleAvatar(
@@ -133,7 +138,8 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
 class _UserProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    HomeState data = BlocProvider.of<HomeCubit>(context).state;
+    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
+    HomeState data = cubit.state;
     var theme = Theme.of(context);
     return FloatingActionButton(
       tooltip: 'Your profile',
@@ -287,7 +293,8 @@ class _Header extends StatelessWidget {
 class _CategoryGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    HomeState data = BlocProvider.of<HomeCubit>(context).state;
+    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
+    HomeState data = cubit.state;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: _kHorizontalPadding),
       child: GridView.count(
@@ -312,10 +319,14 @@ class _CategoryGridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
+    HomeState data = cubit.state;
     var theme = Theme.of(context);
     return InkWell(
       borderRadius: BorderRadius.circular(16.0),
-      onTap: () {},
+      onTap: () {
+        cubit.addNotification();
+      },
       // onLongPress: () {},
       child: Container(
         decoration: BoxDecoration(

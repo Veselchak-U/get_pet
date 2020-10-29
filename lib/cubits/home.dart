@@ -28,6 +28,14 @@ class HomeCubit extends Cubit<HomeState> {
     }
     return result;
   }
+
+  void addNotification() {
+    emit(state.copyWith(notificationCount: state.notificationCount + 1));
+  }
+
+  void clearNotification() {
+    emit(state.copyWith(notificationCount: 0));
+  }
 }
 
 enum HomeStatus { initial, busy, ready }
