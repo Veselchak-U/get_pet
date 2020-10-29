@@ -31,7 +31,9 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     return BlocBuilder<HomeCubit, HomeState>(
-      builder: (context, state) {
+      // buildWhen: (HomeState previous, HomeState current) =>
+      //     current.status != previous.status,
+      builder: (BuildContext context, HomeState state) {
         Widget result;
         if (state.status == HomeStatus.ready) {
           result = Scaffold(
