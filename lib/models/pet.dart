@@ -33,6 +33,41 @@ class Pet {
   final List<String> photos; // список фотографий
   final String description; // описание
   final Contact contact; // контактное лицо
+
+  Pet.fromJson(Map<String, dynamic> json)
+      : id = json['id'] as int,
+        idCategory = json['idCategory'] as int,
+        breed = json['breed'] as String,
+        gender = Gender.values
+            .firstWhere((e) => e.toString() == (json['gender'] as String)),
+        age = json['age'] as String,
+        coloring = json['coloring'] as String,
+        weight = json['weight'] as double,
+        address = json['address'] as String,
+        distance = json['distance'] as double,
+        action = PetAction.values
+            .firstWhere((e) => e.toString() == (json['action'] as String)),
+        liked = json['liked'] as bool,
+        photos = json['photos'] as List<String>,
+        description = json['description'] as String,
+        contact = json['contact'] as Contact;
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'idCategory': idCategory,
+        'breed': breed,
+        'gender': gender.toString(),
+        'age': age,
+        'coloring': coloring,
+        'weight': weight,
+        'address': address,
+        'distance': distance,
+        'action': action.toString(),
+        'liked': liked,
+        'photos': photos,
+        'description': description,
+        'contact': contact,
+      };
 }
 
 enum Gender { male, female } // мальчик, девочка

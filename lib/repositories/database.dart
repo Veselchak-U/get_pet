@@ -1,7 +1,27 @@
 import 'package:cats/import.dart';
 import 'package:flutter/material.dart';
+import 'package:graphql/client.dart';
+
+import '../local.dart';
+
+const _kGraphqlUri = 'https://cats.hasura.app/v1/graphql';
+const _kToken = 'Bearer $kDatabaseToken';
+// const _kEnableWebSockets = false;
+const _kGraphQLTimeout = 5000;
 
 class DatabaseRepository {
+  final GraphQLClient _client = _getClient();
+
+  static GraphQLClient _getClient() {
+    final httpLink = HttpLink(uri: _kGraphqlUri);
+    final authLink = AuthLink(getToken: () async => _kToken);
+    final link = authLink.concat(httpLink);
+    return GraphQLClient(
+      cache: InMemoryCache(),
+      link: link,
+    );
+  }
+
   Future<int> loadNotificationCount() async {
     var result = 2;
     await Future.delayed(const Duration(milliseconds: 300));
@@ -16,33 +36,53 @@ class DatabaseRepository {
   }
 
   Future<List<PetCategory>> loadPetCategories() async {
-    var result = [
-      PetCategory(
-        name: 'Hamster',
-        count: 56,
-        image: 'assets/image/hamster.png',
-        background: Color(0xffF9EDD3),
-      ),
-      PetCategory(
-        name: 'Cats',
-        count: 210,
-        image: 'assets/image/cat.png',
-        background: Color(0xffD8F1FD),
-      ),
-      PetCategory(
-        name: 'Bunnies',
-        count: 90,
-        image: 'assets/image/rabbit.png',
-        background: Color(0xffE6F3E7),
-      ),
-      PetCategory(
-        name: 'Dogs',
-        count: 340,
-        image: 'assets/image/dog.png',
-        background: Color(0xffFAE0D8),
-      ),
-    ];
-    await Future.delayed(const Duration(milliseconds: 300));
+    List<PetCategory> result = [];
+
+    final options = QueryOptions(
+      documentNode: _API.readPetCategories,
+      fetchPolicy: FetchPolicy.noCache,
+      errorPolicy: ErrorPolicy.all,
+    );
+    final queryResult = await _client
+        .query(options)
+        .timeout(Duration(milliseconds: _kGraphQLTimeout));
+    if (queryResult.hasException) {
+      throw queryResult.exception;
+    }
+    // print(queryResult.data);
+    final dataItems =
+        (queryResult.data['PetCategory'] as List).cast<Map<String, dynamic>>();
+    for (final item in dataItems) {
+      result.add(PetCategory.fromJson(item));
+    }
+
+    // var result = [
+    //   PetCategory(
+    //     name: 'Hamster',
+    //     count: 56,
+    //     image: 'assets/image/hamster.png',
+    //     background: Color(0xffF9EDD3),
+    //   ),
+    //   PetCategory(
+    //     name: 'Cats',
+    //     count: 210,
+    //     image: 'assets/image/cat.png',
+    //     background: Color(0xffD8F1FD),
+    //   ),
+    //   PetCategory(
+    //     name: 'Bunnies',
+    //     count: 90,
+    //     image: 'assets/image/rabbit.png',
+    //     background: Color(0xffE6F3E7),
+    //   ),
+    //   PetCategory(
+    //     name: 'Dogs',
+    //     count: 340,
+    //     image: 'assets/image/dog.png',
+    //     background: Color(0xffFAE0D8),
+    //   ),
+    // ];
+    // await Future.delayed(const Duration(milliseconds: 300));
     return result;
   }
 
@@ -178,4 +218,18 @@ class DatabaseRepository {
     await Future.delayed(const Duration(milliseconds: 300));
     return result;
   }
+}
+
+class _API {
+  static final readPetCategories = gql(r'''
+    query ReadPetCategories {
+      PetCategory {
+        id
+        name
+        count
+        image
+        background
+      }
+    }
+  ''');
 }
