@@ -416,21 +416,27 @@ class _VetsCarousel extends StatelessWidget {
     HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
     HomeState data = cubit.state;
     var theme = Theme.of(context);
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: _kHorizontalPadding),
-      child: Container(
-        height: 120,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: data.nearestVets.length,
-          itemBuilder: (context, index) => Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: _VetsCarouselItem(
-              item: data.nearestVets[index],
-            ),
-          ),
-        ),
+    return Container(
+      height: 120,
+      margin: EdgeInsets.only(bottom: _kHorizontalPadding),
+      child: PageView.builder(
+        itemCount: data.nearestVets.length,
+        // controller: PageController(viewportFraction: 1.0),
+        itemBuilder: (context, index) =>
+            _VetsCarouselItem(item: data.nearestVets[index]),
       ),
+      //),
+      // child: ListView.builder(
+      //   scrollDirection: Axis.horizontal,
+      //   itemCount: data.nearestVets.length,
+      //   itemBuilder: (context, index) => Padding(
+      //     padding: const EdgeInsets.all(8.0),
+      //     child: _VetsCarouselItem(
+      //       item: data.nearestVets[index],
+      //     ),
+      //   ),
+      // ),
+      // ),
     );
   }
 }
@@ -441,11 +447,12 @@ class _VetsCarouselItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var borderWidth = 2.0;
-    var boxWidth = MediaQuery.of(context).size.width -
-        _kHorizontalPadding * 2 -
-        borderWidth * 4;
+    // var boxWidth = MediaQuery.of(context).size.width -
+    //     _kHorizontalPadding * 2 -
+    //     borderWidth * 4;
     return Container(
-      width: boxWidth,
+      // width: boxWidth,
+      margin: EdgeInsets.symmetric(horizontal: _kHorizontalPadding),
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
         border: Border.all(
