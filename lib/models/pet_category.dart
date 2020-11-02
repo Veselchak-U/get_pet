@@ -5,28 +5,28 @@ class PetCategory {
   PetCategory({
     this.id,
     this.name,
-    this.count,
+    this.totalOf,
     this.image,
     this.background,
   });
 
-  final int id;
+  final String id;
   final String name;
-  final int count;
+  final int totalOf;
   final String image;
   final Color background;
 
   PetCategory.fromJson(Map<String, dynamic> json)
-      : id = json['id'] as int,
+      : id = json['id'] as String,
         name = json['name'] as String,
-        count = json['count'] as int,
+        totalOf = json['totalOf'] as int,
         image = json['image'] as String,
         background = Color(int.parse(json['background'] as String));
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
-        'count': count,
+        'totalOf': totalOf,
         'image': image,
         'background': background.value.toString(),
       };

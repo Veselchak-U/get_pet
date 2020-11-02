@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 const double _kHorizontalPadding = 16.0;
+const String _kAssetPath = 'assets/image/';
 
 class HomeScreen extends StatelessWidget {
   final _searchBar = _SearchBar();
@@ -335,7 +336,7 @@ class _CategoryGridItem extends StatelessWidget {
                   radius: 13.0,
                   backgroundColor: item.background,
                   child: Image.asset(
-                    item.image,
+                    '$_kAssetPath${item.image}',
                     fit: BoxFit.scaleDown,
                   ),
                 ),
@@ -353,7 +354,7 @@ class _CategoryGridItem extends StatelessWidget {
                         fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    'Total of ${item.count}',
+                    'Total of ${item.totalOf}',
                     style: TextStyle(
                       // color: _baseColor,
                       fontSize: 13,

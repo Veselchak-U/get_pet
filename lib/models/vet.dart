@@ -1,6 +1,7 @@
 // Ветеринарная клиника
 class Vet {
   Vet({
+    this.id,
     this.name,
     this.phone,
     this.timetable,
@@ -8,6 +9,7 @@ class Vet {
     this.logo,
   });
 
+  final String id; // id
   final String name; // наименование
   final String phone; // телефон
   final String timetable; // режим работы
@@ -15,13 +17,15 @@ class Vet {
   final String logo; // логотип
 
   Vet.fromJson(Map<String, dynamic> json)
-      : name = json['name'] as String,
+      : id = json['id'] as String,
+        name = json['name'] as String,
         phone = json['phone'] as String,
         timetable = json['timetable'] as String,
         isOpenNow = json['isOpenNow'] as bool,
         logo = json['logo'] as String;
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         'name': name,
         'phone': phone,
         'timetable': timetable,
