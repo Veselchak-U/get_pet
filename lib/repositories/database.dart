@@ -34,8 +34,8 @@ class DatabaseRepository {
     return result;
   }
 
-  Future<List<PetCategory>> loadPetCategories() async {
-    List<PetCategory> result = [];
+  Future<List<CategoryModel>> loadPetCategories() async {
+    List<CategoryModel> result = [];
     final options = QueryOptions(
       documentNode: _API.readPetCategories,
       fetchPolicy: FetchPolicy.noCache,
@@ -51,7 +51,7 @@ class DatabaseRepository {
     final dataItems =
         (queryResult.data['pet_category'] as List).cast<Map<String, dynamic>>();
     for (final item in dataItems) {
-      result.add(PetCategory.fromJson(item));
+      result.add(CategoryModel.fromJson(item));
     }
     return result;
 
@@ -85,8 +85,8 @@ class DatabaseRepository {
     // return result;
   }
 
-  Future<List<Pet>> loadNewestPets() async {
-    List<Pet> result = [];
+  Future<List<PetModel>> loadNewestPets() async {
+    List<PetModel> result = [];
     final options = QueryOptions(
       documentNode: _API.readNewestPets,
       fetchPolicy: FetchPolicy.noCache,
@@ -103,7 +103,7 @@ class DatabaseRepository {
         (queryResult.data['pet'] as List).cast<Map<String, dynamic>>();
     for (final item in dataItems) {
       try {
-        result.add(Pet.fromJson(item));
+        result.add(PetModel.fromJson(item));
       } catch (e) {
         print(e);
       }
@@ -212,8 +212,8 @@ class DatabaseRepository {
     // return result;
   }
 
-  Future<List<Vet>> loadNearestVets() async {
-    List<Vet> result = [];
+  Future<List<VetModel>> loadNearestVets() async {
+    List<VetModel> result = [];
     final options = QueryOptions(
       documentNode: _API.readNearestVets,
       fetchPolicy: FetchPolicy.noCache,
@@ -229,7 +229,7 @@ class DatabaseRepository {
     final dataItems =
         (queryResult.data['vet'] as List).cast<Map<String, dynamic>>();
     for (final item in dataItems) {
-      result.add(Vet.fromJson(item));
+      result.add(VetModel.fromJson(item));
     }
     return result;
 

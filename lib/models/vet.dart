@@ -1,6 +1,10 @@
-// Ветеринарная клиника
-class Vet {
-  Vet({
+import 'package:json_annotation/json_annotation.dart';
+
+part 'vet.g.dart';
+
+@JsonSerializable()
+class VetModel {
+  VetModel({
     this.id,
     this.name,
     this.phone,
@@ -16,20 +20,8 @@ class Vet {
   final bool isOpenNow; // сейчас открыто
   final String logo; // логотип
 
-  Vet.fromJson(Map<String, dynamic> json)
-      : id = json['id'] as String,
-        name = json['name'] as String,
-        phone = json['phone'] as String,
-        timetable = json['timetable'] as String,
-        isOpenNow = json['isOpenNow'] as bool,
-        logo = json['logo'] as String;
+  factory VetModel.fromJson(Map<String, dynamic> json) =>
+      _$VetModelFromJson(json);
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'phone': phone,
-        'timetable': timetable,
-        'isOpenNow': isOpenNow,
-        'logo': logo,
-      };
+  Map<String, dynamic> toJson() => _$VetModelToJson(this);
 }

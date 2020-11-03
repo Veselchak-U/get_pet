@@ -33,6 +33,9 @@ local.dart
 .pub-cache/
 .pub/
 /build/
+*.g.dart
+apollo.config.js
+schema.json
 
 # Web related
 lib/generated_plugin_registrant.dart

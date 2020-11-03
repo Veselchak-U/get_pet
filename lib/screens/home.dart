@@ -293,7 +293,7 @@ class _CategoryGrid extends StatelessWidget {
         mainAxisSpacing: _kHorizontalPadding,
         crossAxisSpacing: _kHorizontalPadding,
         children: data.petCategories
-            .map((PetCategory element) => _CategoryGridItem(item: element))
+            .map((CategoryModel element) => _CategoryGridItem(item: element))
             .toList(),
       ),
     );
@@ -303,7 +303,7 @@ class _CategoryGrid extends StatelessWidget {
 class _CategoryGridItem extends StatelessWidget {
   const _CategoryGridItem({this.item});
 
-  final PetCategory item;
+  final CategoryModel item;
 
   @override
   Widget build(BuildContext context) {
@@ -397,7 +397,7 @@ class _NewestCarousel extends StatelessWidget {
 
 class _NewestCarouselItem extends StatelessWidget {
   const _NewestCarouselItem({Key key, this.item}) : super(key: key);
-  final Pet item;
+  final PetModel item;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -444,7 +444,7 @@ class _VetsCarousel extends StatelessWidget {
 
 class _VetsCarouselItem extends StatelessWidget {
   const _VetsCarouselItem({Key key, this.item}) : super(key: key);
-  final Vet item;
+  final VetModel item;
   @override
   Widget build(BuildContext context) {
     var borderWidth = 2.0;

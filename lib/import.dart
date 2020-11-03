@@ -1,10 +1,10 @@
 export 'main.dart';
 export 'common/theme.dart';
 export 'cubits/home.dart';
-export 'models/_base_model.dart';
+// export 'models/_base_model.dart';
 export 'models/member.dart';
 export 'models/pet.dart';
-export 'models/pet_category.dart';
+export 'models/category.dart';
 export 'models/vet.dart';
 export 'repositories/database.dart';
 export 'screens/home.dart';

@@ -1,6 +1,10 @@
-// Пользователь
-class Member {
-  Member({
+import 'package:json_annotation/json_annotation.dart';
+
+part 'member.g.dart';
+
+@JsonSerializable()
+class MemberModel {
+  MemberModel({
     this.id,
     this.name,
     this.photo,
@@ -14,18 +18,8 @@ class Member {
   final String email;
   final String phone;
 
-  Member.fromJson(Map<String, dynamic> json)
-      : id = json['id'] as String,
-        name = json['name'] as String,
-        photo = json['photo'] as String,
-        email = json['email'] as String,
-        phone = json['phone'] as String;
+  factory MemberModel.fromJson(Map<String, dynamic> json) =>
+      _$MemberModelFromJson(json);
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'photo': photo,
-        'email': email,
-        'phone': phone,
-      };
+  Map<String, dynamic> toJson() => _$MemberModelToJson(this);
 }

@@ -13,9 +13,9 @@ class HomeCubit extends Cubit<HomeState> {
     try {
       final int notificationCount = await repo.loadNotificationCount();
       final String userAvatarImage = await repo.loadUserAvatarImage();
-      final List<PetCategory> petCategories = await repo.loadPetCategories();
-      final List<Pet> newestPets = await repo.loadNewestPets();
-      final List<Vet> nearestVets = await repo.loadNearestVets();
+      final List<CategoryModel> petCategories = await repo.loadPetCategories();
+      final List<PetModel> newestPets = await repo.loadNewestPets();
+      final List<VetModel> nearestVets = await repo.loadNearestVets();
       emit(state.copyWith(
         status: HomeStatus.ready,
         notificationCount: notificationCount,
@@ -55,9 +55,9 @@ class HomeState extends Equatable {
   final HomeStatus status;
   final int notificationCount;
   final String userAvatarImage;
-  final List<PetCategory> petCategories;
-  final List<Pet> newestPets;
-  final List<Vet> nearestVets;
+  final List<CategoryModel> petCategories;
+  final List<PetModel> newestPets;
+  final List<VetModel> nearestVets;
 
   @override
   List<Object> get props => [
@@ -73,9 +73,9 @@ class HomeState extends Equatable {
     HomeStatus status,
     int notificationCount,
     String userAvatarImage,
-    List<PetCategory> petCategories,
-    List<Pet> newestPets,
-    List<Vet> nearestVets,
+    List<CategoryModel> petCategories,
+    List<PetModel> newestPets,
+    List<VetModel> nearestVets,
   }) {
     return HomeState(
       status: status ?? this.status,
