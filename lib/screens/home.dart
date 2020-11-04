@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
                   _Header(index: 0, text: 'Pet Category'),
                   _CategoryGrid(),
                   _Header(index: 1, text: 'Newest Pet'),
-                  _NewestCarousel(),
+                  _NewestPetsCarousel(),
                   _Header(index: 2, text: 'Vets Near You'),
                   _VetsCarousel(),
                 ],
@@ -370,7 +370,7 @@ class _CategoryGridItem extends StatelessWidget {
   }
 }
 
-class _NewestCarousel extends StatelessWidget {
+class _NewestPetsCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
@@ -379,12 +379,12 @@ class _NewestCarousel extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: _kHorizontalPadding),
       child: Container(
-        height: 150,
+        height: 255,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: data.newestPets.length,
           itemBuilder: (context, index) => Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(_kHorizontalPadding / 2),
             child: _NewestCarouselItem(
               item: data.newestPets[index],
             ),
@@ -400,13 +400,101 @@ class _NewestCarouselItem extends StatelessWidget {
   final PetModel item;
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth = (screenWidth - (_kHorizontalPadding * 4)) / 2;
     return Container(
-      width: 100,
+      width: cardWidth < 200 ? cardWidth : 200,
       decoration: BoxDecoration(
-        color: theme.primaryColorLight,
-        border: Border.all(color: theme.primaryColorLight),
+        border: Border.all(
+          color: theme.primaryColorLight,
+          width: 2.0,
+        ),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
+        ),
       ),
-      child: Text(item.breed),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            children: [
+              Container(
+                height: 150,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.0),
+                    topRight: Radius.circular(16.0),
+                  ),
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: NetworkImage(item.photos),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 7,
+                right: -11,
+                child: FlatButton(
+                  height: 30,
+                  color: item.liked ? Color(0xFFEE8363) : Colors.white,
+                  shape: CircleBorder(),
+                  onPressed: () {},
+                  child: Icon(
+                    Icons.favorite,
+                    color: item.liked ? Colors.white : theme.textSelectionColor,
+                    size: 16,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: Color(0xFFFCEBD3),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
+                    child: Text(
+                      item.condition,
+                      style: TextStyle(
+                        color: Color(0xFFE3B774),
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  item.breed,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.location_on_outlined,
+                      size: 16,
+                    ),
+                    Text(
+                      '${item.address} ( ${item.distance} km )',
+                      style: TextStyle(fontSize: 11),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

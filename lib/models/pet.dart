@@ -15,7 +15,7 @@ class PetModel {
     this.address,
     this.distance,
     this.condition,
-    // this.liked,
+    this.liked = true,
     this.photos,
     this.description,
     this.pet,
@@ -34,7 +34,7 @@ class PetModel {
   // final double distance; // расстояние до
   final String condition; // действие
   // final PetAction condition; // действие
-  // final bool liked; // понравилось
+  final bool liked; // понравилось
   final String photos; // список фотографий
   // final List<String> photos; // список фотографий
   final String description; // описание
