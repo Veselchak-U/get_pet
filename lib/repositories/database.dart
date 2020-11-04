@@ -49,9 +49,13 @@ class DatabaseRepository {
     }
     // print(queryResult.data);
     final dataItems =
-        (queryResult.data['pet_category'] as List).cast<Map<String, dynamic>>();
+        (queryResult.data['categories'] as List).cast<Map<String, dynamic>>();
     for (final item in dataItems) {
-      result.add(CategoryModel.fromJson(item));
+      try {
+        result.add(CategoryModel.fromJson(item));
+      } catch (e) {
+        print(e);
+      }
     }
     return result;
 
@@ -100,7 +104,7 @@ class DatabaseRepository {
     }
     // print(queryResult.data);
     final dataItems =
-        (queryResult.data['pet'] as List).cast<Map<String, dynamic>>();
+        (queryResult.data['pets'] as List).cast<Map<String, dynamic>>();
     for (final item in dataItems) {
       try {
         result.add(PetModel.fromJson(item));
@@ -227,9 +231,13 @@ class DatabaseRepository {
     }
     // print(queryResult.data);
     final dataItems =
-        (queryResult.data['vet'] as List).cast<Map<String, dynamic>>();
+        (queryResult.data['vets'] as List).cast<Map<String, dynamic>>();
     for (final item in dataItems) {
-      result.add(VetModel.fromJson(item));
+      try {
+        result.add(VetModel.fromJson(item));
+      } catch (e) {
+        print(e);
+      }
     }
     return result;
 
@@ -266,10 +274,10 @@ class DatabaseRepository {
 class _API {
   static final readPetCategories = gql(r'''
     query ReadPetCategories {
-      pet_category {
+      categories(order_by: {sort_order: asc}) {
         id
         name
-        totalOf
+        total_of
         image
         background
       }
@@ -278,20 +286,20 @@ class _API {
 
   static final readNearestVets = gql(r'''
     query ReadNearestVets {
-      vet {
+      vets {
         id
         name
         logo
         phone
         timetable
-        isOpenNow
+        is_open_now
       }
     }
   ''');
 
   static final readNewestPets = gql(r'''
     query ReadNewestPets {
-      pet {
+      pets {
         id
         idCategory
         condition

@@ -184,7 +184,7 @@ class _SearchBarState extends State<_SearchBar> {
 
   @override
   void initState() {
-    print('_SearchBar initState()');
+    // print('_SearchBar initState()');
     _searchController.addListener(() {
       print('_SearchBar listen: "${_searchController.text}"');
       setState(() {
@@ -196,14 +196,14 @@ class _SearchBarState extends State<_SearchBar> {
 
   @override
   void dispose() {
-    print('_SearchBar dispose()');
+    // print('_SearchBar dispose()');
     _searchController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    print('_SearchBar build()');
+    // print('_SearchBar build()');
     var theme = Theme.of(context);
     return Padding(
       padding: EdgeInsets.only(left: _kHorizontalPadding, top: 16.0),
