@@ -13,6 +13,7 @@ class HomeCubit extends Cubit<HomeState> {
     try {
       final int notificationCount = await repo.loadNotificationCount();
       final String userAvatarImage = await repo.loadUserAvatarImage();
+      final List<ConditionModel> conditions = await repo.loadConditions();
       final List<CategoryModel> petCategories = await repo.loadPetCategories();
       final List<PetModel> newestPets = await repo.loadNewestPets();
       final List<VetModel> nearestVets = await repo.loadNearestVets();
@@ -20,6 +21,7 @@ class HomeCubit extends Cubit<HomeState> {
         status: HomeStatus.ready,
         notificationCount: notificationCount,
         userAvatarImage: userAvatarImage,
+        conditions: conditions,
         petCategories: petCategories,
         newestPets: newestPets,
         nearestVets: nearestVets,
@@ -47,6 +49,7 @@ class HomeState extends Equatable {
     this.status = HomeStatus.initial,
     this.notificationCount = 0,
     this.userAvatarImage = '',
+    this.conditions = const [],
     this.petCategories = const [],
     this.newestPets = const [],
     this.nearestVets = const [],
@@ -55,6 +58,7 @@ class HomeState extends Equatable {
   final HomeStatus status;
   final int notificationCount;
   final String userAvatarImage;
+  final List<ConditionModel> conditions;
   final List<CategoryModel> petCategories;
   final List<PetModel> newestPets;
   final List<VetModel> nearestVets;
@@ -64,6 +68,7 @@ class HomeState extends Equatable {
         status,
         notificationCount,
         userAvatarImage,
+        conditions,
         petCategories,
         newestPets,
         nearestVets,
@@ -73,6 +78,7 @@ class HomeState extends Equatable {
     HomeStatus status,
     int notificationCount,
     String userAvatarImage,
+    List<ConditionModel> conditions,
     List<CategoryModel> petCategories,
     List<PetModel> newestPets,
     List<VetModel> nearestVets,
@@ -81,6 +87,7 @@ class HomeState extends Equatable {
       status: status ?? this.status,
       notificationCount: notificationCount ?? this.notificationCount,
       userAvatarImage: userAvatarImage ?? this.userAvatarImage,
+      conditions: conditions ?? this.conditions,
       petCategories: petCategories ?? this.petCategories,
       newestPets: newestPets ?? this.newestPets,
       nearestVets: nearestVets ?? this.nearestVets,

@@ -15,23 +15,27 @@ class HomeScreen extends StatelessWidget {
       // buildWhen: (HomeState previous, HomeState current) =>
       //     current.status != previous.status,
       builder: (BuildContext context, HomeState state) {
+        HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
         Widget result;
         if (state.status == HomeStatus.ready) {
-          result = Scaffold(
-            appBar: _AppBar(),
-            body: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _Greeting(),
-                  _searchBar,
-                  _Header(index: 0, text: 'Pet Category'),
-                  _CategoryGrid(),
-                  _Header(index: 1, text: 'Newest Pet'),
-                  _NewestPetsCarousel(),
-                  _Header(index: 2, text: 'Vets Near You'),
-                  _VetsCarousel(),
-                ],
+          result = RefreshIndicator(
+            onRefresh: () => cubit.load(),
+            child: Scaffold(
+              appBar: _AppBar(),
+              body: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _Greeting(),
+                    _searchBar,
+                    _Header(index: 0, text: 'Pet Category'),
+                    _CategoryGrid(),
+                    _Header(index: 1, text: 'Newest Pet'),
+                    _NewestPetsCarousel(),
+                    _Header(index: 2, text: 'Vets Near You'),
+                    _VetsCarousel(),
+                  ],
+                ),
               ),
             ),
           );
@@ -331,14 +335,16 @@ class _CategoryGridItem extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 20.0,
-                backgroundColor: item.background,
+                backgroundColor: item.background ?? theme.primaryColorLight,
                 child: CircleAvatar(
                   radius: 13.0,
-                  backgroundColor: item.background,
-                  child: Image.asset(
-                    '$_kAssetPath${item.image}',
-                    fit: BoxFit.scaleDown,
-                  ),
+                  backgroundColor: item.background ?? theme.primaryColorLight,
+                  child: item.image != null
+                      ? Image.asset(
+                          '$_kAssetPath${item.image}',
+                          fit: BoxFit.scaleDown,
+                        )
+                      : null,
                 ),
               ),
               SizedBox(width: 16.0),
@@ -400,6 +406,11 @@ class _NewestCarouselItem extends StatelessWidget {
   final PetModel item;
   @override
   Widget build(BuildContext context) {
+    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
+    HomeState data = cubit.state;
+    // print('_NewestCarouselItem build ${item.conditionId}');
+    ConditionModel itemCondition = data.conditions
+        .firstWhere((ConditionModel e) => e.id == item.conditionId);
     var theme = Theme.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final cardWidth = (screenWidth - (_kHorizontalPadding * 4)) / 2;
@@ -457,15 +468,17 @@ class _NewestCarouselItem extends StatelessWidget {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color: Color(0xFFFCEBD3),
+                    color: itemCondition.backgroundColor ??
+                        theme.primaryColorLight,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
                     child: Text(
-                      item.condition,
+                      itemCondition.name ?? item.conditionId,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: Color(0xFFE3B774),
+                        color: itemCondition.textColor ?? theme.primaryColor,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),

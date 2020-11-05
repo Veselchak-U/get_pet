@@ -23,14 +23,40 @@ class DatabaseRepository {
 
   Future<int> loadNotificationCount() async {
     var result = 2;
-    await Future.delayed(const Duration(milliseconds: 300));
+    // await Future.delayed(const Duration(milliseconds: 300));
     return result;
   }
 
   Future<String> loadUserAvatarImage() async {
     var result =
         'https://images.unsplash.com/photo-1602773890240-87ce74fc752e?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80';
-    await Future.delayed(const Duration(milliseconds: 300));
+    // await Future.delayed(const Duration(milliseconds: 300));
+    return result;
+  }
+
+  Future<List<ConditionModel>> loadConditions() async {
+    List<ConditionModel> result = [];
+    final options = QueryOptions(
+      documentNode: _API.readConditions,
+      fetchPolicy: FetchPolicy.noCache,
+      errorPolicy: ErrorPolicy.all,
+    );
+    final queryResult = await _client
+        .query(options)
+        .timeout(Duration(milliseconds: _kGraphQLTimeout));
+    if (queryResult.hasException) {
+      throw queryResult.exception;
+    }
+    // print(queryResult.data);
+    final dataItems =
+        (queryResult.data['conditions'] as List).cast<Map<String, dynamic>>();
+    for (final item in dataItems) {
+      try {
+        result.add(ConditionModel.fromJson(item));
+      } catch (e) {
+        print(e);
+      }
+    }
     return result;
   }
 
@@ -272,6 +298,17 @@ class DatabaseRepository {
 }
 
 class _API {
+  static final readConditions = gql(r'''
+    query ReadConditions {
+      conditions {
+        id
+        name
+        text_color
+        background_color
+      }
+    }
+  ''');
+
   static final readPetCategories = gql(r'''
     query ReadPetCategories {
       categories(order_by: {sort_order: asc}) {
@@ -301,8 +338,8 @@ class _API {
     query ReadNewestPets {
       pets {
         id
-        idCategory
-        condition
+        category_id
+        condition_id
         description
         distance
         member_id
