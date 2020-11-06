@@ -1,3 +1,4 @@
+import 'package:cats/import.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'pet.g.dart';
@@ -6,7 +7,7 @@ part 'pet.g.dart';
 class PetModel {
   PetModel({
     this.id,
-    this.categoryId,
+    this.category,
     this.breed,
     // this.gender,
     this.age,
@@ -14,31 +15,29 @@ class PetModel {
     this.weight,
     this.address,
     this.distance,
-    this.conditionId,
+    this.condition,
     this.liked = true,
     this.photos,
     this.description,
-    this.memberId,
+    this.member,
   });
 
   final String id; // id
-  final String categoryId; // id категории (PetCategory)
+  final CategoryModel category; // категория
   final String breed; // порода
   // final Gender gender; // пол
   final String age; // возраст
   final String coloring; // окрас
-  final int weight; // вес
-  // final double weight; // вес
+  final int weight; // вес double
   final String address; // адрес
-  final int distance; // расстояние до
-  // final double distance; // расстояние до
-  final String conditionId; // действие
+  final int distance; // расстояние до  double
+  final ConditionModel condition; // действие
   @JsonKey(ignore: true)
   final bool liked; // понравилось
   final String photos; // список фотографий
   // final List<String> photos; // список фотографий
   final String description; // описание
-  final String memberId; // контактное лицо
+  final MemberModel member; // контактное лицо
 
   factory PetModel.fromJson(Map<String, dynamic> json) =>
       _$PetModelFromJson(json);

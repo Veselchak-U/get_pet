@@ -9,16 +9,17 @@ class CategoryModel {
     this.id,
     this.name,
     this.totalOf,
-    this.image,
-    this.background,
+    this.assetImage,
+    this.backgroundColor,
   });
 
   final String id;
   final String name;
   final int totalOf;
-  final String image;
+  @JsonKey(nullable: true)
+  final String assetImage;
   @JsonKey(fromJson: _colorFromString, toJson: _colorToString)
-  Color background;
+  Color backgroundColor;
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) =>
       _$CategoryModelFromJson(json);

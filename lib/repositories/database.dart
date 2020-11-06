@@ -315,8 +315,8 @@ class _API {
         id
         name
         total_of
-        image
-        background
+        asset_image
+        background_color
       }
     }
   ''');
@@ -326,10 +326,10 @@ class _API {
       vets {
         id
         name
-        logo
         phone
         timetable
         is_open_now
+        logo_image
       }
     }
   ''');
@@ -338,17 +338,34 @@ class _API {
     query ReadNewestPets {
       pets {
         id
-        category_id
-        condition_id
-        description
-        distance
-        member_id
-        photos
-        weight
-        coloring
+        category {
+          id
+          name
+          total_of
+          asset_image
+          background_color
+        }
+        condition {
+          id
+          name
+          text_color
+          background_color
+        }
         breed
         age
+        coloring
+        weight
+        photos
         address
+        distance
+        description
+        member {
+          id
+          name
+          photo
+          email
+          phone
+        }
       }
     }
   ''');

@@ -10,15 +10,16 @@ class VetModel {
     this.phone,
     this.timetable,
     this.isOpenNow,
-    this.logo,
+    this.logoImage,
   });
 
   final String id; // id
   final String name; // наименование
   final String phone; // телефон
   final String timetable; // режим работы
+  @JsonKey(nullable: true)
   final bool isOpenNow; // сейчас открыто
-  final String logo; // логотип
+  final String logoImage; // логотип
 
   factory VetModel.fromJson(Map<String, dynamic> json) =>
       _$VetModelFromJson(json);

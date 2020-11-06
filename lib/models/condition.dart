@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'condition.g.dart';
 
-@JsonSerializable(createToJson: false)
+@JsonSerializable()
 class ConditionModel {
   ConditionModel({
     this.id,
@@ -14,13 +14,17 @@ class ConditionModel {
 
   final String id;
   final String name;
-  @JsonKey(fromJson: _colorFromString)
+  @JsonKey(fromJson: _colorFromString, toJson: _colorToString)
   final Color textColor;
-  @JsonKey(fromJson: _colorFromString)
+  @JsonKey(fromJson: _colorFromString, toJson: _colorToString)
   final Color backgroundColor;
 
   factory ConditionModel.fromJson(Map<String, dynamic> json) =>
       _$ConditionModelFromJson(json);
 
+  Map<String, dynamic> toJson() => _$ConditionModelToJson(this);
+
   static Color _colorFromString(String value) => Color(int.parse(value));
+
+  static String _colorToString(Color color) => color.value.toString();
 }

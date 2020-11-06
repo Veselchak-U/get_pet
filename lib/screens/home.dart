@@ -190,7 +190,7 @@ class _SearchBarState extends State<_SearchBar> {
   void initState() {
     // print('_SearchBar initState()');
     _searchController.addListener(() {
-      print('_SearchBar listen: "${_searchController.text}"');
+      // print('_SearchBar listen: "${_searchController.text}"');
       setState(() {
         // put search procedure here
       });
@@ -335,13 +335,13 @@ class _CategoryGridItem extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 20.0,
-                backgroundColor: item.background ?? theme.primaryColorLight,
+                backgroundColor: item.backgroundColor ?? theme.primaryColorLight,
                 child: CircleAvatar(
                   radius: 13.0,
-                  backgroundColor: item.background ?? theme.primaryColorLight,
-                  child: item.image != null
+                  backgroundColor: item.backgroundColor ?? theme.primaryColorLight,
+                  child: item.assetImage != null
                       ? Image.asset(
-                          '$_kAssetPath${item.image}',
+                          '$_kAssetPath${item.assetImage}',
                           fit: BoxFit.scaleDown,
                         )
                       : null,
@@ -409,8 +409,8 @@ class _NewestCarouselItem extends StatelessWidget {
     HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
     HomeState data = cubit.state;
     // print('_NewestCarouselItem build ${item.conditionId}');
-    ConditionModel itemCondition = data.conditions
-        .firstWhere((ConditionModel e) => e.id == item.conditionId);
+    // ConditionModel itemCondition = data.conditions
+    //     .firstWhere((ConditionModel e) => e.id == item.condition);
     var theme = Theme.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final cardWidth = (screenWidth - (_kHorizontalPadding * 4)) / 2;
@@ -468,17 +468,17 @@ class _NewestCarouselItem extends StatelessWidget {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color: itemCondition.backgroundColor ??
+                    color: item.condition.backgroundColor ??
                         theme.primaryColorLight,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
                     child: Text(
-                      itemCondition.name ?? item.conditionId,
+                      item.condition.name ?? item.condition,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: itemCondition.textColor ?? theme.primaryColor,
+                        color: item.condition.textColor ?? theme.primaryColor,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
@@ -571,7 +571,7 @@ class _VetsCarouselItem extends StatelessWidget {
               width: 100,
               // color: Colors.yellow[100],
               child: Image(
-                image: NetworkImage(item.logo),
+                image: NetworkImage(item.logoImage),
                 fit: BoxFit.scaleDown,
               ),
             ),
