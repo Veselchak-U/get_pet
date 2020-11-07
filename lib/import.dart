@@ -1,6 +1,7 @@
 export 'main.dart';
 export 'common/theme.dart';
 export 'cubits/home.dart';
+export 'models/breed.dart';
 export 'models/category.dart';
 export 'models/condition.dart';
 export 'models/member.dart';

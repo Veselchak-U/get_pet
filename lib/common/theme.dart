@@ -27,7 +27,7 @@ final theme = ThemeData(
   // buttonColor: Colors.pink[300],
   // secondaryHeaderColor: Colors.pink[300],
   textSelectionColor: Color(0xffb7b7b7),
-  cursorColor: Color(0xff575757),
+  cursorColor: Color(0xff575757), // primaryColor
   textSelectionHandleColor: Color(0xffb7b7b7),
   backgroundColor: Colors.white,
   // dialogBackgroundColor: Colors.pink[300],
@@ -38,11 +38,11 @@ final theme = ThemeData(
   appBarTheme: AppBarTheme(
     color: Colors.white,
     iconTheme: IconThemeData(
-      color: Color(0xff575757), //Color(0xff949494),
+      color: Color(0xff575757), // primaryColor
     ),
   ),
   iconTheme: IconThemeData(
-    color: Color(0xff575757), //Color(0xff949494),
+    color: Color(0xff575757), // primaryColor
   ),
   textTheme: TextTheme(),
 );

@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:cats/import.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit({this.repo}) : super(const HomeState());
@@ -40,6 +41,18 @@ class HomeCubit extends Cubit<HomeState> {
   void clearNotifications() {
     emit(state.copyWith(notificationCount: 0));
   }
+
+  // Future<void> callToPhoneNumber({String phone}) async {
+  //   if (phone == null || phone.isEmpty) {
+  //     return;
+  //   } else {
+  //     if (await canLaunch('tel:$phone')) {
+  //       await launch(phone);
+  //     } else {
+  //       throw 'Could not launch $phone';
+  //     }
+  //   }
+  // }
 }
 
 enum HomeStatus { initial, busy, ready }

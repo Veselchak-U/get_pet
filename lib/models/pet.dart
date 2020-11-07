@@ -24,7 +24,7 @@ class PetModel {
 
   final String id; // id
   final CategoryModel category; // категория
-  final String breed; // порода
+  final BreedModel breed; // порода
   // final Gender gender; // пол
   final String age; // возраст
   final String coloring; // окрас

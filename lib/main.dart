@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
-  runApp(MyApp(
+  runApp(App(
     databaseRepository: DatabaseRepository(),
   ));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({this.databaseRepository});
+class App extends StatelessWidget {
+  const App({this.databaseRepository});
 
   final DatabaseRepository databaseRepository;
 

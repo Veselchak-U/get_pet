@@ -6,7 +6,7 @@ const double _kHorizontalPadding = 16.0;
 const String _kAssetPath = 'assets/image/';
 
 class HomeScreen extends StatelessWidget {
-  final _searchBar = _SearchBar();
+  final _searchBar = _SearchBar(); // statefull witget, create only once
 
   @override
   Widget build(BuildContext context) {
@@ -335,10 +335,12 @@ class _CategoryGridItem extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 20.0,
-                backgroundColor: item.backgroundColor ?? theme.primaryColorLight,
+                backgroundColor:
+                    item.backgroundColor ?? theme.primaryColorLight,
                 child: CircleAvatar(
                   radius: 13.0,
-                  backgroundColor: item.backgroundColor ?? theme.primaryColorLight,
+                  backgroundColor:
+                      item.backgroundColor ?? theme.primaryColorLight,
                   child: item.assetImage != null
                       ? Image.asset(
                           '$_kAssetPath${item.assetImage}',
@@ -348,25 +350,28 @@ class _CategoryGridItem extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 16.0),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.name,
-                    style: TextStyle(
-                        // color: _baseColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'Total of ${item.totalOf}',
-                    style: TextStyle(
-                      // color: _baseColor,
-                      fontSize: 13,
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.name,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          // color: _baseColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
                     ),
-                  ),
-                ],
+                    Text(
+                      'Total of ${item.totalOf}',
+                      style: TextStyle(
+                        // color: _baseColor,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -487,7 +492,7 @@ class _NewestCarouselItem extends StatelessWidget {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  item.breed,
+                  item.breed.name,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 4),
@@ -527,18 +532,6 @@ class _VetsCarousel extends StatelessWidget {
         itemBuilder: (context, index) =>
             _VetsCarouselItem(item: data.nearestVets[index]),
       ),
-      //),
-      // child: ListView.builder(
-      //   scrollDirection: Axis.horizontal,
-      //   itemCount: data.nearestVets.length,
-      //   itemBuilder: (context, index) => Padding(
-      //     padding: const EdgeInsets.all(8.0),
-      //     child: _VetsCarouselItem(
-      //       item: data.nearestVets[index],
-      //     ),
-      //   ),
-      // ),
-      // ),
     );
   }
 }
@@ -548,6 +541,7 @@ class _VetsCarouselItem extends StatelessWidget {
   final VetModel item;
   @override
   Widget build(BuildContext context) {
+    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
     var borderWidth = 2.0;
     // var boxWidth = MediaQuery.of(context).size.width -
     //     _kHorizontalPadding * 2 -
@@ -563,74 +557,81 @@ class _VetsCarouselItem extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(20.0),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Row(
-          children: [
-            Container(
-              width: 100,
-              // color: Colors.yellow[100],
-              child: Image(
-                image: NetworkImage(item.logoImage),
-                fit: BoxFit.scaleDown,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16.0),
+        onTap: () {
+          // cubit.callToPhoneNumber(phone: item.phone);
+        },
+        // onLongPress: () {},
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Row(
+            children: [
+              Container(
+                width: 100,
+                child: Image(
+                  image: NetworkImage(item.logoImage),
+                  fit: BoxFit.scaleDown,
+                ),
               ),
-            ),
-            SizedBox(width: 16.0),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.name,
-                    maxLines: 1,
-                    softWrap: false,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        // color: _baseColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.phone,
-                        size: 20,
-                      ),
-                      SizedBox(width: 4.0),
-                      Text(
-                        item.phone,
-                        style: TextStyle(
+              SizedBox(width: 16.0),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.name,
+                      maxLines: 1,
+                      softWrap: false,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
                           // color: _baseColor,
-                          fontSize: 14,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.phone,
+                          size: 20,
+                        ),
+                        SizedBox(width: 4.0),
+                        Text(
+                          item.phone,
+                          style: TextStyle(
+                            // color: _baseColor,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 4),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: item.isOpenNow
+                            ? Colors.green[100]
+                            : Colors.blue[100],
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
+                        child: Text(
+                          item.timetable,
+                          style: TextStyle(
+                            color: item.isOpenNow ? Colors.green : Colors.blue,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
-                    ],
-                  ),
-                  SizedBox(height: 4),
-                  Container(
-                    decoration: BoxDecoration(
-                      color:
-                          item.isOpenNow ? Colors.green[100] : Colors.blue[100],
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.circular(20.0),
                     ),
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
-                      child: Text(
-                        item.timetable,
-                        style: TextStyle(
-                          color: item.isOpenNow ? Colors.green : Colors.blue,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

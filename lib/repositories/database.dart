@@ -6,7 +6,7 @@ import '../local.dart';
 const _kGraphqlUri = 'https://cats.hasura.app/v1/graphql';
 const _kToken = 'Bearer $kDatabaseToken';
 // const _kEnableWebSockets = false;
-const _kGraphQLTimeout = 5000;
+const _kTimeoutMillisec = 5000;
 
 class DatabaseRepository {
   final GraphQLClient _client = _getClient();
@@ -43,7 +43,7 @@ class DatabaseRepository {
     );
     final queryResult = await _client
         .query(options)
-        .timeout(Duration(milliseconds: _kGraphQLTimeout));
+        .timeout(Duration(milliseconds: _kTimeoutMillisec));
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
@@ -69,7 +69,7 @@ class DatabaseRepository {
     );
     final queryResult = await _client
         .query(options)
-        .timeout(Duration(milliseconds: _kGraphQLTimeout));
+        .timeout(Duration(milliseconds: _kTimeoutMillisec));
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
@@ -124,7 +124,7 @@ class DatabaseRepository {
     );
     final queryResult = await _client
         .query(options)
-        .timeout(Duration(milliseconds: _kGraphQLTimeout));
+        .timeout(Duration(milliseconds: _kTimeoutMillisec));
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
@@ -251,7 +251,7 @@ class DatabaseRepository {
     );
     final queryResult = await _client
         .query(options)
-        .timeout(Duration(milliseconds: _kGraphQLTimeout));
+        .timeout(Duration(milliseconds: _kTimeoutMillisec));
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
@@ -351,7 +351,6 @@ class _API {
           text_color
           background_color
         }
-        breed
         age
         coloring
         weight
@@ -365,6 +364,11 @@ class _API {
           photo
           email
           phone
+        }
+        breed {
+          id
+          category_id
+          name
         }
       }
     }
