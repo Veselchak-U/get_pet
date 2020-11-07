@@ -42,17 +42,17 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(notificationCount: 0));
   }
 
-  // Future<void> callToPhoneNumber({String phone}) async {
-  //   if (phone == null || phone.isEmpty) {
-  //     return;
-  //   } else {
-  //     if (await canLaunch('tel:$phone')) {
-  //       await launch(phone);
-  //     } else {
-  //       throw 'Could not launch $phone';
-  //     }
-  //   }
-  // }
+  Future<void> callToPhoneNumber({String phone}) async {
+    if (phone == null || phone.isEmpty) {
+      return;
+    } else {
+      if (await canLaunch('tel:$phone')) {
+        await launch(phone);
+      } else {
+        throw 'Could not launch $phone';
+      }
+    }
+  }
 }
 
 enum HomeStatus { initial, busy, ready }

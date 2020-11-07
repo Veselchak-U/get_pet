@@ -560,7 +560,7 @@ class _VetsCarouselItem extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16.0),
         onTap: () {
-          // cubit.callToPhoneNumber(phone: item.phone);
+          cubit.callToPhoneNumber(phone: item.phone);
         },
         // onLongPress: () {},
         child: Padding(

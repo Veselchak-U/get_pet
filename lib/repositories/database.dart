@@ -130,7 +130,7 @@ class DatabaseRepository {
     }
     // print(queryResult.data);
     final dataItems =
-        (queryResult.data['pets'] as List).cast<Map<String, dynamic>>();
+        (queryResult.data['get_pets_by_member'] as List).cast<Map<String, dynamic>>();
     for (final item in dataItems) {
       try {
         result.add(PetModel.fromJson(item));
@@ -336,8 +336,20 @@ class _API {
 
   static final readNewestPets = gql(r'''
     query ReadNewestPets {
-      pets {
+      get_pets_by_member(args: {member: "52139d1b-80da-4d24-a360-1c088363cc46"}) {
         id
+        age
+        coloring
+        description
+        weight
+        photos
+        address
+        distance
+        liked
+        breed {
+          id
+          name
+        }
         category {
           id
           name
@@ -351,13 +363,6 @@ class _API {
           text_color
           background_color
         }
-        age
-        coloring
-        weight
-        photos
-        address
-        distance
-        description
         member {
           id
           name
@@ -365,12 +370,47 @@ class _API {
           email
           phone
         }
-        breed {
-          id
-          category_id
-          name
-        }
       }
     }
   ''');
+
+  // static final readNewestPets = gql(r'''
+  //   query ReadNewestPets {
+  //     pets {
+  //       id
+  //       category {
+  //         id
+  //         name
+  //         total_of
+  //         asset_image
+  //         background_color
+  //       }
+  //       condition {
+  //         id
+  //         name
+  //         text_color
+  //         background_color
+  //       }
+  //       age
+  //       coloring
+  //       weight
+  //       photos
+  //       address
+  //       distance
+  //       description
+  //       member {
+  //         id
+  //         name
+  //         photo
+  //         email
+  //         phone
+  //       }
+  //       breed {
+  //         id
+  //         category_id
+  //         name
+  //       }
+  //     }
+  //   }
+  // ''');
 }

@@ -16,7 +16,7 @@ class PetModel {
     this.address,
     this.distance,
     this.condition,
-    this.liked = true,
+    this.liked,
     this.photos,
     this.description,
     this.member,
@@ -32,7 +32,7 @@ class PetModel {
   final String address; // адрес
   final int distance; // расстояние до  double
   final ConditionModel condition; // действие
-  @JsonKey(ignore: true)
+  // @JsonKey(ignore: true)
   final bool liked; // понравилось
   final String photos; // список фотографий
   // final List<String> photos; // список фотографий
