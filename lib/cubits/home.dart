@@ -8,9 +8,13 @@ class HomeCubit extends Cubit<HomeState> {
 
   final DatabaseRepository repo;
 
-  Future<bool> load() async {
+  Future<bool> load({bool isReload}) async {
     var result = true;
-    emit(state.copyWith(status: HomeStatus.busy));
+    if (isReload != null && isReload) {
+      emit(state.copyWith(status: HomeStatus.reload));
+    } else {
+      emit(state.copyWith(status: HomeStatus.busy));
+    }
     try {
       final int notificationCount = await repo.loadNotificationCount();
       final String userAvatarImage = await repo.loadUserAvatarImage();
@@ -56,19 +60,23 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void onTapPetLike({String petId}) {
-    // local changes
-    List<PetModel> newPets = [...state.newestPets];
-    PetModel changedPet = newPets.firstWhere((PetModel e) => e.id == petId);
-    PetModel newPet = changedPet.copyWith(liked: !changedPet.liked);
-    var index = newPets.indexOf(changedPet);
-    newPets[index] = newPet;
-    emit(state.copyWith(newestPets: newPets));
-    // database changes
-    repo.updatePetLike(petId: petId, isLike: newPet.liked);
+    if (state.status == HomeStatus.reload) {
+      return;
+    } else {
+      // local changes
+      List<PetModel> newPets = [...state.newestPets];
+      PetModel changedPet = newPets.firstWhere((PetModel e) => e.id == petId);
+      PetModel newPet = changedPet.copyWith(liked: !changedPet.liked);
+      var index = newPets.indexOf(changedPet);
+      newPets[index] = newPet;
+      emit(state.copyWith(newestPets: newPets));
+      // database changes
+      repo.updatePetLike(petId: petId, isLike: newPet.liked);
+    }
   }
 }
 
-enum HomeStatus { initial, busy, ready }
+enum HomeStatus { initial, busy, reload, ready }
 
 class HomeState extends Equatable {
   const HomeState({

@@ -17,9 +17,10 @@ class HomeScreen extends StatelessWidget {
       builder: (BuildContext context, HomeState state) {
         HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
         Widget result;
-        if (state.status == HomeStatus.ready) {
+        if (state.status == HomeStatus.ready ||
+            state.status == HomeStatus.reload) {
           result = RefreshIndicator(
-            onRefresh: () => cubit.load(),
+            onRefresh: () => cubit.load(isReload: true),
             child: Scaffold(
               appBar: _AppBar(),
               body: SingleChildScrollView(
