@@ -64,7 +64,7 @@ class HomeCubit extends Cubit<HomeState> {
     newPets[index] = newPet;
     emit(state.copyWith(newestPets: newPets));
     // database changes
-    repo.updatePetLike(petId: petId);
+    repo.updatePetLike(petId: petId, isLike: newPet.liked);
   }
 }
 

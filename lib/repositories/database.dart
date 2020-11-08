@@ -299,13 +299,54 @@ class DatabaseRepository {
     // return result;
   }
 
-  Future<bool> updatePetLike({String petId}) async {
+  Future<bool> updatePetLike({String petId, bool isLike}) async {
     var result = true;
+
+    final options = MutationOptions(
+      documentNode: isLike ? _API.insertPetLike : _API.deletePetLike,
+      variables: {
+        'member_id': kDatabaseUserId,
+        'pet_id': petId,
+      },
+      fetchPolicy: FetchPolicy.noCache,
+      errorPolicy: ErrorPolicy.all,
+    );
+    final mutationResult = await _client
+        .mutate(options)
+        .timeout(Duration(milliseconds: _kTimeoutMillisec));
+    if (mutationResult.hasException) {
+      result = false;
+      throw mutationResult.exception;
+    }
+    // print(queryResult.data);
+    // final dataItems =
+    //     (mutationResult.data['insert_liked_one'] as List).cast<Map<String, dynamic>>();
+    // return TodoModel.fromJson(dataItem);
+
     return result;
   }
 }
 
 class _API {
+
+  static final insertPetLike = gql(r'''
+    mutation InsertPetLike($member_id: uuid!, $pet_id: uuid!) {
+      insert_liked_one(object: {member_id: $member_id, pet_id: $pet_id}) {
+        member_id
+        pet_id
+      }
+    }
+  ''');
+
+  static final deletePetLike = gql(r'''
+    mutation DeletePetLike($member_id: uuid!, $pet_id: uuid!) {
+      delete_liked_by_pk(member_id: $member_id, pet_id: $pet_id) {
+        member_id
+        pet_id
+      }
+    }
+  ''');
+
   static final readConditions = gql(r'''
     query ReadConditions {
       conditions {
