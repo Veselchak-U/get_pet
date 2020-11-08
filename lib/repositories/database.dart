@@ -119,6 +119,9 @@ class DatabaseRepository {
     List<PetModel> result = [];
     final options = QueryOptions(
       documentNode: _API.readNewestPets,
+      variables: {
+        'member_id': kDatabaseUserId,
+      },
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
     );
@@ -129,8 +132,8 @@ class DatabaseRepository {
       throw queryResult.exception;
     }
     // print(queryResult.data);
-    final dataItems =
-        (queryResult.data['get_pets_by_member'] as List).cast<Map<String, dynamic>>();
+    final dataItems = (queryResult.data['get_pets_by_member'] as List)
+        .cast<Map<String, dynamic>>();
     for (final item in dataItems) {
       try {
         result.add(PetModel.fromJson(item));
@@ -295,6 +298,11 @@ class DatabaseRepository {
     // await Future.delayed(const Duration(milliseconds: 300));
     // return result;
   }
+
+  Future<bool> updatePetLike({String petId}) async {
+    var result = true;
+    return result;
+  }
 }
 
 class _API {
@@ -335,8 +343,8 @@ class _API {
   ''');
 
   static final readNewestPets = gql(r'''
-    query ReadNewestPets {
-      get_pets_by_member(args: {member: "52139d1b-80da-4d24-a360-1c088363cc46"}) {
+    query ReadNewestPets($member_id: uuid!) {
+      get_pets_by_member(args: {member: $member_id}) {
         id
         age
         coloring
@@ -374,43 +382,43 @@ class _API {
     }
   ''');
 
-  // static final readNewestPets = gql(r'''
-  //   query ReadNewestPets {
-  //     pets {
-  //       id
-  //       category {
-  //         id
-  //         name
-  //         total_of
-  //         asset_image
-  //         background_color
-  //       }
-  //       condition {
-  //         id
-  //         name
-  //         text_color
-  //         background_color
-  //       }
-  //       age
-  //       coloring
-  //       weight
-  //       photos
-  //       address
-  //       distance
-  //       description
-  //       member {
-  //         id
-  //         name
-  //         photo
-  //         email
-  //         phone
-  //       }
-  //       breed {
-  //         id
-  //         category_id
-  //         name
-  //       }
-  //     }
-  //   }
-  // ''');
+  static final readAllPets = gql(r'''
+    query ReadAllPets {
+      pets {
+        id
+        category {
+          id
+          name
+          total_of
+          asset_image
+          background_color
+        }
+        condition {
+          id
+          name
+          text_color
+          background_color
+        }
+        age
+        coloring
+        weight
+        photos
+        address
+        distance
+        description
+        member {
+          id
+          name
+          photo
+          email
+          phone
+        }
+        breed {
+          id
+          category_id
+          name
+        }
+      }
+    }
+  ''');
 }

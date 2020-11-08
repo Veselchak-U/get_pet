@@ -46,12 +46,25 @@ class HomeCubit extends Cubit<HomeState> {
     if (phone == null || phone.isEmpty) {
       return;
     } else {
-      if (await canLaunch('tel:$phone')) {
-        await launch(phone);
+      var url = 'tel:$phone';
+      if (await canLaunch(url)) {
+        await launch(url);
       } else {
         throw 'Could not launch $phone';
       }
     }
+  }
+
+  void onTapPetLike({String petId}) {
+    // local changes
+    List<PetModel> newPets = [...state.newestPets];
+    PetModel changedPet = newPets.firstWhere((PetModel e) => e.id == petId);
+    PetModel newPet = changedPet.copyWith(liked: !changedPet.liked);
+    var index = newPets.indexOf(changedPet);
+    newPets[index] = newPet;
+    emit(state.copyWith(newestPets: newPets));
+    // database changes
+    repo.updatePetLike(petId: petId);
   }
 }
 

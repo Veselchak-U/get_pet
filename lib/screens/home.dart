@@ -456,7 +456,9 @@ class _NewestCarouselItem extends StatelessWidget {
                   height: 30,
                   color: item.liked ? Color(0xFFEE8363) : Colors.white,
                   shape: CircleBorder(),
-                  onPressed: () {},
+                  onPressed: () {
+                    cubit.onTapPetLike(petId: item.id);
+                  },
                   child: Icon(
                     Icons.favorite,
                     color: item.liked ? Colors.white : theme.textSelectionColor,
