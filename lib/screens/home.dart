@@ -2,15 +2,12 @@ import 'package:cats/import.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-const double _kHorizontalPadding = 16.0;
-const String _kAssetPath = 'assets/image/';
-
 class HomeScreen extends StatelessWidget {
   final _searchBar = _SearchBar(); // statefull witget, create only once
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
+    // var theme = Theme.of(context);
     return BlocBuilder<HomeCubit, HomeState>(
       // buildWhen: (HomeState previous, HomeState current) =>
       //     current.status != previous.status,
@@ -76,7 +73,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
     HomeState data = cubit.state;
-    var theme = Theme.of(context);
+    // var theme = Theme.of(context);
     return AppBar(
       elevation: 0.0,
       leading: IconButton(
@@ -118,7 +115,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
               )
             : SizedBox.shrink(),
         _UserProfile(),
-        SizedBox(width: _kHorizontalPadding),
+        SizedBox(width: kHorizontalPadding),
       ],
     );
   }
@@ -129,7 +126,7 @@ class _UserProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
     HomeState data = cubit.state;
-    var theme = Theme.of(context);
+    // var theme = Theme.of(context);
     return FloatingActionButton(
       tooltip: 'Your profile',
       backgroundColor: theme.backgroundColor,
@@ -150,9 +147,9 @@ class _UserProfile extends StatelessWidget {
 class _Greeting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
+    // var theme = Theme.of(context);
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: _kHorizontalPadding),
+      padding: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -209,9 +206,9 @@ class _SearchBarState extends State<_SearchBar> {
   @override
   Widget build(BuildContext context) {
     // print('_SearchBar build()');
-    var theme = Theme.of(context);
+    // var theme = Theme.of(context);
     return Padding(
-      padding: EdgeInsets.only(left: _kHorizontalPadding, top: 16.0),
+      padding: EdgeInsets.only(left: kHorizontalPadding, top: 16.0),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -260,9 +257,9 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
+    // var theme = Theme.of(context);
     return Padding(
-      padding: EdgeInsets.fromLTRB(_kHorizontalPadding, 4.0, 8.0, 4.0),
+      padding: EdgeInsets.fromLTRB(kHorizontalPadding, 4.0, 8.0, 4.0),
       child: Row(
         children: [
           Text(
@@ -289,14 +286,14 @@ class _CategoryGrid extends StatelessWidget {
     HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
     HomeState data = cubit.state;
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: _kHorizontalPadding),
+      padding: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
       child: GridView.count(
         crossAxisCount: 2,
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         childAspectRatio: 5 / 2,
-        mainAxisSpacing: _kHorizontalPadding,
-        crossAxisSpacing: _kHorizontalPadding,
+        mainAxisSpacing: kHorizontalPadding,
+        crossAxisSpacing: kHorizontalPadding,
         children: data.petCategories
             .map((CategoryModel element) => _CategoryGridItem(item: element))
             .toList(),
@@ -314,7 +311,7 @@ class _CategoryGridItem extends StatelessWidget {
   Widget build(BuildContext context) {
     HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
     HomeState data = cubit.state;
-    var theme = Theme.of(context);
+    // var theme = Theme.of(context);
     return InkWell(
       borderRadius: BorderRadius.circular(16.0),
       onTap: () {
@@ -344,7 +341,7 @@ class _CategoryGridItem extends StatelessWidget {
                       item.backgroundColor ?? theme.primaryColorLight,
                   child: item.assetImage != null
                       ? Image.asset(
-                          '$_kAssetPath${item.assetImage}',
+                          '$kAssetPath${item.assetImage}',
                           fit: BoxFit.scaleDown,
                         )
                       : null,
@@ -387,16 +384,16 @@ class _NewestPetsCarousel extends StatelessWidget {
   Widget build(BuildContext context) {
     HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
     HomeState data = cubit.state;
-    var theme = Theme.of(context);
+    // var theme = Theme.of(context);
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: _kHorizontalPadding),
+      padding: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
       child: Container(
         height: 255,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: data.newestPets.length,
           itemBuilder: (context, index) => Padding(
-            padding: const EdgeInsets.all(_kHorizontalPadding / 2),
+            padding: const EdgeInsets.all(kHorizontalPadding / 2),
             child: _NewestCarouselItem(
               item: data.newestPets[index],
             ),
@@ -417,104 +414,117 @@ class _NewestCarouselItem extends StatelessWidget {
     // print('_NewestCarouselItem build ${item.conditionId}');
     // ConditionModel itemCondition = data.conditions
     //     .firstWhere((ConditionModel e) => e.id == item.condition);
-    var theme = Theme.of(context);
+    // var theme = Theme.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth = (screenWidth - (_kHorizontalPadding * 4)) / 2;
-    return Container(
-      width: cardWidth < 200 ? cardWidth : 200,
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: theme.primaryColorLight,
-          width: 2.0,
-        ),
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16.0),
-          topRight: Radius.circular(16.0),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              Container(
-                height: 150,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16.0),
-                    topRight: Radius.circular(16.0),
-                  ),
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: NetworkImage(item.photos),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 7,
-                right: -11,
-                child: FlatButton(
-                  height: 30,
-                  color: item.liked ? Color(0xFFEE8363) : Colors.white,
-                  shape: CircleBorder(),
-                  onPressed: () {
-                    cubit.onTapPetLike(petId: item.id);
-                  },
-                  child: Icon(
-                    Icons.favorite,
-                    color: item.liked ? Colors.white : theme.textSelectionColor,
-                    size: 16,
-                  ),
-                ),
-              ),
-            ],
+    final cardWidth = (screenWidth - (kHorizontalPadding * 4)) / 2;
+    return GestureDetector(
+      onTap: () {
+        navigator.push(
+          MaterialPageRoute<Widget>(
+            builder: (context) => DetailScreen(item: item),
           ),
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        );
+      },
+      child: Container(
+        width: cardWidth < 200 ? cardWidth : 200,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: theme.primaryColorLight,
+            width: 2.0,
+          ),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16.0),
+            topRight: Radius.circular(16.0),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: item.condition.backgroundColor ??
-                        theme.primaryColorLight,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
-                    child: Text(
-                      item.condition.name ?? item.condition,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: item.condition.textColor ?? theme.primaryColor,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
+                Hero(
+                  tag: '${item.id}',
+                  child: Container(
+                    height: 150,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(16.0),
+                        topRight: Radius.circular(16.0),
+                      ),
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(item.photos),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: 4),
-                Text(
-                  item.breed.name,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.location_on_outlined,
+                Positioned(
+                  top: 7,
+                  right: -11,
+                  child: FlatButton(
+                    height: 30,
+                    color: item.liked ? Color(0xFFEE8363) : Colors.white,
+                    shape: CircleBorder(),
+                    onPressed: () {
+                      cubit.onTapPetLike(petId: item.id);
+                    },
+                    child: Icon(
+                      Icons.favorite,
+                      color:
+                          item.liked ? Colors.white : theme.textSelectionColor,
                       size: 16,
                     ),
-                    Text(
-                      '${item.address} ( ${item.distance} km )',
-                      style: TextStyle(fontSize: 11),
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: item.condition.backgroundColor ??
+                          theme.primaryColorLight,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
+                      child: Text(
+                        item.condition.name ?? item.condition,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: item.condition.textColor ?? theme.primaryColor,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    item.breed.name,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.location_on_outlined,
+                        size: 16,
+                      ),
+                      Text(
+                        '${item.address} ( ${item.distance} km )',
+                        style: TextStyle(fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -525,10 +535,10 @@ class _VetsCarousel extends StatelessWidget {
   Widget build(BuildContext context) {
     HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
     HomeState data = cubit.state;
-    var theme = Theme.of(context);
+    // var theme = Theme.of(context);
     return Container(
       height: 120,
-      margin: EdgeInsets.only(bottom: _kHorizontalPadding),
+      margin: EdgeInsets.only(bottom: kHorizontalPadding),
       child: PageView.builder(
         itemCount: data.nearestVets.length,
         // controller: PageController(viewportFraction: 1.0),
@@ -551,7 +561,7 @@ class _VetsCarouselItem extends StatelessWidget {
     //     borderWidth * 4;
     return Container(
       // width: boxWidth,
-      margin: EdgeInsets.symmetric(horizontal: _kHorizontalPadding),
+      margin: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
         border: Border.all(

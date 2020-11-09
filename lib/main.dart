@@ -8,6 +8,10 @@ void main() {
   ));
 }
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
+NavigatorState get navigator => navigatorKey.currentState;
+
 class App extends StatelessWidget {
   const App({this.databaseRepository});
 
@@ -22,13 +26,13 @@ class App extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'Cats & Pets',
+        title: 'Pet finder',
+        navigatorKey: navigatorKey,
         theme: theme,
         debugShowCheckedModeBanner: false,
         home: BlocProvider(
           create: (BuildContext context) => HomeCubit(
-              repo:
-                  RepositoryProvider.of<DatabaseRepository>(context))
+              repo: RepositoryProvider.of<DatabaseRepository>(context))
             ..load(),
           child: HomeScreen(),
         ),

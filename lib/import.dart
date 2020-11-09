@@ -8,4 +8,5 @@ export 'models/member.dart';
 export 'models/pet.dart';
 export 'models/vet.dart';
 export 'repositories/database.dart';
+export 'screens/detail.dart';
 export 'screens/home.dart';
