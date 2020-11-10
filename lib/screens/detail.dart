@@ -19,9 +19,9 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   void initState() {
-    super.initState();
     cubit = widget.cubit;
     itemId = widget.item.id;
+    super.initState();
   }
 
   @override
@@ -29,68 +29,98 @@ class _DetailScreenState extends State<DetailScreen> {
     final PetModel item =
         cubit.state.newestPets.firstWhere((PetModel e) => e.id == itemId);
     final screenHeight = MediaQuery.of(context).size.height;
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            // automaticallyImplyLeading: false,
-            // leading: RaisedButton(
-            //   shape: CircleBorder(),
-            //   color: Colors.transparent.withOpacity(0.001),
-            //   onPressed: () {
-            //     navigator.pop(context);
-            //   },
-            //   child: Icon(Icons.arrow_back),
-            // ),
-            elevation: 0.0,
-            expandedHeight: screenHeight - 20,
-            flexibleSpace: Stack(
-              children: [
-                FlexibleSpaceBar(
-                  background: Hero(
-                    tag: '${widget.item.id}',
-                    child: Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(widget.item.photos),
-                          fit: BoxFit.cover,
+    return GestureDetector(
+      onHorizontalDragEnd: (details) {
+        _updateOnHorizontalSwap(details: details, item: item);
+      },
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              // automaticallyImplyLeading: false,
+              // leading: RaisedButton(
+              //   shape: CircleBorder(),
+              //   color: Colors.transparent.withOpacity(0.001),
+              //   onPressed: () {
+              //     navigator.pop(context);
+              //   },
+              //   child: Icon(Icons.arrow_back),
+              // ),
+              elevation: 0.0,
+              expandedHeight: screenHeight - 20,
+              flexibleSpace: Stack(
+                children: [
+                  FlexibleSpaceBar(
+                    background: Hero(
+                      tag: '${item.id}',
+                      child: Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: NetworkImage(item.photos),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                _SliderCover(),
-              ],
+                  _SliderCover(),
+                ],
+              ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Container(
-              color: theme.backgroundColor,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: kHorizontalPadding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _Header(
-                      item: item,
-                      onLiked: () {
-                        setState(() {
-                          cubit.onTapPetLike(petId: item.id);
-                        });
-                      },
-                    ),
-                    _Details(item: item),
-                    _Story(item: item),
-                    _Contact(item: item),
-                  ],
+            SliverToBoxAdapter(
+              child: Container(
+                color: theme.backgroundColor,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: kHorizontalPadding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _Header(
+                        item: item,
+                        onLiked: () {
+                          setState(() {
+                            cubit.onTapPetLike(petId: item.id);
+                          });
+                        },
+                      ),
+                      _Details(item: item),
+                      _Story(item: item),
+                      _Contact(item: item),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  void _updateOnHorizontalSwap({DragEndDetails details, PetModel item}) {
+    var items = cubit.state.newestPets;
+    var needUpdate = false;
+    var newIndex;
+    if (details.primaryVelocity > 0) {
+      // swipe left
+      newIndex = items.indexOf(item) - 1;
+      if (newIndex >= 0) {
+        needUpdate = true;
+      }
+    } else if (details.primaryVelocity < 0) {
+      // swipe right
+      newIndex = items.indexOf(item) + 1;
+      if (newIndex < items.length) {
+        needUpdate = true;
+      }
+    }
+    if (needUpdate) {
+      // print('newIndex = $newIndex');
+      setState(() {
+        itemId = items[newIndex].id;
+      });
+    }
   }
 }
 
