@@ -421,7 +421,7 @@ class _NewestCarouselItem extends StatelessWidget {
       onTap: () {
         navigator.push(
           MaterialPageRoute<Widget>(
-            builder: (context) => DetailScreen(item: item),
+            builder: (context) => DetailScreen(cubit: cubit, item: item),
           ),
         );
       },

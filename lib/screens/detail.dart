@@ -1,15 +1,33 @@
+import 'dart:wasm';
+
 import 'package:cats/import.dart';
 import 'package:flutter/material.dart';
 
-class DetailScreen extends StatelessWidget {
-  DetailScreen({@required this.item});
+class DetailScreen extends StatefulWidget {
+  DetailScreen({@required this.cubit, @required this.item});
 
+  final HomeCubit cubit;
   final PetModel item;
 
   @override
+  _DetailScreenState createState() => _DetailScreenState();
+}
+
+class _DetailScreenState extends State<DetailScreen> {
+  HomeCubit cubit;
+  String itemId;
+
+  @override
+  void initState() {
+    super.initState();
+    cubit = widget.cubit;
+    itemId = widget.item.id;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // final HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
-    // final theme = Theme.of(context);
+    final PetModel item =
+        cubit.state.newestPets.firstWhere((PetModel e) => e.id == itemId);
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: CustomScrollView(
@@ -30,11 +48,11 @@ class DetailScreen extends StatelessWidget {
               children: [
                 FlexibleSpaceBar(
                   background: Hero(
-                    tag: '${item.id}',
+                    tag: '${widget.item.id}',
                     child: Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: NetworkImage(item.photos),
+                          image: NetworkImage(widget.item.photos),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -54,7 +72,14 @@ class DetailScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _Header(item: item),
+                    _Header(
+                      item: item,
+                      onLiked: () {
+                        setState(() {
+                          cubit.onTapPetLike(petId: item.id);
+                        });
+                      },
+                    ),
                     _Details(item: item),
                     _Story(item: item),
                     _Contact(item: item),
@@ -105,8 +130,9 @@ class _SliderCover extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  _Header({this.item});
+  _Header({this.item, this.onLiked});
 
+  final VoidCallback onLiked;
   final PetModel item;
 
   @override
@@ -148,9 +174,7 @@ class _Header extends StatelessWidget {
           height: 48,
           color: item.liked ? Color(0xFFEE8363) : theme.primaryColorLight,
           shape: CircleBorder(),
-          onPressed: () {
-            // cubit.onTapPetLike(petId: item.id);
-          },
+          onPressed: onLiked,
           child: Icon(
             Icons.favorite,
             color: item.liked ? Colors.white : theme.textSelectionColor,
