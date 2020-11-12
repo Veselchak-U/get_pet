@@ -31,7 +31,7 @@ class _DetailScreenState extends State<DetailScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
     return GestureDetector(
       onHorizontalDragEnd: (details) {
-        _updateOnHorizontalSwap(details: details, item: item);
+        _swapItem(details: details, item: item);
       },
       child: Scaffold(
         body: CustomScrollView(
@@ -98,27 +98,27 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
-  void _updateOnHorizontalSwap({DragEndDetails details, PetModel item}) {
+  void _swapItem({DragEndDetails details, PetModel item}) {
     var items = cubit.state.newestPets;
     var needUpdate = false;
-    var newIndex;
+    var newItemIndex;
     if (details.primaryVelocity > 0) {
       // swipe left
-      newIndex = items.indexOf(item) - 1;
-      if (newIndex >= 0) {
+      newItemIndex = items.indexOf(item) - 1;
+      if (newItemIndex >= 0) {
         needUpdate = true;
       }
     } else if (details.primaryVelocity < 0) {
       // swipe right
-      newIndex = items.indexOf(item) + 1;
-      if (newIndex < items.length) {
+      newItemIndex = items.indexOf(item) + 1;
+      if (newItemIndex < items.length) {
         needUpdate = true;
       }
     }
     if (needUpdate) {
       // print('newIndex = $newIndex');
       setState(() {
-        itemId = items[newIndex].id;
+        itemId = items[newItemIndex].id;
       });
     }
   }

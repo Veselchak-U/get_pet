@@ -22,6 +22,7 @@ class HomeCubit extends Cubit<HomeState> {
       final List<CategoryModel> petCategories = await repo.loadPetCategories();
       final List<PetModel> newestPets = await repo.loadNewestPets();
       final List<VetModel> nearestVets = await repo.loadNearestVets();
+      final List<PetModel> searchPets = await repo.searchPets(categoryId: 'abe09048-c1dc-4f4b-87e3-421b7f34e07d', query: 'abyss');
       emit(state.copyWith(
         status: HomeStatus.ready,
         notificationCount: notificationCount,

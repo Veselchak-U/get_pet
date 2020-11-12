@@ -115,6 +115,43 @@ class DatabaseRepository {
     // return result;
   }
 
+  Future<List<PetModel>> searchPets(
+      {String categoryId, String query, int limit = 20}) async {
+    assert(categoryId != null || query != null);
+    List<PetModel> result = [];
+    final options = QueryOptions(
+      documentNode: _API.searchPets,
+      variables: {
+        'member_id': kDatabaseUserId,
+        'category_id': categoryId,
+        'query': '%$query%',
+        'limit': limit,
+      },
+      fetchPolicy: FetchPolicy.noCache,
+      errorPolicy: ErrorPolicy.all,
+    );
+    final queryResult = await _client
+        .query(options)
+        .timeout(Duration(milliseconds: _kTimeoutMillisec));
+    if (queryResult.hasException) {
+      // print(queryResult.exception.clientException.message);
+      throw queryResult.exception;
+    }
+    // print(queryResult.data);
+    final dataItems = (queryResult.data['get_pets_by_member_id'] as List)
+        .cast<Map<String, dynamic>>();
+    for (final item in dataItems) {
+      try {
+        result.add(PetModel.fromJson(item));
+        print(PetModel.fromJson(item).breed.name);
+        print(PetModel.fromJson(item).address);
+      } catch (e) {
+        print(e);
+      }
+    }
+    return result;
+  }
+
   Future<List<PetModel>> loadNewestPets() async {
     List<PetModel> result = [];
     final options = QueryOptions(
@@ -132,7 +169,7 @@ class DatabaseRepository {
       throw queryResult.exception;
     }
     // print(queryResult.data);
-    final dataItems = (queryResult.data['get_pets_by_member'] as List)
+    final dataItems = (queryResult.data['get_pets_by_member_id'] as List)
         .cast<Map<String, dynamic>>();
     for (final item in dataItems) {
       try {
@@ -142,107 +179,6 @@ class DatabaseRepository {
       }
     }
     return result;
-
-    // List<Pet> result = [
-    //   Pet(
-    //     breed: 'Abyssinian Cats',
-    //     // gender: Gender.male,
-    //     age: '4 monts',
-    //     coloring: 'Grey',
-    //     weight: 2.0,
-    //     address: 'California',
-    //     distance: 2.5,
-    //     action: PetAction.adoption,
-    //     liked: true,
-    //     photos: [
-    //       'https://cdn.pixabay.com/photo/2020/05/05/10/14/cat-5132411_960_720.jpg'
-    //     ],
-    //     description: 'Ищу нового хозяина',
-    //     contact: Member(name: 'Nannie Baker'),
-    //   ),
-    //   Pet(
-    //     breed: 'Scottish Fold',
-    //     // gender: Gender.female,
-    //     age: '1,5 years',
-    //     coloring: 'Leopard',
-    //     weight: 3.5,
-    //     address: 'New Jersey',
-    //     distance: 1.2,
-    //     action: PetAction.mating,
-    //     liked: false,
-    //     photos: [
-    //       'https://cdn.pixabay.com/photo/2014/11/05/17/28/savannah-cat-518126_960_720.jpg'
-    //     ],
-    //     description: 'Желаю завести семью',
-    //     contact: Member(name: 'Donald Trump'),
-    //   ),
-    //   Pet(
-    //     breed: 'Abyssinian Cats',
-    //     // gender: Gender.male,
-    //     age: '4 monts',
-    //     coloring: 'Grey',
-    //     weight: 2.0,
-    //     address: 'California',
-    //     distance: 2.5,
-    //     action: PetAction.adoption,
-    //     liked: true,
-    //     photos: [
-    //       'https://cdn.pixabay.com/photo/2020/05/05/10/14/cat-5132411_960_720.jpg'
-    //     ],
-    //     description: 'Ищу нового хозяина',
-    //     contact: Member(name: 'Nannie Baker'),
-    //   ),
-    //   Pet(
-    //     breed: 'Scottish Fold',
-    //     // gender: Gender.female,
-    //     age: '1,5 years',
-    //     coloring: 'Leopard',
-    //     weight: 3.5,
-    //     address: 'New Jersey',
-    //     distance: 1.2,
-    //     action: PetAction.mating,
-    //     liked: false,
-    //     photos: [
-    //       'https://cdn.pixabay.com/photo/2014/11/05/17/28/savannah-cat-518126_960_720.jpg'
-    //     ],
-    //     description: 'Желаю завести семью',
-    //     contact: Member(name: 'Donald Trump'),
-    //   ),
-    //   Pet(
-    //     breed: 'Abyssinian Cats',
-    //     // gender: Gender.male,
-    //     age: '4 monts',
-    //     coloring: 'Grey',
-    //     weight: 2.0,
-    //     address: 'California',
-    //     distance: 2.5,
-    //     action: PetAction.adoption,
-    //     liked: true,
-    //     photos: [
-    //       'https://cdn.pixabay.com/photo/2020/05/05/10/14/cat-5132411_960_720.jpg'
-    //     ],
-    //     description: 'Ищу нового хозяина',
-    //     contact: Member(name: 'Nannie Baker'),
-    //   ),
-    //   Pet(
-    //     breed: 'Scottish Fold',
-    //     // gender: Gender.female,
-    //     age: '1,5 years',
-    //     coloring: 'Leopard',
-    //     weight: 3.5,
-    //     address: 'New Jersey',
-    //     distance: 1.2,
-    //     action: PetAction.mating,
-    //     liked: false,
-    //     photos: [
-    //       'https://cdn.pixabay.com/photo/2014/11/05/17/28/savannah-cat-518126_960_720.jpg'
-    //     ],
-    //     description: 'Желаю завести семью',
-    //     contact: Member(name: 'Donald Trump'),
-    //   ),
-    // ];
-    // await Future.delayed(const Duration(milliseconds: 300));
-    // return result;
   }
 
   Future<List<VetModel>> loadNearestVets() async {
@@ -328,6 +264,23 @@ class DatabaseRepository {
 }
 
 class _API {
+  static final searchPets = gql(r'''
+    query SearchPets($member_id: uuid!, $category_id: uuid, $query: String, $limit: Int!) {
+      get_pets_by_member_id(args: {member_id: $member_id},
+        where: {_and: [
+                  {category: {id: {_eq: $category_id}}},
+                  {_or: [
+                    {breed: {name: {_ilike: $query}}},
+                    {address: {_ilike: $query}},
+                  ]},
+               ]},
+        order_by: {updated_at: desc},
+        limit: $limit
+      ) {
+        ...PetFields
+      }
+    }
+  ''')..definitions.addAll(fragments.definitions);
 
   static final insertPetLike = gql(r'''
     mutation InsertPetLike($member_id: uuid!, $pet_id: uuid!) {
@@ -350,115 +303,134 @@ class _API {
   static final readConditions = gql(r'''
     query ReadConditions {
       conditions {
-        id
-        name
-        text_color
-        background_color
+        ...ConditionFields
       }
     }
-  ''');
+  ''')..definitions.addAll(fragments.definitions);
 
   static final readPetCategories = gql(r'''
     query ReadPetCategories {
       categories(order_by: {sort_order: asc}) {
+        ...CategoryFields
+      }
+    }
+  ''')..definitions.addAll(fragments.definitions);
+
+  static final readNearestVets = gql(r'''
+    query ReadNearestVets {
+      vets {
+        ...VetFields
+      }
+    }
+  ''')..definitions.addAll(fragments.definitions);
+
+  static final readNewestPets = gql(r'''
+    query ReadNewestPets($member_id: uuid!) {
+      get_pets_by_member_id(args: {member_id: $member_id}) {
+        ...PetFields
+      }
+    }
+  ''')..definitions.addAll(fragments.definitions);
+
+  static final readAllPets = gql(r'''
+    query ReadAllPets {
+      pets {
+        ...PetFields
+      }
+    }
+  ''')..definitions.addAll(fragments.definitions);
+
+  static final fragments = gql(r'''
+    fragment CategoryFields on category {
+      # __typename
+      id
+      name
+      total_of
+      asset_image
+      background_color
+    }
+    fragment ConditionFields on condition {
+      # __typename
+      id
+      name
+      text_color
+      background_color
+    }
+    fragment BreedFields on breed {
+      # __typename
+      id
+      category_id
+      name
+    }
+    fragment VetFields on vet {
+      # __typename
+      id
+      name
+      phone
+      timetable
+      is_open_now
+      logo_image
+    }
+    fragment MemberFields on member {
+      # __typename
+      id
+      name
+      photo
+      email
+      phone
+    }
+    fragment LikedFields on member {
+      # __typename
+      member_id
+      pet_id
+    }
+    fragment PetFields on pet {
+      # __typename
+      # id
+      # category_id
+      # age
+      # coloring
+      # weight
+      # address
+      # distance
+      # photos
+      # description
+      # member_id
+      # condition_id
+      # breed_id
+      # liked
+      id
+      age
+      coloring
+      description
+      weight
+      photos
+      address
+      distance
+      liked
+      breed {
+        id
+        name
+      }
+      category {
         id
         name
         total_of
         asset_image
         background_color
       }
-    }
-  ''');
-
-  static final readNearestVets = gql(r'''
-    query ReadNearestVets {
-      vets {
+      condition {
         id
         name
+        text_color
+        background_color
+      }
+      member {
+        id
+        name
+        photo
+        email
         phone
-        timetable
-        is_open_now
-        logo_image
-      }
-    }
-  ''');
-
-  static final readNewestPets = gql(r'''
-    query ReadNewestPets($member_id: uuid!) {
-      get_pets_by_member(args: {member: $member_id}) {
-        id
-        age
-        coloring
-        description
-        weight
-        photos
-        address
-        distance
-        liked
-        breed {
-          id
-          name
-        }
-        category {
-          id
-          name
-          total_of
-          asset_image
-          background_color
-        }
-        condition {
-          id
-          name
-          text_color
-          background_color
-        }
-        member {
-          id
-          name
-          photo
-          email
-          phone
-        }
-      }
-    }
-  ''');
-
-  static final readAllPets = gql(r'''
-    query ReadAllPets {
-      pets {
-        id
-        category {
-          id
-          name
-          total_of
-          asset_image
-          background_color
-        }
-        condition {
-          id
-          name
-          text_color
-          background_color
-        }
-        age
-        coloring
-        weight
-        photos
-        address
-        distance
-        description
-        member {
-          id
-          name
-          photo
-          email
-          phone
-        }
-        breed {
-          id
-          category_id
-          name
-        }
       }
     }
   ''');
