@@ -5,9 +5,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class HomeScreen extends StatelessWidget {
   final _searchBar = _SearchBar(); // statefull witget, create only once
 
+  Route<T> getRoute<T>() {
+    return buildRoute<T>(
+      '/home',
+      builder: (_) => this,
+      fullscreenDialog: false,
+      isInitialRoute: true,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // var theme = Theme.of(context);
     return BlocBuilder<HomeCubit, HomeState>(
       // buildWhen: (HomeState previous, HomeState current) =>
       //     current.status != previous.status,
@@ -35,6 +43,19 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
+              floatingActionButton: FloatingActionButton(
+                heroTag: 'HomeScreen_AddPet',
+                backgroundColor: theme.accentColor,
+                onPressed: () {
+                  navigator.push(AddPetScreen().getRoute());
+                },
+                child: Icon(
+                  Icons.pets,
+                  size: 30,
+                  color: Colors.white,
+                ),
+              ),
+              // floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
             ),
           );
         } else if (state.status == HomeStatus.busy) {
@@ -129,6 +150,7 @@ class _UserProfile extends StatelessWidget {
     // var theme = Theme.of(context);
     return FloatingActionButton(
       tooltip: 'Your profile',
+      heroTag: 'HomeScreen_UserProfile',
       backgroundColor: theme.backgroundColor,
       mini: true,
       onPressed: () {},
@@ -186,9 +208,7 @@ class _SearchBarState extends State<_SearchBar> {
 
   @override
   void initState() {
-    // print('_SearchBar initState()');
     _searchController.addListener(() {
-      // print('_SearchBar listen: "${_searchController.text}"');
       setState(() {
         // put search procedure here
       });
@@ -198,15 +218,12 @@ class _SearchBarState extends State<_SearchBar> {
 
   @override
   void dispose() {
-    // print('_SearchBar dispose()');
     _searchController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // print('_SearchBar build()');
-    // var theme = Theme.of(context);
     return Padding(
       padding: EdgeInsets.only(left: kHorizontalPadding, top: 16.0),
       child: Container(
@@ -257,7 +274,6 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // var theme = Theme.of(context);
     return Padding(
       padding: EdgeInsets.fromLTRB(kHorizontalPadding, 4.0, 8.0, 4.0),
       child: Row(
@@ -310,14 +326,11 @@ class _CategoryGridItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
-    HomeState data = cubit.state;
-    // var theme = Theme.of(context);
     return InkWell(
       borderRadius: BorderRadius.circular(16.0),
       onTap: () {
         cubit.addNotification();
       },
-      // onLongPress: () {},
       child: Container(
         decoration: BoxDecoration(
           shape: BoxShape.rectangle,
@@ -384,7 +397,6 @@ class _NewestPetsCarousel extends StatelessWidget {
   Widget build(BuildContext context) {
     HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
     HomeState data = cubit.state;
-    // var theme = Theme.of(context);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
       child: Container(
@@ -411,19 +423,13 @@ class _NewestCarouselItem extends StatelessWidget {
   Widget build(BuildContext context) {
     HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
     HomeState data = cubit.state;
-    // print('_NewestCarouselItem build ${item.conditionId}');
     // ConditionModel itemCondition = data.conditions
     //     .firstWhere((ConditionModel e) => e.id == item.condition);
-    // var theme = Theme.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final cardWidth = (screenWidth - (kHorizontalPadding * 4)) / 2;
     return GestureDetector(
       onTap: () {
-        navigator.push(
-          MaterialPageRoute<Widget>(
-            builder: (context) => DetailScreen(cubit: cubit, item: item),
-          ),
-        );
+        navigator.push(DetailScreen(cubit: cubit, item: item).getRoute());
       },
       child: Container(
         width: cardWidth < 200 ? cardWidth : 200,

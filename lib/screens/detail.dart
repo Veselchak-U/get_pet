@@ -1,5 +1,3 @@
-import 'dart:wasm';
-
 import 'package:cats/import.dart';
 import 'package:flutter/material.dart';
 
@@ -8,6 +6,14 @@ class DetailScreen extends StatefulWidget {
 
   final HomeCubit cubit;
   final PetModel item;
+
+  Route<T> getRoute<T>() {
+    return buildRoute<T>(
+      '/detail?id=${item.id}',
+      builder: (_) => this,
+      fullscreenDialog: false,
+    );
+  }
 
   @override
   _DetailScreenState createState() => _DetailScreenState();
@@ -188,7 +194,6 @@ class _Header extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Row(
-              // mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Icon(Icons.location_on_outlined, size: 24),
                 SizedBox(width: 8),
@@ -285,7 +290,6 @@ class _Story extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           'Pet Story',
@@ -318,11 +322,8 @@ class _Contact extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24),
       child: Row(
-        // crossAxisAlignment: CrossAxisAlignment.start,
-        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           FloatingActionButton(
-            // mini: true,
             onPressed: null,
             heroTag: 'DetailScreen_Contact',
             backgroundColor: theme.backgroundColor,
@@ -358,24 +359,14 @@ class _Contact extends StatelessWidget {
             ],
           ),
           Spacer(),
-          FlatButton(
-            height: 44,
-            color: Color(0xFF63C8FA),
-            shape: StadiumBorder(),
+          ElevatedButton(
             onPressed: () {
               // cubit.onTapPetLike(petId: item.id);
             },
             child: Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: kHorizontalPadding),
-              child: Text(
-                'Contact Me',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.0),
-              ),
+              child: Text('Contact Me'),
             ),
           ),
         ],

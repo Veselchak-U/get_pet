@@ -13,7 +13,7 @@ final theme = ThemeData(
   primaryColor: Color(0xff575757),
   primaryColorLight: Color(0xfff5f5f5),
   primaryColorDark: Color(0xff2e2e2e),
-  // accentColor: Colors.pink[300],
+  accentColor: Color(0xFF63C8FA),
   canvasColor: Colors.white,
   shadowColor: Colors.black,
   // scaffoldBackgroundColor: Colors.white,
@@ -46,6 +46,31 @@ final theme = ThemeData(
   ),
   iconTheme: IconThemeData(
     color: Color(0xff575757), // primaryColor
+  ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      primary: Color(0xFF63C8FA), // theme.accentColor,
+      onPrimary: Colors.white,
+      // Color onSurface,
+      // Color shadowColor,
+      elevation: 6.0,
+      textStyle: TextStyle(
+        color: Colors.white,
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 1.0,
+      ),
+      // EdgeInsetsGeometry padding,
+      minimumSize: Size(0, 40),
+      // BorderSide side,
+      shape: StadiumBorder(),
+      // MouseCursor enabledMouseCursor,
+      // MouseCursor disabledMouseCursor,
+      // VisualDensity visualDensity,
+      // MaterialTapTargetSize tapTargetSize,
+      // Duration animationDuration,
+      // bool enableFeedback,
+    ),
   ),
   textTheme: TextTheme(),
 );

@@ -1,4 +1,5 @@
 export 'main.dart';
+export 'common/route.dart';
 export 'common/theme.dart';
 export 'cubits/home.dart';
 export 'models/breed.dart';
@@ -8,5 +9,6 @@ export 'models/member.dart';
 export 'models/pet.dart';
 export 'models/vet.dart';
 export 'repositories/database.dart';
+export 'screens/add_pet.dart';
 export 'screens/detail.dart';
 export 'screens/home.dart';
