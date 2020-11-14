@@ -1,6 +1,7 @@
 export 'main.dart';
 export 'common/route.dart';
 export 'common/theme.dart';
+export 'cubits/add_pet.dart';
 export 'cubits/home.dart';
 export 'models/breed.dart';
 export 'models/category.dart';

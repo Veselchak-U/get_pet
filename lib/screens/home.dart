@@ -45,6 +45,7 @@ class HomeScreen extends StatelessWidget {
               ),
               floatingActionButton: FloatingActionButton(
                 heroTag: 'HomeScreen_AddPet',
+                tooltip: 'Add your pet',
                 backgroundColor: theme.accentColor,
                 onPressed: () {
                   navigator.push(AddPetScreen().getRoute());
@@ -160,7 +161,7 @@ class _UserProfile extends StatelessWidget {
         backgroundImage:
             (data.userAvatarImage != null && data.userAvatarImage.isNotEmpty)
                 ? NetworkImage(data.userAvatarImage)
-                : AssetImage('assets/image/no_avatar.png'),
+                : AssetImage('${kAssetPath}placeholder_avatar.png'),
       ),
     );
   }

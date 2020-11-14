@@ -32,8 +32,8 @@ class App extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         home: BlocProvider(
           create: (BuildContext context) => HomeCubit(
-              repo: RepositoryProvider.of<DatabaseRepository>(context))
-            ..load(),
+            repo: RepositoryProvider.of<DatabaseRepository>(context),
+          )..load(),
           child: HomeScreen(),
         ),
       ),

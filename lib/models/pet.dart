@@ -8,7 +8,7 @@ part 'pet.g.dart';
 @CopyWith()
 @JsonSerializable()
 class PetModel extends Equatable {
-  PetModel({
+  const PetModel({
     this.id,
     this.category,
     this.breed,

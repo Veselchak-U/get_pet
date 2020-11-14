@@ -1,7 +1,10 @@
 import 'package:bloc/bloc.dart';
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
 import 'package:cats/import.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+part 'home.g.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit({this.repo}) : super(const HomeState());
@@ -22,7 +25,8 @@ class HomeCubit extends Cubit<HomeState> {
       final List<CategoryModel> petCategories = await repo.loadPetCategories();
       final List<PetModel> newestPets = await repo.loadNewestPets();
       final List<VetModel> nearestVets = await repo.loadNearestVets();
-      final List<PetModel> searchPets = await repo.searchPets(categoryId: 'abe09048-c1dc-4f4b-87e3-421b7f34e07d', query: 'abyss');
+      final List<PetModel> searchPets = await repo.searchPets(
+          categoryId: 'abe09048-c1dc-4f4b-87e3-421b7f34e07d', query: 'abyss');
       emit(state.copyWith(
         status: HomeStatus.ready,
         notificationCount: notificationCount,
@@ -79,6 +83,7 @@ class HomeCubit extends Cubit<HomeState> {
 
 enum HomeStatus { initial, busy, reload, ready }
 
+@CopyWith()
 class HomeState extends Equatable {
   const HomeState({
     this.status = HomeStatus.initial,
@@ -108,24 +113,4 @@ class HomeState extends Equatable {
         newestPets,
         nearestVets,
       ];
-
-  HomeState copyWith({
-    HomeStatus status,
-    int notificationCount,
-    String userAvatarImage,
-    List<ConditionModel> conditions,
-    List<CategoryModel> petCategories,
-    List<PetModel> newestPets,
-    List<VetModel> nearestVets,
-  }) {
-    return HomeState(
-      status: status ?? this.status,
-      notificationCount: notificationCount ?? this.notificationCount,
-      userAvatarImage: userAvatarImage ?? this.userAvatarImage,
-      conditions: conditions ?? this.conditions,
-      petCategories: petCategories ?? this.petCategories,
-      newestPets: newestPets ?? this.newestPets,
-      nearestVets: nearestVets ?? this.nearestVets,
-    );
-  }
 }

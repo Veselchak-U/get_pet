@@ -333,7 +333,7 @@ class _Contact extends StatelessWidget {
               backgroundImage:
                   (item.member.photo != null && item.member.photo.isNotEmpty)
                       ? NetworkImage(item.member.photo)
-                      : AssetImage('assets/image/no_avatar.png'),
+                      : AssetImage('${kAssetPath}placeholder_avatar.png'),
             ),
           ),
           SizedBox(width: 8),
