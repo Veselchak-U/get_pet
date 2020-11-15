@@ -22,7 +22,7 @@ class HomeCubit extends Cubit<HomeState> {
       final int notificationCount = await repo.loadNotificationCount();
       final String userAvatarImage = await repo.loadUserAvatarImage();
       final List<ConditionModel> conditions = await repo.loadConditions();
-      final List<CategoryModel> petCategories = await repo.loadPetCategories();
+      final List<CategoryModel> petCategories = await repo.loadCategories();
       final List<PetModel> newestPets = await repo.loadNewestPets();
       final List<VetModel> nearestVets = await repo.loadNearestVets();
       final List<PetModel> searchPets = await repo.searchPets(

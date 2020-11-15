@@ -34,7 +34,8 @@ class App extends StatelessWidget {
           create: (BuildContext context) => HomeCubit(
             repo: RepositoryProvider.of<DatabaseRepository>(context),
           )..load(),
-          child: HomeScreen(),
+          // child: HomeScreen(),
+          child: AddPetScreen(),
         ),
       ),
     );
