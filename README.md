@@ -1,8 +1,8 @@
 # cats
 
-A new Flutter project.
+Flutter demo-project.
 
-## How to start
+## Code generation
 
 '''
 $ flutter packages pub run build_runner build --delete-conflicting-outputs
