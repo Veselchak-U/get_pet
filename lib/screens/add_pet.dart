@@ -105,26 +105,26 @@ class _AddPetForm extends StatefulWidget {
 class _AddPetFormState extends State<_AddPetForm> {
   final _formKey = GlobalKey<FormState>();
   final _controller = TextEditingController();
+  final _breedFocusNode = FocusNode();
+  final _conditionFocusNode = FocusNode();
+  final _coloringFocusNode = FocusNode();
   AddPetCubit cubit;
 
   @override
   void initState() {
-    cubit = BlocProvider.of<AddPetCubit>(context);
     super.initState();
+    cubit = BlocProvider.of<AddPetCubit>(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    print('_AddPetFormState build()');
     PetModel newPet = cubit.state.newPet;
-    print('newPet.category.name = ${newPet?.category?.name}');
     // при изменении URL фото "извне" обновляем содержимое соответствующего поля
     return BlocListener<AddPetCubit, AddPetState>(
       listenWhen: (AddPetState previous, AddPetState current) =>
           (current.externalUpdate &&
               previous.newPet.photos != current.newPet.photos),
       listener: (BuildContext context, AddPetState state) {
-        print('BlocListener newPet.photos changed');
         cubit.setExternalUpdate(false);
         _controller.text = state.newPet.photos ?? '';
       },
@@ -138,11 +138,11 @@ class _AddPetFormState extends State<_AddPetForm> {
                 labelText: 'Photo url',
                 helperText: '',
               ),
+              textInputAction: TextInputAction.next,
               controller: _controller,
-              // initialValue: cubit.state.newPet.photos,
-              // onChanged: (value) {
-              //   cubit.updateNewPet(newPet.copyWith(photos: value));
-              // },
+              onChanged: (value) {
+                cubit.updateNewPet(newPet.copyWith(photos: value));
+              },
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) {
                 var result = 'Unknown error';
@@ -165,125 +165,117 @@ class _AddPetFormState extends State<_AddPetForm> {
               value: cubit.state.newPet.category,
               items: _getDropdownItemsFromList(cubit.state.categories),
               onChanged: (CategoryModel value) {
-                cubit.updateNewPet(newPet.copyWith(category: value));
-                cubit.updateBreedsByCategory(value);
+                cubit.setCategory(value);
+                _breedFocusNode.requestFocus();
               },
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) {
-                if (value == null) {
-                  return 'Select pet category';
-                }
-                return null;
-              },
+              validator: (value) =>
+                  (value == null) ? 'Select pet category' : null,
             ),
             DropdownButtonFormField<BreedModel>(
               decoration: InputDecoration(
                 labelText: 'Breed',
                 helperText: '',
               ),
-              value: cubit.state.newPet.breed,
-              items: _getDropdownItemsFromList(cubit.state.breedsByCategory),
+              focusNode: _breedFocusNode,
+              value: (cubit.state.newPet.breed?.name == null
+                  ? null
+                  : cubit.state.newPet.breed),
+              items: _getDropdownItemsFromList(cubit.state.breeds),
               onChanged: (BreedModel value) {
                 cubit.updateNewPet(newPet.copyWith(breed: value));
+                _conditionFocusNode.requestFocus();
               },
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) {
-                if (value == null) {
-                  return 'Select pet breed';
-                }
-                return null;
-              },
+              validator: (value) => (value == null) ? 'Select pet breed' : null,
             ),
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: 'Breed',
-                helperText: '',
-              ),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Select pet breed';
-                }
-                // newPet = newPet.copyWith(breed: value);
-                return null;
-              },
-            ),
-            TextFormField(
+            DropdownButtonFormField<ConditionModel>(
               decoration: InputDecoration(
                 labelText: 'Condition',
                 helperText: '',
               ),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Select pet condition';
-                }
-                // newPet = newPet.copyWith(condition: value);
-                return null;
+              focusNode: _conditionFocusNode,
+              value: cubit.state.newPet.condition,
+              items: _getDropdownItemsFromList(cubit.state.conditions),
+              onChanged: (ConditionModel value) {
+                cubit.updateNewPet(newPet.copyWith(condition: value));
+                _coloringFocusNode.requestFocus();
               },
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) =>
+                  (value == null) ? 'Select pet condition' : null,
             ),
             TextFormField(
               decoration: InputDecoration(
                 labelText: 'Coloring',
                 helperText: '',
               ),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Input pet coloring';
-                }
-                newPet = newPet.copyWith(coloring: value);
-                return null;
+              focusNode: _coloringFocusNode,
+              textInputAction: TextInputAction.next,
+              onFieldSubmitted: (value) {
+                cubit.updateNewPet(newPet.copyWith(coloring: value));
               },
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) => (value == null || value.isEmpty)
+                  ? 'Input pet coloring'
+                  : null,
             ),
             TextFormField(
               decoration: InputDecoration(
                 labelText: 'Age',
                 helperText: '',
               ),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Input pet age';
-                }
-                newPet = newPet.copyWith(age: value);
-                return null;
+              textInputAction: TextInputAction.next,
+              onFieldSubmitted: (value) {
+                cubit.updateNewPet(newPet.copyWith(age: value));
               },
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) =>
+                  (value == null || value.isEmpty) ? 'Input pet age' : null,
             ),
             TextFormField(
               decoration: InputDecoration(
                 labelText: 'Weight',
                 helperText: '',
               ),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Input pet weight';
-                }
-                // newPet = newPet.copyWith(weight: value);
-                return null;
+              textInputAction: TextInputAction.next,
+              keyboardType: TextInputType.number,
+              onFieldSubmitted: (value) {
+                cubit
+                    .updateNewPet(newPet.copyWith(weight: double.parse(value)));
               },
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) =>
+                  (value == null || value.isEmpty) ? 'Input pet weight' : null,
             ),
             TextFormField(
               decoration: InputDecoration(
                 labelText: 'Address',
                 helperText: '',
               ),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Input pet address';
-                }
-                newPet = newPet.copyWith(address: value);
-                return null;
+              textInputAction: TextInputAction.next,
+              onFieldSubmitted: (value) {
+                cubit.updateNewPet(newPet.copyWith(address: value));
               },
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) =>
+                  (value == null || value.isEmpty) ? 'Input pet address' : null,
             ),
             TextFormField(
               decoration: InputDecoration(
                 labelText: 'Distance',
                 helperText: '',
               ),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Input distance to pet';
-                }
-                // newPet = newPet.copyWith(distance: value);
-                return null;
+              textInputAction: TextInputAction.next,
+              keyboardType: TextInputType.number,
+              onFieldSubmitted: (value) {
+                cubit.updateNewPet(
+                    newPet.copyWith(distance: double.parse(value)));
               },
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) => (value == null || value.isEmpty)
+                  ? 'Input distance to pet'
+                  : null,
             ),
             TextFormField(
               minLines: 1,
@@ -292,13 +284,14 @@ class _AddPetFormState extends State<_AddPetForm> {
                 labelText: 'Pet story',
                 helperText: '',
               ),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Input pet story';
-                }
-                newPet = newPet.copyWith(description: value);
-                return null;
+              textInputAction: TextInputAction.done,
+              keyboardType: TextInputType.multiline,
+              onFieldSubmitted: (value) {
+                cubit.updateNewPet(newPet.copyWith(description: value));
               },
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) =>
+                  (value == null || value.isEmpty) ? 'Input pet story' : null,
             ),
             Center(
               child: ElevatedButton(
@@ -310,14 +303,7 @@ class _AddPetFormState extends State<_AddPetForm> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: kHorizontalPadding),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Icon(Icons.pets),
-                      // SizedBox(width: 16),
-                      Text('Add Pet'),
-                    ],
-                  ),
+                  child: Text('Add Pet'),
                 ),
               ),
             ),
@@ -327,17 +313,10 @@ class _AddPetFormState extends State<_AddPetForm> {
     );
   }
 
-  // List<DropdownMenuItem<CategoryModel>> _getCategoryItems() {
-  //   var models = cubit.state.petCategories;
-  //   return List.generate(
-  //       models.length,
-  //       (index) => DropdownMenuItem<CategoryModel>(
-  //             value: models[index],
-  //             child: Text('${models[index].name}'),
-  //           ));
-  // }
-
   List<DropdownMenuItem<T>> _getDropdownItemsFromList<T>(List<T> list) {
+    if (list == null || list.isEmpty) {
+      return null;
+    }
     return List.generate(
         list.length,
         (index) => DropdownMenuItem<T>(

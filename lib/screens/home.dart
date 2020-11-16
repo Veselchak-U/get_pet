@@ -209,12 +209,12 @@ class _SearchBarState extends State<_SearchBar> {
 
   @override
   void initState() {
+    super.initState();
     _searchController.addListener(() {
       setState(() {
         // put search procedure here
       });
     });
-    super.initState();
   }
 
   @override

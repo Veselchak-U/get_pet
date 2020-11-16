@@ -29,13 +29,12 @@ class PetModel extends Equatable {
   final BreedModel breed; // порода
   final String age; // возраст
   final String coloring; // окрас
-  final int weight; // вес double
+  final double weight; // вес double
   final String address; // адрес
-  final int distance; // расстояние до  double
+  final double distance; // расстояние до  double
   final ConditionModel condition; // действие
   final bool liked; // понравилось
-  final String photos; // список фотографий
-  // final List<String> photos; // список фотографий
+  final String photos; // TODO список фотографий
   final String description; // описание
   final MemberModel member; // контактное лицо
 

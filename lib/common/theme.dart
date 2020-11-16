@@ -20,7 +20,7 @@ final theme = ThemeData(
   // bottomAppBarColor: Colors.pink[300],
   // cardColor: Colors.pink[300],
   // dividerColor: Colors.pink[300],
-  // focusColor: Colors.pink[300],
+  // focusColor: Color(0xFF63C8FA), // accentColor
   // hoverColor: Colors.pink[300],
   // highlightColor: Colors.pink[300],
   // splashColor: Colors.pink[300],
@@ -46,6 +46,14 @@ final theme = ThemeData(
   ),
   iconTheme: IconThemeData(
     color: Color(0xff575757), // primaryColor
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    focusedBorder: UnderlineInputBorder(
+      borderSide: BorderSide(
+        color: Color(0xFF63C8FA), // theme.accentColor,
+        width: 2.0,
+      ),
+    ),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(

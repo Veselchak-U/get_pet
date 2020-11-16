@@ -16,15 +16,12 @@ class AddPetCubit extends Cubit<AddPetState> {
     emit(state.copyWith(status: AddPetStatus.busy));
     try {
       final List<ConditionModel> conditions = await repo.loadConditions();
-      // print('AddPetCubit conditions = $conditions');
       final List<CategoryModel> categories = await repo.loadCategories();
-      // print('AddPetCubit petCategories = $categories');
       allBreeds = await repo.loadBreeds();
       emit(state.copyWith(
         status: AddPetStatus.ready,
         conditions: conditions,
         categories: categories,
-        // breeds: allBreeds,
       ));
     } catch (error) {
       print(error);
@@ -35,27 +32,25 @@ class AddPetCubit extends Cubit<AddPetState> {
 
   void updateNewPet(PetModel newPet) {
     emit(state.copyWith(newPet: newPet));
-    // updateBreeds();
   }
 
   void setExternalUpdate(bool externalUpdate) {
-    print('AddPetCubit setExternalUpdate = $externalUpdate');
     emit(state.copyWith(externalUpdate: externalUpdate));
   }
 
-  void updateBreedsByCategory(CategoryModel category) {
-    assert(category != null);
-    // CategoryModel category = state.newPet.category;
-    // if (category == null) {
-    //   return;
-    // }
+  void setCategory(CategoryModel category) {
+    // emit empty breeds
+    emit(state.copyWith(
+      newPet: state.newPet.copyWith(
+        category: category,
+        breed: BreedModel(), // set breed.name to null
+      ),
+      breeds: [],
+    ));
+    // emit breeds by category
     List<BreedModel> breedsByCategory =
         allBreeds.where((BreedModel e) => e.categoryId == category.id).toList();
-    PetModel newPet = state.newPet.copyWith(breed: null);
-    emit(state.copyWith(
-      breedsByCategory: breedsByCategory,
-      newPet: newPet,
-    ));
+    emit(state.copyWith(breeds: breedsByCategory));
   }
 }
 
@@ -67,7 +62,7 @@ class AddPetState extends Equatable {
     this.status = AddPetStatus.initial,
     this.conditions = const [],
     this.categories = const [],
-    this.breedsByCategory = const [],
+    this.breeds = const [],
     this.newPet = const PetModel(),
     this.externalUpdate = false,
   });
@@ -75,7 +70,7 @@ class AddPetState extends Equatable {
   final AddPetStatus status;
   final List<ConditionModel> conditions;
   final List<CategoryModel> categories;
-  final List<BreedModel> breedsByCategory;
+  final List<BreedModel> breeds;
   final PetModel newPet;
   final bool externalUpdate;
 
@@ -84,7 +79,7 @@ class AddPetState extends Equatable {
         status,
         conditions,
         categories,
-        breedsByCategory,
+        breeds,
         newPet,
         externalUpdate,
       ];

@@ -25,9 +25,9 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   void initState() {
+    super.initState();
     cubit = widget.cubit;
     itemId = widget.item.id;
-    super.initState();
   }
 
   @override
