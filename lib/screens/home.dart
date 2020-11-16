@@ -43,19 +43,19 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              floatingActionButton: FloatingActionButton(
-                heroTag: 'HomeScreen_AddPet',
-                tooltip: 'Add your pet',
-                backgroundColor: theme.accentColor,
-                onPressed: () {
-                  navigator.push(AddPetScreen().getRoute());
-                },
-                child: Icon(
-                  Icons.pets,
-                  size: 30,
-                  color: Colors.white,
-                ),
-              ),
+              // floatingActionButton: FloatingActionButton(
+              //   heroTag: 'HomeScreen_AddPet',
+              //   tooltip: 'Add your pet',
+              //   backgroundColor: theme.accentColor,
+              //   onPressed: () {
+              //     navigator.push(AddPetScreen().getRoute());
+              //   },
+              //   child: Icon(
+              //     Icons.pets,
+              //     size: 30,
+              //     color: Colors.white,
+              //   ),
+              // ),
               // floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
             ),
           );
@@ -173,26 +173,48 @@ class _Greeting extends StatelessWidget {
     // var theme = Theme.of(context);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SizedBox(height: 16.0),
-          Text(
-            'Find Your',
-            style: TextStyle(
-                color: theme.primaryColorDark,
-                fontSize: 20,
-                fontWeight: FontWeight.bold),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 16.0),
+              Text(
+                'Find Your',
+                style: TextStyle(
+                    color: theme.primaryColorDark,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                'Lovely pet in anywhere',
+                style: TextStyle(
+                  color: theme.primaryColorDark,
+                  fontSize: 20,
+                ),
+              ),
+              SizedBox(height: 16.0),
+            ],
           ),
-          SizedBox(height: 8.0),
-          Text(
-            'Lovely pet in anywhere',
-            style: TextStyle(
-              color: theme.primaryColorDark,
-              fontSize: 20,
+          ElevatedButton(
+            onPressed: () {
+              navigator.push(AddPetScreen().getRoute());
+            },
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(/* horizontal: kHorizontalPadding */),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.pets),
+                  SizedBox(width: 8),
+                  Text('Or Add'),
+                ],
+              ),
             ),
           ),
-          SizedBox(height: 16.0),
         ],
       ),
     );
