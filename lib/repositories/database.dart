@@ -56,6 +56,7 @@ class DatabaseRepository {
         result.add(ConditionModel.fromJson(item));
       } catch (e) {
         print(e);
+        // return Future.error(error);
       }
     }
     return result;
@@ -82,6 +83,7 @@ class DatabaseRepository {
         result.add(CategoryModel.fromJson(item));
       } catch (e) {
         print(e);
+        // return Future.error(error);
       }
     }
     return result;
@@ -116,7 +118,8 @@ class DatabaseRepository {
     // return result;
   }
 
-  Future<List<BreedModel>> loadBreeds(/* {@required CategoryModel category} */) async {
+  Future<List<BreedModel>> loadBreeds(
+      /* {@required CategoryModel category} */) async {
     // assert(category == null);
 
     List<BreedModel> result = [
@@ -310,6 +313,7 @@ class DatabaseRepository {
     //     result.add(ConditionModel.fromJson(item));
     //   } catch (e) {
     //     print(e);
+    // return Future.error(error);
     //   }
     // }
 
@@ -349,6 +353,7 @@ class DatabaseRepository {
         print(PetModel.fromJson(item).address);
       } catch (e) {
         print(e);
+        // return Future.error(error);
       }
     }
     return result;
@@ -378,6 +383,7 @@ class DatabaseRepository {
         result.add(PetModel.fromJson(item));
       } catch (e) {
         print(e);
+        // return Future.error(error);
       }
     }
     return result;
@@ -404,6 +410,7 @@ class DatabaseRepository {
         result.add(VetModel.fromJson(item));
       } catch (e) {
         print(e);
+        // return Future.error(error);
       }
     }
     return result;
@@ -463,9 +470,91 @@ class DatabaseRepository {
 
     return result;
   }
+
+  Future<PetModel> createPet(PetModel newPet) async {
+    // print(newPet.toJson());
+    final options = MutationOptions(
+      documentNode: _API.createPet,
+      variables: {
+        'category_id': newPet.category.id,
+        'breed_id': newPet.breed.id,
+        'condition_id': newPet.condition.id,
+        'member_id': kDatabaseUserId,
+        'coloring': newPet.coloring,
+        'age': newPet.age,
+        'weight': newPet.weight,
+        'address': newPet.address,
+        'distance': newPet.distance,
+        'description': newPet.description,
+        'photos': newPet.photos,
+      },
+      fetchPolicy: FetchPolicy.noCache,
+      errorPolicy: ErrorPolicy.all,
+    );
+    final mutationResult = await _client
+        .mutate(options)
+        .timeout(Duration(milliseconds: _kTimeoutMillisec));
+    if (mutationResult.hasException) {
+      print(mutationResult.exception);
+      throw mutationResult.exception;
+    }
+    print(mutationResult.data);
+    final dataItem =
+        mutationResult.data['insert_pet_one'] as Map<String, dynamic>;
+    return PetModel.fromJson(dataItem);
+  }
 }
 
+/*     final options = MutationOptions(
+      documentNode: _API.createUnit,
+      variables: data.toJson(),
+      fetchPolicy: FetchPolicy.noCache,
+      errorPolicy: ErrorPolicy.all,
+    );
+    final mutationResult =
+        await _client.mutate(options).timeout(kGraphQLTimeoutDuration);
+    if (mutationResult.hasException) {
+      throw mutationResult.exception;
+    }
+    final dataItem =
+        mutationResult.data['insert_unit_one'] as Map<String, dynamic>;
+    return UnitModel.fromJson(dataItem);
+  }
+ */
+
 class _API {
+  static final createPet = gql(r'''
+    mutation CreatePet(
+      $category_id: uuid!,
+      $breed_id: uuid!,
+      $condition_id: uuid!,
+      $member_id: uuid!,
+      $coloring: String!,
+      $age: String!,
+      $weight: numeric!,
+      $address: String!,
+      $distance: numeric!,
+      $description: String!,
+      $photos: String!,
+    ) {
+      insert_pet_one(object: {
+        category_id: $category_id,
+        breed_id: $breed_id,
+        condition_id: $condition_id,
+        member_id: $member_id,
+        coloring: $coloring,
+        age: $age,
+        weight: $weight,
+        address: $address,
+        distance: $distance,
+        description: $description,
+        photos: $photos,
+        }) {
+        ...PetFields
+      }
+    }
+  ''')..definitions.addAll(fragments.definitions);
+
   static final searchPets = gql(r'''
     query SearchPets($member_id: uuid!, $category_id: uuid, $query: String, $limit: Int!) {
       get_pets_by_member_id(args: {member_id: $member_id},

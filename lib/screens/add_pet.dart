@@ -138,6 +138,7 @@ class _AddPetFormState extends State<_AddPetForm> {
                 labelText: 'Photo url',
                 helperText: '',
               ),
+              // initialValue: 'Photo url',
               textInputAction: TextInputAction.next,
               controller: _controller,
               onChanged: (value) {
@@ -210,6 +211,7 @@ class _AddPetFormState extends State<_AddPetForm> {
                 labelText: 'Coloring',
                 helperText: '',
               ),
+              initialValue: 'Gray',
               focusNode: _coloringFocusNode,
               textInputAction: TextInputAction.next,
               onFieldSubmitted: (value) {
@@ -225,6 +227,7 @@ class _AddPetFormState extends State<_AddPetForm> {
                 labelText: 'Age',
                 helperText: '',
               ),
+              initialValue: '4 months',
               textInputAction: TextInputAction.next,
               onFieldSubmitted: (value) {
                 cubit.updateNewPet(newPet.copyWith(age: value));
@@ -238,6 +241,7 @@ class _AddPetFormState extends State<_AddPetForm> {
                 labelText: 'Weight',
                 helperText: '',
               ),
+              initialValue: '2.2',
               textInputAction: TextInputAction.next,
               keyboardType: TextInputType.number,
               onFieldSubmitted: (value) {
@@ -253,6 +257,7 @@ class _AddPetFormState extends State<_AddPetForm> {
                 labelText: 'Address',
                 helperText: '',
               ),
+              initialValue: 'Address',
               textInputAction: TextInputAction.next,
               onFieldSubmitted: (value) {
                 cubit.updateNewPet(newPet.copyWith(address: value));
@@ -266,6 +271,7 @@ class _AddPetFormState extends State<_AddPetForm> {
                 labelText: 'Distance',
                 helperText: '',
               ),
+              initialValue: '1.1',
               textInputAction: TextInputAction.next,
               keyboardType: TextInputType.number,
               onFieldSubmitted: (value) {
@@ -278,12 +284,13 @@ class _AddPetFormState extends State<_AddPetForm> {
                   : null,
             ),
             TextFormField(
-              minLines: 1,
-              maxLines: 5,
               decoration: InputDecoration(
                 labelText: 'Pet story',
                 helperText: '',
               ),
+              initialValue: 'Pet story',
+              minLines: 1,
+              maxLines: 5,
               textInputAction: TextInputAction.done,
               keyboardType: TextInputType.multiline,
               onFieldSubmitted: (value) {
@@ -298,6 +305,7 @@ class _AddPetFormState extends State<_AddPetForm> {
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
                     print('Form OK');
+                    cubit.addPet();
                   }
                 },
                 child: Padding(

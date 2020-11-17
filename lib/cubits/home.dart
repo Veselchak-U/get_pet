@@ -39,6 +39,7 @@ class HomeCubit extends Cubit<HomeState> {
     } catch (error) {
       print(error);
       result = false;
+      // return Future.error(error);
     }
     return result;
   }

@@ -26,6 +26,7 @@ class AddPetCubit extends Cubit<AddPetState> {
     } catch (error) {
       print(error);
       result = false;
+      // return Future.error(error);
     }
     return result;
   }
@@ -51,6 +52,11 @@ class AddPetCubit extends Cubit<AddPetState> {
     List<BreedModel> breedsByCategory =
         allBreeds.where((BreedModel e) => e.categoryId == category.id).toList();
     emit(state.copyWith(breeds: breedsByCategory));
+  }
+
+  void addPet() async {
+    final addedPet = await repo.createPet(state.newPet);
+
   }
 }
 
