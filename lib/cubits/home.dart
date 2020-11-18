@@ -19,12 +19,12 @@ class HomeCubit extends Cubit<HomeState> {
       emit(state.copyWith(status: HomeStatus.busy));
     }
     try {
-      final int notificationCount = await repo.loadNotificationCount();
-      final String userAvatarImage = await repo.loadUserAvatarImage();
-      final List<ConditionModel> conditions = await repo.loadConditions();
-      final List<CategoryModel> petCategories = await repo.loadCategories();
-      final List<PetModel> newestPets = await repo.loadNewestPets();
-      final List<VetModel> nearestVets = await repo.loadNearestVets();
+      final int notificationCount = await repo.readNotificationCount();
+      final String userAvatarImage = await repo.readUserAvatarImage();
+      final List<ConditionModel> conditions = await repo.readConditions();
+      final List<CategoryModel> petCategories = await repo.readCategories();
+      final List<PetModel> newestPets = await repo.readNewestPets();
+      final List<VetModel> nearestVets = await repo.readNearestVets();
       final List<PetModel> searchPets = await repo.searchPets(
           categoryId: 'abe09048-c1dc-4f4b-87e3-421b7f34e07d', query: 'abyss');
       emit(state.copyWith(

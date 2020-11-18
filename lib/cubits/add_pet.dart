@@ -15,9 +15,9 @@ class AddPetCubit extends Cubit<AddPetState> {
     var result = true;
     emit(state.copyWith(status: AddPetStatus.busy));
     try {
-      final List<ConditionModel> conditions = await repo.loadConditions();
-      final List<CategoryModel> categories = await repo.loadCategories();
-      allBreeds = await repo.loadBreeds();
+      final List<ConditionModel> conditions = await repo.readConditions();
+      final List<CategoryModel> categories = await repo.readCategories();
+      allBreeds = await repo.readBreeds();
       emit(state.copyWith(
         status: AddPetStatus.ready,
         conditions: conditions,
