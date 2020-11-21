@@ -43,6 +43,12 @@ final theme = ThemeData(
     iconTheme: IconThemeData(
       color: Color(0xff575757), // primaryColor
     ),
+    textTheme: TextTheme(
+      headline6: TextStyle(
+        color: Color(0xff575757), // primaryColor
+        fontSize: 18.0,
+      ),
+    ),
   ),
   iconTheme: IconThemeData(
     color: Color(0xff575757), // primaryColor
@@ -80,5 +86,9 @@ final theme = ThemeData(
       // bool enableFeedback,
     ),
   ),
-  textTheme: TextTheme(),
+  textTheme: TextTheme(
+    headline6: TextStyle(
+      color: Color(0xff575757), // primaryColor
+    ),
+  ),
 );

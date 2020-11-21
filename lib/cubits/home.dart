@@ -11,6 +11,8 @@ class HomeCubit extends Cubit<HomeState> {
 
   final DatabaseRepository repo;
 
+  // TODO: subscribe to update newestPets from repo
+
   Future<bool> load({bool isReload}) async {
     var result = true;
     if (isReload != null && isReload) {

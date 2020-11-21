@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
 import 'package:cats/import.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'add_pet.g.dart';
 
@@ -56,7 +57,6 @@ class AddPetCubit extends Cubit<AddPetState> {
 
   void addPet() async {
     final addedPet = await repo.createPet(state.newPet);
-
   }
 }
 

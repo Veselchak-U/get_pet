@@ -22,6 +22,7 @@ class PetModel extends Equatable {
     this.photos,
     this.description,
     this.member,
+    this.updatedAt,
   });
 
   final String id; // id
@@ -37,6 +38,7 @@ class PetModel extends Equatable {
   final String photos; // TODO список фотографий
   final String description; // описание
   final MemberModel member; // контактное лицо
+  final DateTime updatedAt; // дата обновления
 
   @override
   List<Object> get props => [

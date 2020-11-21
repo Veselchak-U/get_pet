@@ -178,6 +178,8 @@ class DatabaseRepository {
         return Future.error(error);
       }
     }
+    // TODO: move sorting to server
+    result.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
     return result;
   }
 
@@ -440,6 +442,7 @@ class _API {
       address
       distance
       liked
+      updated_at
       breed {
         id
         name

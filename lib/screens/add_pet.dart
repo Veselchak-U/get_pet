@@ -37,7 +37,7 @@ class _AddPetBody extends StatelessWidget {
                 expandedHeight: screenHeight / 2,
                 title: Text(
                   'Add Your Pet',
-                  style: TextStyle(color: theme.primaryColor),
+                  // style: TextStyle(color: theme.primaryColor),
                 ),
                 centerTitle: true,
                 flexibleSpace:
@@ -306,6 +306,7 @@ class _AddPetFormState extends State<_AddPetForm> {
                   if (_formKey.currentState.validate()) {
                     print('Form OK');
                     cubit.addPet();
+                    navigator.pop();
                   }
                 },
                 child: Padding(

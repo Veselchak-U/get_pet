@@ -203,8 +203,8 @@ class _Greeting extends StatelessWidget {
               navigator.push(AddPetScreen().getRoute());
             },
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(/* horizontal: kHorizontalPadding */),
+              padding: const EdgeInsets.symmetric(
+                  /* horizontal: kHorizontalPadding */),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -353,6 +353,9 @@ class _CategoryGridItem extends StatelessWidget {
       borderRadius: BorderRadius.circular(16.0),
       onTap: () {
         cubit.addNotification();
+        navigator.push(SearchScreen(
+          category: item,
+        ).getRoute());
       },
       child: Container(
         decoration: BoxDecoration(
