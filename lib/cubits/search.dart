@@ -11,53 +11,46 @@ class SearchCubit extends Cubit<SearchState> {
   final DatabaseRepository repo;
   final CategoryModel category;
 
-  Future<bool> init({bool isReload}) async {
-    // await Future.delayed(Duration(seconds: 2));
+  Future<bool> init() async {
     var result = true;
-    if (isReload != null && isReload) {
-      emit(state.copyWith(status: SearchStatus.reload));
-    } else {
-      emit(state.copyWith(
-        status: SearchStatus.busy,
-        categoryFilter: category,
-      ));
-    }
+    emit(state.copyWith(
+      status: SearchStatus.busy,
+      categoryFilter: category,
+    ));
     try {
-      final List<CategoryModel> petCategories = await repo.readCategories();
+      final List<CategoryModel> categories = await repo.readCategories();
       final List<ConditionModel> conditions = await repo.readConditions();
-      final List<PetModel> foundPets = await repo.searchPets(
-          categoryId: 'abe09048-c1dc-4f4b-87e3-421b7f34e07d', query: 'abyss');
+      // final List<PetModel> foundPets = await repo.searchPets(
+      //     categoryId: 'abe09048-c1dc-4f4b-87e3-421b7f34e07d', query: 'abyss');
       emit(state.copyWith(
         status: SearchStatus.ready,
-        categories: petCategories,
+        categories: categories,
         conditions: conditions,
-        foundPets: foundPets,
+        // foundPets: foundPets,
       ));
     } catch (error) {
       print(error);
       result = false;
-      // return Future.error(error);
+      return Future.error(error);
     }
     return result;
   }
 
   void setCategoryFilter(CategoryModel category) {
     if (category == state.categoryFilter) {
-      return; // no change
+      return;
     }
     emit(state.copyWith(
-      categoryFilter:
-          category ?? CategoryModel(), // if null - clear categoryFilter
+      categoryFilter: category ?? CategoryModel(),
     ));
   }
 
   void setConditionFilter(ConditionModel condition) {
     if (condition == state.conditionFilter) {
-      return; // no change
+      return;
     }
     emit(state.copyWith(
-      conditionFilter:
-          condition ?? ConditionModel(), // if null - clear conditionFilter
+      conditionFilter: condition ?? ConditionModel(),
     ));
   }
 }

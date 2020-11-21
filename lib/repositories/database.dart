@@ -11,6 +11,10 @@ const _kTimeoutMillisec = 5000;
 class DatabaseRepository {
   final GraphQLClient _client = _getClient();
 
+  List<CategoryModel> _cashedCategories;
+  List<ConditionModel> _cashedConditions;
+  List<BreedModel> _cashedBreeds;
+
   static GraphQLClient _getClient() {
     final httpLink = HttpLink(uri: _kGraphqlUri);
     final authLink = AuthLink(getToken: () async => _kToken);
@@ -32,7 +36,10 @@ class DatabaseRepository {
     return result;
   }
 
-  Future<List<ConditionModel>> readConditions() async {
+  Future<List<ConditionModel>> readConditions({bool fromCash = true}) async {
+    if (fromCash && _cashedConditions != null) {
+      return _cashedConditions;
+    }
     List<ConditionModel> result = [];
     final options = QueryOptions(
       documentNode: _API.readConditions,
@@ -56,10 +63,14 @@ class DatabaseRepository {
         return Future.error(error);
       }
     }
+    _cashedConditions = result;
     return result;
   }
 
-  Future<List<CategoryModel>> readCategories() async {
+  Future<List<CategoryModel>> readCategories({bool fromCash = true}) async {
+    if (fromCash && _cashedCategories != null) {
+      return _cashedCategories;
+    }
     List<CategoryModel> result = [];
     final options = QueryOptions(
       documentNode: _API.readPetCategories,
@@ -83,10 +94,14 @@ class DatabaseRepository {
         return Future.error(error);
       }
     }
+    _cashedCategories = result;
     return result;
   }
 
-  Future<List<BreedModel>> readBreeds() async {
+  Future<List<BreedModel>> readBreeds({bool fromCash = true}) async {
+    if (fromCash && _cashedBreeds != null) {
+      return _cashedBreeds;
+    }
     List<BreedModel> result = [];
 
     final options = QueryOptions(
@@ -111,6 +126,7 @@ class DatabaseRepository {
         return Future.error(error);
       }
     }
+    _cashedBreeds = result;
     return result;
   }
 

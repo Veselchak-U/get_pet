@@ -41,7 +41,8 @@ class _SearchBody extends StatelessWidget {
       ),
       body: BlocBuilder<SearchCubit, SearchState>(
         builder: (BuildContext context, SearchState state) {
-          if (state.status == SearchStatus.initial) {
+          if (state.status == SearchStatus.initial ||
+              state.status == SearchStatus.busy) {
             return Center(
               child: CircularProgressIndicator(),
             );
@@ -51,24 +52,19 @@ class _SearchBody extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  _ChipFilter(
+                  _ChipFilter<CategoryModel>(
                     filter: state.categoryFilter,
                     items: state.categories,
                     onSelected: cubit.setCategoryFilter,
                   ),
-                  _ChipFilter(
+                  _ChipFilter<ConditionModel>(
                     filter: state.conditionFilter,
                     items: state.conditions,
                     onSelected: cubit.setConditionFilter,
                   ),
-                  // _CategoryFilter(),
-                  // _ConditionFilter(),
                 ],
               ),
             );
-            // return Center(
-            //   child: Text('Search screen: ${state.category}'),
-            // );
           }
         },
       ),
@@ -76,93 +72,11 @@ class _SearchBody extends StatelessWidget {
   }
 }
 
-class _CategoryFilter extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    SearchCubit cubit = BlocProvider.of<SearchCubit>(context);
-    SearchState state = cubit.state;
-    if (state.categories != null && state.categories.isNotEmpty) {
-      return Container(
-        margin: EdgeInsets.only(bottom: 8.0),
-        height: 30,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          children: List.generate(
-              state.categories.length,
-              (index) => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: FilterChip(
-                      label: Text('${state.categories[index].name}'),
-                      selected: (state.categoryFilter != null &&
-                          state.categoryFilter?.id ==
-                              state.categories[index].id),
-                      onSelected: (bool value) {
-                        cubit.setCategoryFilter(
-                            value ? state.categories[index] : null);
-                      },
-                    ),
-                  )),
-        ),
-      );
-    } else {
-      return SizedBox.shrink();
-      // Center(
-      //   child: SizedBox(
-      //       width: 20,
-      //       height: 20,
-      //       child: CircularProgressIndicator(
-      //         strokeWidth: 2.0,
-      //       )),
-      // );
-    }
-  }
-}
-
-class _ConditionFilter extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final SearchCubit cubit = BlocProvider.of<SearchCubit>(context);
-    final ConditionModel filter = cubit.state.conditionFilter;
-    final List<ConditionModel> items = cubit.state.conditions;
-    if (items != null && items.isNotEmpty) {
-      return Container(
-        margin: EdgeInsets.only(bottom: 8.0),
-        height: 30,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          children: List.generate(
-              items.length,
-              (index) => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: FilterChip(
-                      label: Text('${items[index].name}'),
-                      selected: filter?.id == items[index].id,
-                      onSelected: (bool value) {
-                        cubit.setConditionFilter(value ? items[index] : null);
-                      },
-                    ),
-                  )),
-        ),
-      );
-    } else {
-      return SizedBox.shrink();
-      // Center(
-      //   child: SizedBox(
-      //       width: 20,
-      //       height: 20,
-      //       child: CircularProgressIndicator(
-      //         strokeWidth: 2.0,
-      //       )),
-      // );
-    }
-  }
-}
-
 class _ChipFilter<T> extends StatelessWidget {
   _ChipFilter({
-    this.filter,
-    this.items,
-    this.onSelected,
+    @required this.filter,
+    @required this.items,
+    @required this.onSelected,
   });
 
   final T filter;
@@ -171,39 +85,27 @@ class _ChipFilter<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final SearchCubit cubit = BlocProvider.of<SearchCubit>(context);
-    // final ConditionModel filter = cubit.state.conditionFilter;
-    // final List<ConditionModel> items = cubit.state.conditions;
-    if (items != null && items.isNotEmpty) {
-      return Container(
-        margin: EdgeInsets.only(bottom: 8.0),
-        height: 30,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          children: List.generate(
-              items.length,
-              (index) => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: FilterChip(
-                      label: Text('${items[index].toString()}'),
-                      selected: filter == items[index],
-                      onSelected: (bool value) {
-                        onSelected(value ? items[index] : null);
-                      },
-                    ),
-                  )),
-        ),
-      );
-    } else {
+    if (items == null || items.isEmpty) {
       return SizedBox.shrink();
-      // Center(
-      //   child: SizedBox(
-      //       width: 20,
-      //       height: 20,
-      //       child: CircularProgressIndicator(
-      //         strokeWidth: 2.0,
-      //       )),
-      // );
     }
+    return Container(
+      margin: EdgeInsets.only(bottom: 8.0),
+      height: 30,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: List.generate(
+            items.length,
+            (index) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: FilterChip(
+                    label: Text('${items[index].toString()}'),
+                    selected: filter.toString() == items[index].toString(),
+                    onSelected: (bool value) {
+                      onSelected(value ? items[index] : null);
+                    },
+                  ),
+                )),
+      ),
+    );
   }
 }
