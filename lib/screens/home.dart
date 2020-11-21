@@ -249,35 +249,41 @@ class _SearchBarState extends State<_SearchBar> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(left: kHorizontalPadding, top: 16.0),
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(32.0),
-            bottomLeft: Radius.circular(32.0),
+      child: GestureDetector(
+        onTap: () {
+          navigator.push(SearchScreen().getRoute());
+        },
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(32.0),
+              bottomLeft: Radius.circular(32.0),
+            ),
+            color: theme.primaryColorLight,
           ),
-          color: theme.primaryColorLight,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16.0, 4.0, 0.0, 4.0),
-          child: TextField(
-            controller: _searchController,
-            textInputAction: TextInputAction.search,
-            decoration: InputDecoration(
-              hintText: 'Search',
-              border: InputBorder.none,
-              prefixIcon: Icon(Icons.search),
-              suffixIcon: _searchController.text.isNotEmpty
-                  ? IconButton(
-                      icon: Icon(Icons.cancel),
-                      onPressed: () {
-                        setState(() {
-                          _searchController.clear();
-                        });
-                      },
-                    )
-                  : null,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 4.0, 0.0, 4.0),
+            child: TextField(
+              textAlignVertical: TextAlignVertical.center,
+              controller: _searchController,
+              textInputAction: TextInputAction.search,
+              decoration: InputDecoration(
+                hintText: 'Search',
+                border: InputBorder.none,
+                prefixIcon: Icon(Icons.search),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: Icon(Icons.cancel),
+                        onPressed: () {
+                          setState(() {
+                            _searchController.clear();
+                          });
+                        },
+                      )
+                    : null,
+              ),
             ),
           ),
         ),
