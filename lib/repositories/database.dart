@@ -1,5 +1,4 @@
 import 'package:cats/import.dart';
-import 'package:flutter/material.dart';
 import 'package:graphql/client.dart';
 
 import '../local.dart';
@@ -425,7 +424,7 @@ class _API {
       email
       phone
     }
-    fragment LikedFields on member {
+    fragment LikedFields on liked {
       # __typename
       member_id
       pet_id
