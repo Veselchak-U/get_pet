@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatelessWidget {
-  final _searchBar = _SearchBar(); // statefull witget, create only once
-
   Route<T> getRoute<T>() {
     return buildRoute<T>(
       '/home',
@@ -33,7 +31,7 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _Greeting(),
-                    _searchBar,
+                    _StaticSearchBar(),
                     _Header(index: 0, text: 'Pet Category'),
                     _CategoryGrid(),
                     _Header(index: 1, text: 'Newest Pet'),
@@ -221,30 +219,7 @@ class _Greeting extends StatelessWidget {
   }
 }
 
-class _SearchBar extends StatefulWidget {
-  @override
-  _SearchBarState createState() => _SearchBarState();
-}
-
-class _SearchBarState extends State<_SearchBar> {
-  final _searchController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _searchController.addListener(() {
-      setState(() {
-        // put search procedure here
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
+class _StaticSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -266,23 +241,12 @@ class _SearchBarState extends State<_SearchBar> {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16.0, 4.0, 0.0, 4.0),
             child: TextField(
+              enabled: false,
               textAlignVertical: TextAlignVertical.center,
-              controller: _searchController,
-              textInputAction: TextInputAction.search,
               decoration: InputDecoration(
                 hintText: 'Search',
                 border: InputBorder.none,
                 prefixIcon: Icon(Icons.search),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: Icon(Icons.cancel),
-                        onPressed: () {
-                          setState(() {
-                            _searchController.clear();
-                          });
-                        },
-                      )
-                    : null,
               ),
             ),
           ),

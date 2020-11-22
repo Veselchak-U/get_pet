@@ -12,7 +12,7 @@ class AddPetCubit extends Cubit<AddPetState> {
   final DatabaseRepository repo;
   List<BreedModel> allBreeds;
 
-  Future<bool> loadReferenceBooks() async {
+  Future<bool> init() async {
     var result = true;
     emit(state.copyWith(status: AddPetStatus.busy));
     try {
@@ -27,7 +27,7 @@ class AddPetCubit extends Cubit<AddPetState> {
     } catch (error) {
       print(error);
       result = false;
-      // return Future.error(error);
+      return Future.error(error);
     }
     return result;
   }
@@ -47,12 +47,12 @@ class AddPetCubit extends Cubit<AddPetState> {
         category: category,
         breed: BreedModel(), // set breed.name to null
       ),
-      breeds: [],
+      breedsByCategory: [],
     ));
     // emit breeds by category
     List<BreedModel> breedsByCategory =
         allBreeds.where((BreedModel e) => e.categoryId == category.id).toList();
-    emit(state.copyWith(breeds: breedsByCategory));
+    emit(state.copyWith(breedsByCategory: breedsByCategory));
   }
 
   void addPet() async {
@@ -66,26 +66,26 @@ enum AddPetStatus { initial, busy, ready }
 class AddPetState extends Equatable {
   const AddPetState({
     this.status = AddPetStatus.initial,
-    this.conditions = const [],
     this.categories = const [],
-    this.breeds = const [],
+    this.conditions = const [],
+    this.breedsByCategory = const [],
     this.newPet = const PetModel(),
     this.externalUpdate = false,
   });
 
   final AddPetStatus status;
-  final List<ConditionModel> conditions;
   final List<CategoryModel> categories;
-  final List<BreedModel> breeds;
+  final List<ConditionModel> conditions;
+  final List<BreedModel> breedsByCategory;
   final PetModel newPet;
   final bool externalUpdate;
 
   @override
   List<Object> get props => [
         status,
-        conditions,
         categories,
-        breeds,
+        conditions,
+        breedsByCategory,
         newPet,
         externalUpdate,
       ];

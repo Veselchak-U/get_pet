@@ -14,9 +14,13 @@ class AddPetScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => AddPetCubit(
-        repo: RepositoryProvider.of<DatabaseRepository>(context),
-      )..loadReferenceBooks(),
+      create: (BuildContext context) {
+        final cubit = AddPetCubit(
+          repo: RepositoryProvider.of<DatabaseRepository>(context),
+        );
+        cubit.init();
+        return cubit;
+      },
       lazy: false,
       child: _AddPetBody(),
     );
@@ -182,7 +186,7 @@ class _AddPetFormState extends State<_AddPetForm> {
               value: (cubit.state.newPet.breed?.name == null
                   ? null
                   : cubit.state.newPet.breed),
-              items: _getDropdownItemsFromList(cubit.state.breeds),
+              items: _getDropdownItemsFromList(cubit.state.breedsByCategory),
               onChanged: (BreedModel value) {
                 cubit.updateNewPet(newPet.copyWith(breed: value));
                 _conditionFocusNode.requestFocus();

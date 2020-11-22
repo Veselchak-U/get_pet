@@ -20,13 +20,10 @@ class SearchCubit extends Cubit<SearchState> {
     try {
       final List<CategoryModel> categories = await repo.readCategories();
       final List<ConditionModel> conditions = await repo.readConditions();
-      // final List<PetModel> foundPets = await repo.searchPets(
-      //     categoryId: 'abe09048-c1dc-4f4b-87e3-421b7f34e07d', query: 'abyss');
       emit(state.copyWith(
         status: SearchStatus.ready,
         categories: categories,
         conditions: conditions,
-        // foundPets: foundPets,
       ));
     } catch (error) {
       print(error);
@@ -36,21 +33,42 @@ class SearchCubit extends Cubit<SearchState> {
     return result;
   }
 
+  void setQueryFilter(String query) {
+    // if (category == state.categoryFilter) {
+    //   return;
+    // }
+    emit(state.copyWith(
+      queryFilter: query,
+    ));
+    _searchPet();
+  }
+
   void setCategoryFilter(CategoryModel category) {
-    if (category == state.categoryFilter) {
-      return;
-    }
     emit(state.copyWith(
       categoryFilter: category ?? CategoryModel(),
     ));
+    _searchPet();
   }
 
   void setConditionFilter(ConditionModel condition) {
-    if (condition == state.conditionFilter) {
-      return;
-    }
     emit(state.copyWith(
       conditionFilter: condition ?? ConditionModel(),
+    ));
+    _searchPet();
+  }
+
+  void _searchPet() async {
+    print('category = ${state.categoryFilter?.name}');
+    print('query = "${state.queryFilter}"');
+    //
+    emit(state.copyWith(status: SearchStatus.busy));
+    final List<PetModel> foundPets = await repo.searchPets(
+      categoryId: state.categoryFilter?.id,
+      query: state.queryFilter,
+    );
+    emit(state.copyWith(
+      status: SearchStatus.ready,
+      foundPets: foundPets,
     ));
   }
 }
@@ -61,6 +79,7 @@ enum SearchStatus { initial, busy, reload, ready }
 class SearchState extends Equatable {
   const SearchState({
     this.status = SearchStatus.initial,
+    this.queryFilter = '',
     this.categoryFilter,
     this.conditionFilter,
     this.conditions = const [],
@@ -69,6 +88,7 @@ class SearchState extends Equatable {
   });
 
   final SearchStatus status;
+  final String queryFilter;
   final CategoryModel categoryFilter;
   final ConditionModel conditionFilter;
   final List<ConditionModel> conditions;
@@ -78,6 +98,7 @@ class SearchState extends Equatable {
   @override
   List<Object> get props => [
         status,
+        queryFilter,
         categoryFilter,
         conditionFilter,
         conditions,

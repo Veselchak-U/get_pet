@@ -32,6 +32,8 @@ class SearchScreen extends StatelessWidget {
 }
 
 class _SearchBody extends StatelessWidget {
+  final _searchBar = _SearchBar(); // statefull witget, create only once
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,33 +52,197 @@ class _SearchBody extends StatelessWidget {
       ),
       body: BlocBuilder<SearchCubit, SearchState>(
         builder: (BuildContext context, SearchState state) {
-          if (state.status == SearchStatus.initial ||
-              state.status == SearchStatus.busy) {
+          if (state.status == SearchStatus.initial) {
             return Center(
               child: CircularProgressIndicator(),
             );
           } else {
             SearchCubit cubit = BlocProvider.of<SearchCubit>(context);
-            return Padding(
-              padding: const EdgeInsets.all(0.0),
-              child: Column(
-                children: [
-                  _SearchBar(),
-                  _ChipFilter<CategoryModel>(
-                    filter: state.categoryFilter,
-                    items: state.categories,
-                    onSelected: cubit.setCategoryFilter,
-                  ),
-                  _ChipFilter<ConditionModel>(
-                    filter: state.conditionFilter,
-                    items: state.conditions,
-                    onSelected: cubit.setConditionFilter,
-                  ),
-                ],
-              ),
+            return Stack(
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    _searchBar,
+                    _ChipFilter<CategoryModel>(
+                      filter: state.categoryFilter,
+                      items: state.categories,
+                      onSelected: cubit.setCategoryFilter,
+                    ),
+                    _ChipFilter<ConditionModel>(
+                      filter: state.conditionFilter,
+                      items: state.conditions,
+                      onSelected: cubit.setConditionFilter,
+                    ),
+                    _PetGrid(),
+                  ],
+                ),
+                if (state.status == SearchStatus.busy)
+                  Center(
+                    child: CircularProgressIndicator(),
+                  )
+              ],
             );
           }
         },
+      ),
+    );
+  }
+}
+
+class _PetGrid extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    SearchCubit cubit = BlocProvider.of<SearchCubit>(context);
+    if (cubit.state.foundPets.isEmpty) {
+      return Expanded(
+        child: Center(
+          child: Text(
+            'Nothing found',
+            style: TextStyle(
+              fontSize: 18.0,
+              color: Theme.of(context).primaryColor,
+            ),
+          ),
+        ),
+      );
+    }
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth = (screenWidth - (kHorizontalPadding * 3)) / 2;
+    final cardHeight = 255.0;
+    return Expanded(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+            kHorizontalPadding, 0.0, kHorizontalPadding, kHorizontalPadding),
+        child: GridView.count(
+          crossAxisCount: 2,
+          // physics: NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          childAspectRatio: cardWidth / cardHeight,
+          mainAxisSpacing: kHorizontalPadding,
+          crossAxisSpacing: kHorizontalPadding,
+          children: cubit.state.foundPets
+              .map((PetModel element) => _PetGridItem(item: element))
+              .toList(),
+        ),
+      ),
+    );
+  }
+}
+
+class _PetGridItem extends StatelessWidget {
+  const _PetGridItem({Key key, this.item}) : super(key: key);
+  final PetModel item;
+  @override
+  Widget build(BuildContext context) {
+    SearchCubit cubit = BlocProvider.of<SearchCubit>(context);
+    // SearchState data = cubit.state;
+    // final screenWidth = MediaQuery.of(context).size.width;
+    // final cardWidth = (screenWidth - (kHorizontalPadding * 3)) / 2;
+    return GestureDetector(
+      onTap: () {
+        // navigator.push(DetailScreen(cubit: cubit, item: item).getRoute());
+      },
+      child: Container(
+        // width: cardWidth < 200 ? cardWidth : 200,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: theme.primaryColorLight,
+            width: 2.0,
+          ),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16.0),
+            topRight: Radius.circular(16.0),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
+              children: [
+                Hero(
+                  tag: '${item.id}',
+                  child: Container(
+                    height: 150,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(16.0),
+                        topRight: Radius.circular(16.0),
+                      ),
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(item.photos),
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 7,
+                  right: -11,
+                  child: FlatButton(
+                    height: 30,
+                    color: item.liked ? Color(0xFFEE8363) : Colors.white,
+                    shape: CircleBorder(),
+                    onPressed: () {
+                      // cubit.onTapPetLike(petId: item.id);
+                    },
+                    child: Icon(
+                      Icons.favorite,
+                      color:
+                          item.liked ? Colors.white : theme.textSelectionColor,
+                      size: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: item.condition.backgroundColor ??
+                          theme.primaryColorLight,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
+                      child: Text(
+                        item.condition.name ?? item.condition,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: item.condition.textColor ?? theme.primaryColor,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    item.breed.name,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.location_on_outlined,
+                        size: 16,
+                      ),
+                      Text(
+                        '${item.address} ( ${item.distance} km )',
+                        style: TextStyle(fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -89,13 +255,15 @@ class _SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<_SearchBar> {
   final _searchController = TextEditingController();
+  SearchCubit cubit;
 
   @override
   void initState() {
     super.initState();
+    cubit = BlocProvider.of<SearchCubit>(context);
     _searchController.addListener(() {
       setState(() {
-        // put search procedure here
+        cubit.setQueryFilter(_searchController.text);
       });
     });
   }
@@ -123,9 +291,10 @@ class _SearchBarState extends State<_SearchBar> {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16.0, 4.0, 0.0, 4.0),
           child: TextField(
-            textAlignVertical: TextAlignVertical.center,
             controller: _searchController,
-            textInputAction: TextInputAction.search,
+            autofocus: true,
+            textAlignVertical: TextAlignVertical.center,
+            textInputAction: TextInputAction.done,
             // style: TextStyle(fontSize: 18.0),
             decoration: InputDecoration(
               hintText: 'Search',
@@ -142,6 +311,11 @@ class _SearchBarState extends State<_SearchBar> {
                     )
                   : null,
             ),
+            // onChanged: (String value) {
+            //   setState(() {
+            //     cubit.setQueryFilter(value);
+            //   });
+            // },
           ),
         ),
       ),
