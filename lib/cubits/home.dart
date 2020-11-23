@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
-import 'package:cats/import.dart';
+import 'package:get_pet/import.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 part 'home.g.dart';

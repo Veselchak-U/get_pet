@@ -1,4 +1,4 @@
-import 'package:cats/import.dart';
+import 'package:get_pet/import.dart';
 import 'package:graphql/client.dart';
 
 import '../local.dart';
@@ -131,7 +131,7 @@ class DatabaseRepository {
   }
 
   Future<List<PetModel>> searchPets(
-      {String categoryId, String query, int limit = 20}) async {
+      {String categoryId, String conditionId, String query, int limit = 20}) async {
     assert(categoryId != null || query != null);
     List<PetModel> result = [];
     final options = QueryOptions(
@@ -139,6 +139,7 @@ class DatabaseRepository {
       variables: {
         'member_id': kDatabaseUserId,
         'category_id': categoryId,
+        'condition_id': conditionId,
         'query': '%$query%',
         'limit': limit,
       },
@@ -320,10 +321,11 @@ class _API {
   ''')..definitions.addAll(fragments.definitions);
 
   static final searchPets = gql(r'''
-    query SearchPets($member_id: uuid!, $category_id: uuid, $query: String, $limit: Int!) {
+    query SearchPets($member_id: uuid!, $category_id: uuid, $condition_id: uuid, $query: String, $limit: Int!) {
       get_pets_by_member_id(args: {member_id: $member_id},
         where: {_and: [
                   {category: {id: {_eq: $category_id}}},
+                  {condition: {id: {_eq: $condition_id}}},
                   {_or: [
                     {breed: {name: {_ilike: $query}}},
                     {address: {_ilike: $query}},

@@ -1,4 +1,4 @@
-import 'package:cats/import.dart';
+import 'package:get_pet/import.dart';
 import 'package:flutter/material.dart';
 
 class DetailScreen extends StatefulWidget {

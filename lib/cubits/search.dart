@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
-import 'package:cats/import.dart';
+import 'package:get_pet/import.dart';
 
 part 'search.g.dart';
 
@@ -25,6 +25,7 @@ class SearchCubit extends Cubit<SearchState> {
         categories: categories,
         conditions: conditions,
       ));
+      _searchPet();
     } catch (error) {
       print(error);
       result = false;
@@ -58,12 +59,13 @@ class SearchCubit extends Cubit<SearchState> {
   }
 
   void _searchPet() async {
-    print('category = ${state.categoryFilter?.name}');
-    print('query = "${state.queryFilter}"');
-    //
+    // print('query = "${state.queryFilter}"');
+    // print('category = ${state.categoryFilter?.name}');
+    // print('condition = ${state.conditionFilter?.name}');
     emit(state.copyWith(status: SearchStatus.busy));
     final List<PetModel> foundPets = await repo.searchPets(
       categoryId: state.categoryFilter?.id,
+      conditionId: state.conditionFilter?.id,
       query: state.queryFilter,
     );
     emit(state.copyWith(

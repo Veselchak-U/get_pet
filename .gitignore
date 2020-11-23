@@ -1,5 +1,8 @@
 # Private files
 local.dart
+key.properties
+key.jks
+google-services.json
 
 # Miscellaneous
 *.class

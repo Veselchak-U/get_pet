@@ -1,4 +1,4 @@
-import 'package:cats/import.dart';
+import 'package:get_pet/import.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -26,7 +26,7 @@ class App extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'Pet finder',
+        title: 'Get Pet',
         navigatorKey: navigatorKey,
         theme: theme,
         debugShowCheckedModeBanner: false,
