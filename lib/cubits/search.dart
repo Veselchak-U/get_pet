@@ -35,9 +35,6 @@ class SearchCubit extends Cubit<SearchState> {
   }
 
   void setQueryFilter(String query) {
-    // if (category == state.categoryFilter) {
-    //   return;
-    // }
     emit(state.copyWith(
       queryFilter: query,
     ));
@@ -59,9 +56,6 @@ class SearchCubit extends Cubit<SearchState> {
   }
 
   void _searchPet() async {
-    // print('query = "${state.queryFilter}"');
-    // print('category = ${state.categoryFilter?.name}');
-    // print('condition = ${state.conditionFilter?.name}');
     emit(state.copyWith(status: SearchStatus.busy));
     final List<PetModel> foundPets = await repo.searchPets(
       categoryId: state.categoryFilter?.id,
