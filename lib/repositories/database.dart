@@ -6,7 +6,7 @@ import '../local.dart';
 const _kGraphqlUri = 'https://cats.hasura.app/v1/graphql';
 const _kToken = 'Bearer $kDatabaseToken';
 // const _kEnableWebSockets = false;
-const _kTimeoutMillisec = 5000;
+const _kTimeoutMillisec = 10000;
 
 class DatabaseRepository {
   final GraphQLClient _client = _getClient();

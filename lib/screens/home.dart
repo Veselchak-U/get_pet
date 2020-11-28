@@ -2,6 +2,8 @@ import 'package:get_pet/import.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
 class HomeScreen extends StatelessWidget {
   Route<T> getRoute<T>() {
     return buildRoute<T>(
@@ -25,6 +27,7 @@ class HomeScreen extends StatelessWidget {
           result = RefreshIndicator(
             onRefresh: () => cubit.load(isReload: true),
             child: Scaffold(
+              key: _scaffoldKey,
               appBar: _AppBar(),
               body: SingleChildScrollView(
                 child: Column(
@@ -41,20 +44,9 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              // floatingActionButton: FloatingActionButton(
-              //   heroTag: 'HomeScreen_AddPet',
-              //   tooltip: 'Add your pet',
-              //   backgroundColor: theme.accentColor,
-              //   onPressed: () {
-              //     navigator.push(AddPetScreen().getRoute());
-              //   },
-              //   child: Icon(
-              //     Icons.pets,
-              //     size: 30,
-              //     color: Colors.white,
-              //   ),
-              // ),
-              // floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+              drawer: Drawer(
+                child: _Drawer(),
+              ),
             ),
           );
         } else if (state.status == HomeStatus.busy) {
@@ -97,9 +89,11 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       elevation: 0.0,
       leading: IconButton(
-        tooltip: 'Something',
+        tooltip: 'Menu',
         icon: Icon(Icons.sort),
-        onPressed: () {},
+        onPressed: () {
+          _scaffoldKey.currentState.openDrawer();
+        },
       ),
       actions: [
         (data.notificationCount != null && data.notificationCount > 0)
@@ -152,7 +146,9 @@ class _UserProfile extends StatelessWidget {
       heroTag: 'HomeScreen_UserProfile',
       backgroundColor: theme.backgroundColor,
       mini: true,
-      onPressed: () {},
+      onPressed: () {
+        cubit.addNotification();
+      },
       child: CircleAvatar(
         radius: 18.0,
         backgroundColor: theme.backgroundColor,
@@ -160,6 +156,72 @@ class _UserProfile extends StatelessWidget {
             (data.userAvatarImage != null && data.userAvatarImage.isNotEmpty)
                 ? NetworkImage(data.userAvatarImage)
                 : AssetImage('${kAssetPath}placeholder_avatar.png'),
+      ),
+    );
+  }
+}
+
+class _Drawer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                _DrawerBody(),
+                _DrawerButton(),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _DrawerBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> _menuItems = [];
+    _menuItems.add(
+      Container(
+        height: 150,
+        child: Placeholder(),
+      ),
+    );
+    _menuItems.addAll(
+      List.generate(
+        5,
+        (index) => ListTile(
+          leading: Icon(Icons.ac_unit),
+          title: Text('MenuItem $index'),
+          onTap: () {},
+        ),
+      ),
+    );
+    return Column(
+      children: _menuItems,
+    );
+  }
+}
+
+class _DrawerButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: ElevatedButton(
+        onPressed: () {
+          navigator.pop();
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: kHorizontalPadding),
+          child: Text('Close'),
+        ),
       ),
     );
   }
@@ -267,6 +329,7 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
     return Padding(
       padding: EdgeInsets.fromLTRB(kHorizontalPadding, 4.0, 8.0, 4.0),
       child: Row(
@@ -281,7 +344,9 @@ class _Header extends StatelessWidget {
           Spacer(),
           IconButton(
             icon: Icon(Icons.more_horiz),
-            onPressed: () {},
+            onPressed: () {
+              cubit.addNotification();
+            },
           ),
         ],
       ),
@@ -322,7 +387,6 @@ class _CategoryGridItem extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(16.0),
       onTap: () {
-        cubit.addNotification();
         navigator.push(SearchScreen(
           category: item,
         ).getRoute());
