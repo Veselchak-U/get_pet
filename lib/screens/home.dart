@@ -138,22 +138,18 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
 class _Drawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // var screenHeight = MediaQuery.of(context).size.height;
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        return SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: constraints.maxHeight),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                _DrawerBody(),
-                _DrawerButton(),
-              ],
-            ),
-          ),
-        );
-      },
+    var screenHeight = MediaQuery.of(context).size.height;
+    return SingleChildScrollView(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: screenHeight),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            _DrawerBody(),
+            _DrawerButton(),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -161,11 +157,11 @@ class _Drawer extends StatelessWidget {
 class _DrawerBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    List<Widget> _menuItems = [];
-    _menuItems.add(
+    List<Widget> menuItems = [];
+    menuItems.add(
       _UserProfileCard(),
     );
-    _menuItems.addAll(
+    menuItems.addAll(
       List.generate(
         5,
         (index) => ExpansionTile(
@@ -188,7 +184,7 @@ class _DrawerBody extends StatelessWidget {
       ),
     );
     return Column(
-      children: _menuItems,
+      children: menuItems,
     );
   }
 }
@@ -216,7 +212,7 @@ class _UserProfileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 120,
-      color: Theme.of(context).textSelectionColor,
+      color: Theme.of(context).primaryColorLight,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
