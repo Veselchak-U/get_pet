@@ -1,4 +1,4 @@
-# cats
+# Get Pet
 Flutter demo-project.
 
 Technologies: BLoC v.6 (Cubit), Code generation, GraphQL, Hasura
