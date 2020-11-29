@@ -90,7 +90,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0.0,
       leading: IconButton(
         tooltip: 'Menu',
-        icon: Icon(Icons.sort),
+        icon: Icon(Icons.menu),
         onPressed: () {
           _scaffoldKey.currentState.openDrawer();
         },
@@ -128,35 +128,9 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
                 ],
               )
             : SizedBox.shrink(),
-        _UserProfile(),
+        // _UserProfile(),
         SizedBox(width: kHorizontalPadding),
       ],
-    );
-  }
-}
-
-class _UserProfile extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
-    HomeState data = cubit.state;
-    // var theme = Theme.of(context);
-    return FloatingActionButton(
-      tooltip: 'Your profile',
-      heroTag: 'HomeScreen_UserProfile',
-      backgroundColor: theme.backgroundColor,
-      mini: true,
-      onPressed: () {
-        cubit.addNotification();
-      },
-      child: CircleAvatar(
-        radius: 18.0,
-        backgroundColor: theme.backgroundColor,
-        backgroundImage:
-            (data.userAvatarImage != null && data.userAvatarImage.isNotEmpty)
-                ? NetworkImage(data.userAvatarImage)
-                : AssetImage('${kAssetPath}placeholder_avatar.png'),
-      ),
     );
   }
 }
@@ -164,6 +138,7 @@ class _UserProfile extends StatelessWidget {
 class _Drawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // var screenHeight = MediaQuery.of(context).size.height;
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         return SingleChildScrollView(
@@ -188,18 +163,27 @@ class _DrawerBody extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> _menuItems = [];
     _menuItems.add(
-      Container(
-        height: 150,
-        child: Placeholder(),
-      ),
+      _UserProfileCard(),
     );
     _menuItems.addAll(
       List.generate(
         5,
-        (index) => ListTile(
-          leading: Icon(Icons.ac_unit),
-          title: Text('MenuItem $index'),
-          onTap: () {},
+        (index) => ExpansionTile(
+          title: ListTile(
+            leading: Icon(Icons.ac_unit),
+            title: Text('MenuItem $index'),
+          ),
+          children: List.generate(
+            3,
+            (index2) => Padding(
+              padding: const EdgeInsets.only(left: 24),
+              child: ListTile(
+                leading: Icon(Icons.menu_open),
+                title: Text('MenuItem $index.$index2'),
+                onTap: () {},
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -220,8 +204,58 @@ class _DrawerButton extends StatelessWidget {
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: kHorizontalPadding),
-          child: Text('Close'),
+          child: Text('Log out'),
         ),
+      ),
+    );
+  }
+}
+
+class _UserProfileCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 120,
+      color: Theme.of(context).textSelectionColor,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            _UserProfileAvatar(),
+            SizedBox(width: 16),
+            Text(
+              'John Doe',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+      //Placeholder(),
+    );
+  }
+}
+
+class _UserProfileAvatar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
+    HomeState data = cubit.state;
+    // var theme = Theme.of(context);
+    return FloatingActionButton(
+      tooltip: 'Your profile',
+      heroTag: 'HomeScreen_UserProfile',
+      backgroundColor: theme.backgroundColor,
+      // mini: true,
+      onPressed: () {
+        cubit.addNotification();
+      },
+      child: CircleAvatar(
+        radius: 26.0,
+        backgroundColor: theme.backgroundColor,
+        backgroundImage:
+            (data.userAvatarImage != null && data.userAvatarImage.isNotEmpty)
+                ? NetworkImage(data.userAvatarImage)
+                : AssetImage('${kAssetPath}placeholder_avatar.png'),
       ),
     );
   }
