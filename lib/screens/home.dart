@@ -544,8 +544,8 @@ class _NewestCarouselItem extends StatelessWidget {
                     height: 150,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(16.0),
-                        topRight: Radius.circular(16.0),
+                        topLeft: Radius.circular(14.0),
+                        topRight: Radius.circular(14.0),
                       ),
                       image: DecorationImage(
                         fit: BoxFit.cover,

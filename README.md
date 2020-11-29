@@ -1,7 +1,7 @@
-# cats
-Flutter demo-project.
+# Get Pet
+Flutter demo-project with backend.
 
-Technologies: BLoC v.6 (Cubit), Code generation, GraphQL, Hasura
+Technologies: BLoC v.6 (Cubit), code generation, GraphQL, Hasura
 
 ## Code generation
 $ flutter packages pub run build_runner build --delete-conflicting-outputs
