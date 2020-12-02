@@ -8,10 +8,6 @@ void main() {
   ));
 }
 
-final navigatorKey = GlobalKey<NavigatorState>();
-
-NavigatorState get navigator => navigatorKey.currentState;
-
 class App extends StatelessWidget {
   const App({this.databaseRepository});
 
@@ -19,25 +15,43 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider.value(
-          value: databaseRepository,
-        ),
-      ],
-      child: MaterialApp(
-        title: 'Get Pet',
-        navigatorKey: navigatorKey,
-        theme: theme,
-        debugShowCheckedModeBanner: false,
-        home: BlocProvider(
-          create: (BuildContext context) => HomeCubit(
-            repo: RepositoryProvider.of<DatabaseRepository>(context),
-          )..load(),
-          child: HomeScreen(),
-          // child: AddPetScreen(),
-        ),
+    Widget result = AppView();
+
+    result = BlocProvider(
+      create: (BuildContext context) => HomeCubit(
+        repo: RepositoryProvider.of<DatabaseRepository>(context),
+      )..load(),
+      child: result,
+    );
+
+    result = BlocProvider(
+      create: (BuildContext context) => ProfileCubit(
+        repo: RepositoryProvider.of<DatabaseRepository>(context),
       ),
+      child: result,
+    );
+
+    result = RepositoryProvider.value(
+      value: databaseRepository,
+      child: result,
+    );
+    return result;
+  }
+}
+
+final navigatorKey = GlobalKey<NavigatorState>();
+
+NavigatorState get navigator => navigatorKey.currentState;
+
+class AppView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Get Pet',
+      navigatorKey: navigatorKey,
+      theme: theme,
+      debugShowCheckedModeBanner: false,
+      home: HomeScreen(),
     );
   }
 }

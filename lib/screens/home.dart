@@ -16,64 +16,80 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeCubit, HomeState>(
-      // buildWhen: (HomeState previous, HomeState current) =>
-      //     current.status != previous.status,
-      builder: (BuildContext context, HomeState state) {
-        HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
-        Widget result;
-        if (state.status == HomeStatus.ready ||
-            state.status == HomeStatus.reload) {
-          result = RefreshIndicator(
-            onRefresh: () => cubit.load(isReload: true),
-            child: Scaffold(
-              key: _scaffoldKey,
-              appBar: _AppBar(),
-              body: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _Greeting(),
-                    _StaticSearchBar(),
-                    _Header(index: 0, text: 'Pet Category'),
-                    _CategoryGrid(),
-                    _Header(index: 1, text: 'Newest Pet'),
-                    _NewestPetsCarousel(),
-                    _Header(index: 2, text: 'Vets Near You'),
-                    _VetsCarousel(),
-                  ],
+    return BlocBuilder<ProfileCubit, ProfileState>(
+        builder: (BuildContext context, ProfileState state) {
+      return BlocBuilder<HomeCubit, HomeState>(
+        // buildWhen: (HomeState previous, HomeState current) =>
+        //     current.status != previous.status,
+        builder: (BuildContext context, HomeState state) {
+          HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
+          ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
+          Widget result;
+          if (state.status == HomeStatus.ready ||
+              state.status == HomeStatus.reload) {
+            result = RefreshIndicator(
+              onRefresh: () => homeCubit.load(isReload: true),
+              child: Scaffold(
+                key: _scaffoldKey,
+                appBar: _AppBar(),
+                body: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _Greeting(),
+                      _StaticSearchBar(),
+                      profileCubit.state.visibleSections[0]
+                          ? _Header(index: 0, text: 'Pet Category')
+                          : SizedBox.shrink(),
+                      profileCubit.state.visibleSections[0]
+                          ? _CategoryGrid()
+                          : SizedBox.shrink(),
+                      profileCubit.state.visibleSections[1]
+                          ? _Header(index: 1, text: 'Newest Pet')
+                          : SizedBox.shrink(),
+                      profileCubit.state.visibleSections[1]
+                          ? _NewestPetsCarousel()
+                          : SizedBox.shrink(),
+                      profileCubit.state.visibleSections[2]
+                          ? _Header(index: 2, text: 'Vets Near You')
+                          : SizedBox.shrink(),
+                      profileCubit.state.visibleSections[2]
+                          ? _VetsCarousel()
+                          : SizedBox.shrink(),
+                    ],
+                  ),
+                ),
+                drawer: Drawer(
+                  child: _Drawer(),
                 ),
               ),
-              drawer: Drawer(
-                child: _Drawer(),
+            );
+          } else if (state.status == HomeStatus.busy) {
+            result = Container(
+              color: theme.backgroundColor,
+              child: Center(
+                child: CircularProgressIndicator(),
               ),
-            ),
-          );
-        } else if (state.status == HomeStatus.busy) {
-          result = Container(
-            color: theme.backgroundColor,
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        } else if (state.status == HomeStatus.initial) {
-          result = Container(
-            color: theme.backgroundColor,
-            child: Center(
-              child: Text('HomeStatus.initial'),
-            ),
-          );
-        } else {
-          result = Container(
-            color: theme.backgroundColor,
-            child: Center(
-              child: Text('Unknown HomeStatus'),
-            ),
-          );
-        }
-        return result;
-      },
-    );
+            );
+          } else if (state.status == HomeStatus.initial) {
+            result = Container(
+              color: theme.backgroundColor,
+              child: Center(
+                child: Text('HomeStatus.initial'),
+              ),
+            );
+          } else {
+            result = Container(
+              color: theme.backgroundColor,
+              child: Center(
+                child: Text('Unknown HomeStatus'),
+              ),
+            );
+          }
+          return result;
+        },
+      );
+    });
   }
 }
 
@@ -167,7 +183,7 @@ class _Drawer extends StatelessWidget {
         //       ),
         LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        print('constraints.maxHeight = ${constraints.maxHeight}');
+        // print('constraints.maxHeight = ${constraints.maxHeight}');
         return SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: constraints.maxHeight),
@@ -191,9 +207,17 @@ class _Drawer extends StatelessWidget {
 class _DrawerBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
     List<Widget> menuItems = [];
     menuItems.add(
       _UserProfileCard(),
+    );
+    menuItems.add(
+      ListTile(
+        leading: Icon(Icons.restore_page),
+        title: Text('Restore sections visibility'),
+        onTap: profileCubit.restoreSectionsVisibility,
+      ),
     );
     menuItems.addAll(
       List.generate(
@@ -393,7 +417,8 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
+    ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
+    HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
     return Padding(
       padding: EdgeInsets.fromLTRB(kHorizontalPadding, 4.0, 8.0, 4.0),
       child: Row(
@@ -406,12 +431,25 @@ class _Header extends StatelessWidget {
                 fontWeight: FontWeight.bold),
           ),
           Spacer(),
-          IconButton(
+          PopupMenuButton(
             icon: Icon(Icons.more_horiz),
-            onPressed: () {
-              cubit.addNotification();
+            itemBuilder: (BuildContext context) => [
+              PopupMenuItem(
+                value: index,
+                child: Text('Hide section'),
+              )
+            ],
+            onSelected: (value) {
+              homeCubit.addNotification();
+              profileCubit.hideSection(index);
             },
           ),
+          // IconButton(
+          //   icon: Icon(Icons.more_horiz),
+          //   onPressed: () {
+          //     cubit.addNotification();
+          //   },
+          // ),
         ],
       ),
     );
