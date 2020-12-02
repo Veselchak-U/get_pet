@@ -121,7 +121,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
                       child: Container(
                         // constraints: BoxConstraints(minWidth: 17, minHeight: 17),
                         decoration: BoxDecoration(
-                          color: theme.highlightColor,
+                          color: theme.selectedRowColor,
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
@@ -423,17 +423,24 @@ class _CategoryGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
     HomeState data = cubit.state;
+    final screenWidth = MediaQuery.of(context).size.width;
+    var itemHeight = 60;
+    var itemWidth = (screenWidth - 3 * kHorizontalPadding) / 2;
+    var innerPadding = itemWidth > 160 ? 16.0 : 8.0;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
       child: GridView.count(
         crossAxisCount: 2,
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
-        childAspectRatio: 5 / 2,
+        childAspectRatio: itemWidth / itemHeight,
         mainAxisSpacing: kHorizontalPadding,
         crossAxisSpacing: kHorizontalPadding,
         children: data.petCategories
-            .map((CategoryModel element) => _CategoryGridItem(item: element))
+            .map((CategoryModel element) => _CategoryGridItem(
+                  item: element,
+                  innerPadding: innerPadding,
+                ))
             .toList(),
       ),
     );
@@ -441,13 +448,13 @@ class _CategoryGrid extends StatelessWidget {
 }
 
 class _CategoryGridItem extends StatelessWidget {
-  const _CategoryGridItem({this.item});
+  const _CategoryGridItem({this.item, this.innerPadding});
 
   final CategoryModel item;
+  final double innerPadding;
 
   @override
   Widget build(BuildContext context) {
-    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
     return InkWell(
       borderRadius: BorderRadius.circular(16.0),
       onTap: () {
@@ -465,7 +472,10 @@ class _CategoryGridItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.0),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          padding: EdgeInsets.symmetric(
+            horizontal: innerPadding,
+            vertical: 8.0,
+          ),
           child: Row(
             children: [
               CircleAvatar(
@@ -484,7 +494,7 @@ class _CategoryGridItem extends StatelessWidget {
                       : null,
                 ),
               ),
-              SizedBox(width: 16.0),
+              SizedBox(width: innerPadding),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -493,15 +503,12 @@ class _CategoryGridItem extends StatelessWidget {
                     Text(
                       item.name,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          // color: _baseColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       'Total of ${item.totalOf}',
                       style: TextStyle(
-                        // color: _baseColor,
                         fontSize: 13,
                       ),
                     ),
@@ -594,7 +601,7 @@ class _NewestCarouselItem extends StatelessWidget {
                   right: -11,
                   child: FlatButton(
                     height: 30,
-                    color: item.liked ? theme.highlightColor : Colors.white,
+                    color: item.liked ? theme.selectedRowColor : Colors.white,
                     shape: CircleBorder(),
                     onPressed: () {
                       cubit.onTapPetLike(petId: item.id);

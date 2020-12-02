@@ -292,7 +292,7 @@ class _PetGridItem extends StatelessWidget {
                   right: -11,
                   child: FlatButton(
                     height: 30,
-                    color: item.liked ? theme.highlightColor : Colors.white,
+                    color: item.liked ? theme.selectedRowColor : Colors.white,
                     shape: CircleBorder(),
                     onPressed: () {
                       // cubit.onTapPetLike(petId: item.id);

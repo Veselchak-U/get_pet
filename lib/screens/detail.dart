@@ -208,7 +208,7 @@ class _Header extends StatelessWidget {
         ),
         FlatButton(
           height: 48,
-          color: item.liked ? theme.highlightColor : theme.primaryColorLight,
+          color: item.liked ? theme.selectedRowColor : theme.primaryColorLight,
           shape: CircleBorder(),
           onPressed: onLiked,
           child: Icon(
