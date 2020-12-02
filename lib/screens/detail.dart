@@ -173,6 +173,7 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       // crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,7 +208,7 @@ class _Header extends StatelessWidget {
         ),
         FlatButton(
           height: 48,
-          color: item.liked ? Color(0xFFEE8363) : theme.primaryColorLight,
+          color: item.liked ? theme.highlightColor : theme.primaryColorLight,
           shape: CircleBorder(),
           onPressed: onLiked,
           child: Icon(

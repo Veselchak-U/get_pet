@@ -22,7 +22,7 @@ final theme = ThemeData(
   // dividerColor: Colors.pink[300],
   // focusColor: Color(0xFF63C8FA), // accentColor
   // hoverColor: Colors.pink[300],
-  // highlightColor: Colors.pink[300],
+  highlightColor: Color(0xFFEE8363),
   // splashColor: Colors.pink[300],
   // selectedRowColor: Colors.pink[300],
   // unselectedWidgetColor: Colors.pink[300],

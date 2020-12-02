@@ -85,7 +85,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
     HomeState data = cubit.state;
-    // var theme = Theme.of(context);
+    var theme = Theme.of(context);
     return AppBar(
       elevation: 0.0,
       leading: IconButton(
@@ -98,7 +98,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         (data.notificationCount != null && data.notificationCount > 0)
             ? Stack(
-                alignment: Alignment(0.8, -0.5),
+                alignment: Alignment(1.0, -0.5),
                 children: [
                   Center(
                     child: IconButton(
@@ -110,17 +110,33 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
                       },
                     ),
                   ),
-                  CircleAvatar(
-                    radius: 10.0,
-                    backgroundColor: theme.backgroundColor,
-                    child: CircleAvatar(
-                      radius: 8.0,
-                      backgroundColor: Colors.orange,
-                      child: Text(
-                        '${data.notificationCount}',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
+                  Container(
+                    decoration: BoxDecoration(
+                      color: theme.backgroundColor,
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(2),
+                      child: Container(
+                        // constraints: BoxConstraints(minWidth: 17, minHeight: 17),
+                        decoration: BoxDecoration(
+                          color: theme.highlightColor,
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 5,
+                            vertical: 2,
+                          ),
+                          child: Text(
+                            '${data.notificationCount > 99 ? "99+" : data.notificationCount}',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -128,7 +144,6 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
                 ],
               )
             : SizedBox.shrink(),
-        // _UserProfile(),
         SizedBox(width: kHorizontalPadding),
       ],
     );
@@ -138,19 +153,38 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
 class _Drawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var screenHeight = MediaQuery.of(context).size.height;
-    return SingleChildScrollView(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: screenHeight),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            _DrawerBody(),
-            _DrawerButton(),
-          ],
-        ),
-      ),
+    // final screenHeight = MediaQuery.of(context).size.height;
+    return
+        // Container(
+        //   child: Column(
+        //     children: [
+        //       // Container(
+        //       //   height: 150,
+        //       //   child: Placeholder(),
+        //       // ),
+        //       DrawerHeader(
+        //         child: Text('DrawerHeader'),
+        //       ),
+        LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        print('constraints.maxHeight = ${constraints.maxHeight}');
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                _DrawerBody(),
+                _DrawerButton(),
+              ],
+            ),
+          ),
+        );
+      },
     );
+    //     ],
+    //   ),
+    // );
   }
 }
 
@@ -513,6 +547,7 @@ class _NewestCarouselItem extends StatelessWidget {
   Widget build(BuildContext context) {
     HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
     HomeState data = cubit.state;
+    var theme = Theme.of(context);
     // ConditionModel itemCondition = data.conditions
     //     .firstWhere((ConditionModel e) => e.id == item.condition);
     final screenWidth = MediaQuery.of(context).size.width;
@@ -559,7 +594,7 @@ class _NewestCarouselItem extends StatelessWidget {
                   right: -11,
                   child: FlatButton(
                     height: 30,
-                    color: item.liked ? Color(0xFFEE8363) : Colors.white,
+                    color: item.liked ? theme.highlightColor : Colors.white,
                     shape: CircleBorder(),
                     onPressed: () {
                       cubit.onTapPetLike(petId: item.id);

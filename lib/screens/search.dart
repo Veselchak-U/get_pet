@@ -90,7 +90,6 @@ class _SearchBody extends StatelessWidget {
   }
 }
 
-
 class _SearchBar extends StatefulWidget {
   @override
   _SearchBarState createState() => _SearchBarState();
@@ -251,6 +250,7 @@ class _PetGridItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SearchCubit cubit = BlocProvider.of<SearchCubit>(context);
+    var theme = Theme.of(context);
     return GestureDetector(
       onTap: () {
         // navigator.push(DetailScreen(cubit: cubit, item: item).getRoute());
@@ -292,7 +292,7 @@ class _PetGridItem extends StatelessWidget {
                   right: -11,
                   child: FlatButton(
                     height: 30,
-                    color: item.liked ? Color(0xFFEE8363) : Colors.white,
+                    color: item.liked ? theme.highlightColor : Colors.white,
                     shape: CircleBorder(),
                     onPressed: () {
                       // cubit.onTapPetLike(petId: item.id);

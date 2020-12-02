@@ -3,6 +3,7 @@ local.dart
 key.properties
 key.jks
 google-services.json
+_FILEZ
 
 # Miscellaneous
 *.class
