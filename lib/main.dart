@@ -27,7 +27,7 @@ class App extends StatelessWidget {
     result = BlocProvider(
       create: (BuildContext context) => ProfileCubit(
         repo: RepositoryProvider.of<DatabaseRepository>(context),
-      ),
+      )..load(),
       child: result,
     );
 

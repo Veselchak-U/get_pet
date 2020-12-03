@@ -21,16 +21,14 @@ class HomeCubit extends Cubit<HomeState> {
       emit(state.copyWith(status: HomeStatus.busy));
     }
     try {
-      final int notificationCount = await repo.readNotificationCount();
-      final String userAvatarImage = await repo.readUserAvatarImage();
-      final List<ConditionModel> conditions = await repo.readConditions(fromCash: false);
-      final List<CategoryModel> petCategories = await repo.readCategories(fromCash: false);
+      final List<ConditionModel> conditions =
+          await repo.readConditions(fromCash: false);
+      final List<CategoryModel> petCategories =
+          await repo.readCategories(fromCash: false);
       final List<PetModel> newestPets = await repo.readNewestPets();
       final List<VetModel> nearestVets = await repo.readNearestVets();
       emit(state.copyWith(
         status: HomeStatus.ready,
-        notificationCount: notificationCount,
-        userAvatarImage: userAvatarImage,
         conditions: conditions,
         petCategories: petCategories,
         newestPets: newestPets,
@@ -42,14 +40,6 @@ class HomeCubit extends Cubit<HomeState> {
       return Future.error(error);
     }
     return result;
-  }
-
-  void addNotification() {
-    emit(state.copyWith(notificationCount: state.notificationCount + 1));
-  }
-
-  void clearNotifications() {
-    emit(state.copyWith(notificationCount: 0));
   }
 
   Future<void> callToPhoneNumber({String phone}) async {
@@ -88,8 +78,6 @@ enum HomeStatus { initial, busy, reload, ready }
 class HomeState extends Equatable {
   const HomeState({
     this.status = HomeStatus.initial,
-    this.notificationCount = 0,
-    this.userAvatarImage = '',
     this.conditions = const [],
     this.petCategories = const [],
     this.newestPets = const [],
@@ -97,8 +85,6 @@ class HomeState extends Equatable {
   });
 
   final HomeStatus status;
-  final int notificationCount;
-  final String userAvatarImage;
   final List<ConditionModel> conditions;
   final List<CategoryModel> petCategories;
   final List<PetModel> newestPets;
@@ -107,8 +93,6 @@ class HomeState extends Equatable {
   @override
   List<Object> get props => [
         status,
-        notificationCount,
-        userAvatarImage,
         conditions,
         petCategories,
         newestPets,

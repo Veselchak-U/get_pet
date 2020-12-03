@@ -16,20 +16,17 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProfileCubit, ProfileState>(
-        builder: (BuildContext context, ProfileState state) {
-      return BlocBuilder<HomeCubit, HomeState>(
-        // buildWhen: (HomeState previous, HomeState current) =>
-        //     current.status != previous.status,
-        builder: (BuildContext context, HomeState state) {
-          HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
-          ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
-          Widget result;
-          if (state.status == HomeStatus.ready ||
-              state.status == HomeStatus.reload) {
-            result = RefreshIndicator(
-              onRefresh: () => homeCubit.load(isReload: true),
-              child: Scaffold(
+    return BlocBuilder<HomeCubit, HomeState>(
+      builder: (BuildContext context, HomeState state) {
+        HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
+        Widget result;
+        if (state.status == HomeStatus.ready ||
+            state.status == HomeStatus.reload) {
+          result = RefreshIndicator(
+            onRefresh: () => homeCubit.load(isReload: true),
+            child: BlocBuilder<ProfileCubit, ProfileState>(
+                builder: (BuildContext context, ProfileState state) {
+              return Scaffold(
                 key: _scaffoldKey,
                 appBar: _AppBar(),
                 body: SingleChildScrollView(
@@ -38,58 +35,43 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       _Greeting(),
                       _StaticSearchBar(),
-                      profileCubit.state.visibleSections[0]
-                          ? _Header(index: 0, text: 'Pet Category')
-                          : SizedBox.shrink(),
-                      profileCubit.state.visibleSections[0]
-                          ? _CategoryGrid()
-                          : SizedBox.shrink(),
-                      profileCubit.state.visibleSections[1]
-                          ? _Header(index: 1, text: 'Newest Pet')
-                          : SizedBox.shrink(),
-                      profileCubit.state.visibleSections[1]
-                          ? _NewestPetsCarousel()
-                          : SizedBox.shrink(),
-                      profileCubit.state.visibleSections[2]
-                          ? _Header(index: 2, text: 'Vets Near You')
-                          : SizedBox.shrink(),
-                      profileCubit.state.visibleSections[2]
-                          ? _VetsCarousel()
-                          : SizedBox.shrink(),
+                      _ScreenSection(index: 0, text: 'Pet Category'),
+                      _ScreenSection(index: 1, text: 'Newest Pet'),
+                      _ScreenSection(index: 2, text: 'Vets Near You'),
                     ],
                   ),
                 ),
                 drawer: Drawer(
-                  child: _Drawer(),
+                  child: _DrawerContent(),
                 ),
-              ),
-            );
-          } else if (state.status == HomeStatus.busy) {
-            result = Container(
-              color: theme.backgroundColor,
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          } else if (state.status == HomeStatus.initial) {
-            result = Container(
-              color: theme.backgroundColor,
-              child: Center(
-                child: Text('HomeStatus.initial'),
-              ),
-            );
-          } else {
-            result = Container(
-              color: theme.backgroundColor,
-              child: Center(
-                child: Text('Unknown HomeStatus'),
-              ),
-            );
-          }
-          return result;
-        },
-      );
-    });
+              );
+            }),
+          );
+        } else if (state.status == HomeStatus.busy) {
+          result = Container(
+            color: theme.backgroundColor,
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else if (state.status == HomeStatus.initial) {
+          result = Container(
+            color: theme.backgroundColor,
+            child: Center(
+              child: Text('HomeStatus.initial'),
+            ),
+          );
+        } else {
+          result = Container(
+            color: theme.backgroundColor,
+            child: Center(
+              child: Text('Unknown HomeStatus'),
+            ),
+          );
+        }
+        return result;
+      },
+    );
   }
 }
 
@@ -99,9 +81,59 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
-    HomeState data = cubit.state;
+    ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
+    ProfileState data = profileCubit.state;
     var theme = Theme.of(context);
+    List<Widget> actions = [];
+    if (data.notificationCount > 0) {
+      actions.add(Stack(
+        alignment: Alignment(1.0, -0.5),
+        children: [
+          Center(
+            child: IconButton(
+              tooltip: 'You have ${data.notificationCount} new notification(s)',
+              icon: Icon(Icons.notifications_none),
+              onPressed: () {
+                profileCubit.clearNotifications();
+              },
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: theme.backgroundColor,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.all(Radius.circular(12.0)),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(2),
+              child: Container(
+                // constraints: BoxConstraints(minWidth: 17, minHeight: 17),
+                decoration: BoxDecoration(
+                  color: theme.selectedRowColor,
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 5,
+                    vertical: 2,
+                  ),
+                  child: Text(
+                    '${data.notificationCount > 99 ? "99+" : data.notificationCount}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ));
+    }
+    actions.add(SizedBox(width: kHorizontalPadding));
+
     return AppBar(
       elevation: 0.0,
       leading: IconButton(
@@ -111,62 +143,12 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
           _scaffoldKey.currentState.openDrawer();
         },
       ),
-      actions: [
-        (data.notificationCount != null && data.notificationCount > 0)
-            ? Stack(
-                alignment: Alignment(1.0, -0.5),
-                children: [
-                  Center(
-                    child: IconButton(
-                      tooltip:
-                          'You have ${data.notificationCount} new notification(s)',
-                      icon: Icon(Icons.notifications_none),
-                      onPressed: () {
-                        cubit.clearNotifications();
-                      },
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: theme.backgroundColor,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(2),
-                      child: Container(
-                        // constraints: BoxConstraints(minWidth: 17, minHeight: 17),
-                        decoration: BoxDecoration(
-                          color: theme.selectedRowColor,
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 5,
-                            vertical: 2,
-                          ),
-                          child: Text(
-                            '${data.notificationCount > 99 ? "99+" : data.notificationCount}',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            : SizedBox.shrink(),
-        SizedBox(width: kHorizontalPadding),
-      ],
+      actions: actions,
     );
   }
 }
 
-class _Drawer extends StatelessWidget {
+class _DrawerContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // final screenHeight = MediaQuery.of(context).size.height;
@@ -216,7 +198,10 @@ class _DrawerBody extends StatelessWidget {
       ListTile(
         leading: Icon(Icons.restore_page),
         title: Text('Restore sections visibility'),
-        onTap: profileCubit.restoreSectionsVisibility,
+        onTap: () {
+          profileCubit.restoreSectionsVisibility();
+          navigator.pop();
+        },
       ),
     );
     menuItems.addAll(
@@ -292,8 +277,8 @@ class _UserProfileCard extends StatelessWidget {
 class _UserProfileAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
-    HomeState data = cubit.state;
+    ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
+    ProfileState data = profileCubit.state;
     // var theme = Theme.of(context);
     return FloatingActionButton(
       tooltip: 'Your profile',
@@ -301,7 +286,7 @@ class _UserProfileAvatar extends StatelessWidget {
       backgroundColor: theme.backgroundColor,
       // mini: true,
       onPressed: () {
-        cubit.addNotification();
+        profileCubit.addNotification();
       },
       child: CircleAvatar(
         radius: 26.0,
@@ -406,6 +391,39 @@ class _StaticSearchBar extends StatelessWidget {
   }
 }
 
+class _ScreenSection extends StatelessWidget {
+  _ScreenSection({this.index, this.text});
+
+  final int index;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
+    List<Widget> children = [];
+    if (profileCubit.state.visibleSections[index] == true) {
+      children.add(_Header(index: index, text: text));
+      if (index == 0) {
+        children.add(_CategoryGrid());
+      }
+      if (index == 1) {
+        children.add(_NewestPetsCarousel());
+      }
+      if (index == 2) {
+        children.add(_VetsCarousel());
+      }
+      if (index > 2) {
+        children.add(SizedBox.shrink());
+      }
+    } else {
+      children.add(SizedBox.shrink());
+    }
+    return Column(
+      children: children,
+    );
+  }
+}
+
 class _Header extends StatelessWidget {
   _Header({
     this.index,
@@ -418,7 +436,6 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
-    HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
     return Padding(
       padding: EdgeInsets.fromLTRB(kHorizontalPadding, 4.0, 8.0, 4.0),
       child: Row(
@@ -440,16 +457,10 @@ class _Header extends StatelessWidget {
               )
             ],
             onSelected: (value) {
-              homeCubit.addNotification();
+              profileCubit.addNotification();
               profileCubit.hideSection(index);
             },
           ),
-          // IconButton(
-          //   icon: Icon(Icons.more_horiz),
-          //   onPressed: () {
-          //     cubit.addNotification();
-          //   },
-          // ),
         ],
       ),
     );
@@ -591,7 +602,6 @@ class _NewestCarouselItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
-    HomeState data = cubit.state;
     var theme = Theme.of(context);
     // ConditionModel itemCondition = data.conditions
     //     .firstWhere((ConditionModel e) => e.id == item.condition);
@@ -709,9 +719,8 @@ class _NewestCarouselItem extends StatelessWidget {
 class _VetsCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
-    HomeState data = cubit.state;
-    // var theme = Theme.of(context);
+    HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
+    HomeState data = homeCubit.state;
     return Container(
       height: 120,
       margin: EdgeInsets.only(bottom: kHorizontalPadding),
@@ -730,13 +739,9 @@ class _VetsCarouselItem extends StatelessWidget {
   final VetModel item;
   @override
   Widget build(BuildContext context) {
-    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
+    HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
     var borderWidth = 2.0;
-    // var boxWidth = MediaQuery.of(context).size.width -
-    //     _kHorizontalPadding * 2 -
-    //     borderWidth * 4;
     return Container(
-      // width: boxWidth,
       margin: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
@@ -749,9 +754,8 @@ class _VetsCarouselItem extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16.0),
         onTap: () {
-          cubit.callToPhoneNumber(phone: item.phone);
+          homeCubit.callToPhoneNumber(phone: item.phone);
         },
-        // onLongPress: () {},
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Row(
