@@ -3,8 +3,6 @@ import 'package:graphql/client.dart';
 
 import '../local.dart';
 
-const _kGraphqlUri = 'https://cats.hasura.app/v1/graphql';
-const _kToken = 'Bearer $kDatabaseToken';
 // const _kEnableWebSockets = false;
 const _kTimeoutMillisec = 10000;
 
@@ -16,8 +14,8 @@ class DatabaseRepository {
   List<BreedModel> _cashedBreeds;
 
   static GraphQLClient _getClient() {
-    final httpLink = HttpLink(uri: _kGraphqlUri);
-    final authLink = AuthLink(getToken: () async => _kToken);
+    final httpLink = HttpLink(uri: kGraphqlUri);
+    final authLink = AuthLink(getToken: () async => 'Bearer $kDatabaseToken');
     final link = authLink.concat(httpLink);
     return GraphQLClient(
       cache: InMemoryCache(),
@@ -26,12 +24,12 @@ class DatabaseRepository {
   }
 
   Future<int> readNotificationCount() async {
-    var result = 2;
+    final result = 2;
     return result;
   }
 
   Future<String> readUserAvatarImage() async {
-    var result =
+    final result =
         'https://images.unsplash.com/photo-1602773890240-87ce74fc752e?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80';
     return result;
   }
@@ -40,7 +38,7 @@ class DatabaseRepository {
     if (fromCash && _cashedConditions != null) {
       return _cashedConditions;
     }
-    List<ConditionModel> result = [];
+    final List<ConditionModel> result = [];
     final options = QueryOptions(
       documentNode: _API.readConditions,
       fetchPolicy: FetchPolicy.noCache,
@@ -52,14 +50,14 @@ class DatabaseRepository {
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
-    // print(queryResult.data);
+    // out(queryResult.data);
     final dataItems =
         (queryResult.data['conditions'] as List).cast<Map<String, dynamic>>();
     for (final item in dataItems) {
       try {
         result.add(ConditionModel.fromJson(item));
       } catch (error) {
-        // print(error);
+        out(error);
         return Future.error(error);
       }
     }
@@ -71,7 +69,7 @@ class DatabaseRepository {
     if (fromCash && _cashedCategories != null) {
       return _cashedCategories;
     }
-    List<CategoryModel> result = [];
+    final List<CategoryModel> result = [];
     final options = QueryOptions(
       documentNode: _API.readPetCategories,
       fetchPolicy: FetchPolicy.noCache,
@@ -83,14 +81,14 @@ class DatabaseRepository {
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
-    // print(queryResult.data);
+    // out(queryResult.data);
     final dataItems =
         (queryResult.data['categories'] as List).cast<Map<String, dynamic>>();
     for (final item in dataItems) {
       try {
         result.add(CategoryModel.fromJson(item));
       } catch (error) {
-        // print(error);
+        out(error);
         return Future.error(error);
       }
     }
@@ -102,7 +100,7 @@ class DatabaseRepository {
     if (fromCash && _cashedBreeds != null) {
       return _cashedBreeds;
     }
-    List<BreedModel> result = [];
+    final List<BreedModel> result = [];
 
     final options = QueryOptions(
       documentNode: _API.readBreeds,
@@ -115,14 +113,14 @@ class DatabaseRepository {
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
-    // print(queryResult.data);
+    // out(queryResult.data);
     final dataItems =
         (queryResult.data['breeds'] as List).cast<Map<String, dynamic>>();
     for (final item in dataItems) {
       try {
         result.add(BreedModel.fromJson(item));
       } catch (error) {
-        // print(error);
+        out(error);
         return Future.error(error);
       }
     }
@@ -133,7 +131,7 @@ class DatabaseRepository {
   Future<List<PetModel>> searchPets(
       {String categoryId, String conditionId, String query, int limit = 20}) async {
     assert(categoryId != null || query != null);
-    List<PetModel> result = [];
+    final List<PetModel> result = [];
     final options = QueryOptions(
       documentNode: _API.searchPets,
       variables: {
@@ -152,16 +150,16 @@ class DatabaseRepository {
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
-    // print(queryResult.data);
+    // out(queryResult.data);
     final dataItems = (queryResult.data['get_pets_by_member_id'] as List)
         .cast<Map<String, dynamic>>();
     for (final item in dataItems) {
       try {
         result.add(PetModel.fromJson(item));
-        // print(PetModel.fromJson(item).breed.name);
-        // print(PetModel.fromJson(item).address);
+        // out(PetModel.fromJson(item).breed.name);
+        // out(PetModel.fromJson(item).address);
       } catch (error) {
-        // print(error);
+        out(error);
         return Future.error(error);
       }
     }
@@ -169,7 +167,7 @@ class DatabaseRepository {
   }
 
   Future<List<PetModel>> readNewestPets() async {
-    List<PetModel> result = [];
+    final List<PetModel> result = [];
     final options = QueryOptions(
       documentNode: _API.readNewestPets,
       variables: {
@@ -184,14 +182,14 @@ class DatabaseRepository {
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
-    // print(queryResult.data);
+    // out(queryResult.data);
     final dataItems = (queryResult.data['get_pets_by_member_id'] as List)
         .cast<Map<String, dynamic>>();
     for (final item in dataItems) {
       try {
         result.add(PetModel.fromJson(item));
       } catch (error) {
-        // print(error);
+        out(error);
         return Future.error(error);
       }
     }
@@ -201,7 +199,7 @@ class DatabaseRepository {
   }
 
   Future<List<VetModel>> readNearestVets() async {
-    List<VetModel> result = [];
+    final List<VetModel> result = [];
     final options = QueryOptions(
       documentNode: _API.readNearestVets,
       fetchPolicy: FetchPolicy.noCache,
@@ -213,14 +211,14 @@ class DatabaseRepository {
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
-    // print(queryResult.data);
+    // out(queryResult.data);
     final dataItems =
         (queryResult.data['vets'] as List).cast<Map<String, dynamic>>();
     for (final item in dataItems) {
       try {
         result.add(VetModel.fromJson(item));
       } catch (error) {
-        // print(error);
+        out(error);
         return Future.error(error);
       }
     }
@@ -272,16 +270,16 @@ class DatabaseRepository {
         .mutate(options)
         .timeout(Duration(milliseconds: _kTimeoutMillisec));
     if (mutationResult.hasException) {
-      // print(mutationResult.exception);
+      // out(mutationResult.exception);
       throw mutationResult.exception;
     }
-    // print(mutationResult.data);
+    // out(mutationResult.data);
     final dataItem =
         mutationResult.data['insert_pet_one'] as Map<String, dynamic>;
     try {
       return PetModel.fromJson(dataItem);
     } catch (error) {
-      // print(error);
+      out(error);
       return Future.error(error);
     }
   }
@@ -389,13 +387,13 @@ class _API {
     }
   ''')..definitions.addAll(fragments.definitions);
 
-  static final readAllPets = gql(r'''
-    query ReadAllPets {
-      pets {
-        ...PetFields
-      }
-    }
-  ''')..definitions.addAll(fragments.definitions);
+  // static final readAllPets = gql(r'''
+  //   query ReadAllPets {
+  //     pets {
+  //       ...PetFields
+  //     }
+  //   }
+  // ''')..definitions.addAll(fragments.definitions);
 
   static final readBreeds = gql(r'''
     query ReadBreeds {

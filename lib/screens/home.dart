@@ -18,7 +18,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (BuildContext context, HomeState state) {
-        HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
+        final HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
         Widget result;
         if (state.status == HomeStatus.ready ||
             state.status == HomeStatus.reload) {
@@ -81,10 +81,10 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
-    ProfileState data = profileCubit.state;
-    var theme = Theme.of(context);
-    List<Widget> actions = [];
+    final ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
+    final ProfileState data = profileCubit.state;
+    final theme = Theme.of(context);
+    final List<Widget> actions = [];
     if (data.notificationCount > 0) {
       actions.add(Stack(
         alignment: Alignment(1.0, -0.5),
@@ -101,7 +101,6 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
           Container(
             decoration: BoxDecoration(
               color: theme.backgroundColor,
-              shape: BoxShape.rectangle,
               borderRadius: BorderRadius.all(Radius.circular(12.0)),
             ),
             child: Padding(
@@ -110,7 +109,6 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
                 // constraints: BoxConstraints(minWidth: 17, minHeight: 17),
                 decoration: BoxDecoration(
                   color: theme.selectedRowColor,
-                  shape: BoxShape.rectangle,
                   borderRadius: BorderRadius.all(Radius.circular(10.0)),
                 ),
                 child: Padding(
@@ -165,7 +163,7 @@ class _DrawerContent extends StatelessWidget {
         //       ),
         LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        // print('constraints.maxHeight = ${constraints.maxHeight}');
+        // out('constraints.maxHeight = ${constraints.maxHeight}');
         return SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: constraints.maxHeight),
@@ -189,8 +187,8 @@ class _DrawerContent extends StatelessWidget {
 class _DrawerBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
-    List<Widget> menuItems = [];
+    final ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
+    final List<Widget> menuItems = [];
     menuItems.add(
       _UserProfileCard(),
     );
@@ -277,24 +275,22 @@ class _UserProfileCard extends StatelessWidget {
 class _UserProfileAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
-    ProfileState data = profileCubit.state;
-    // var theme = Theme.of(context);
+    final ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
+    final ProfileState data = profileCubit.state;
     return FloatingActionButton(
       tooltip: 'Your profile',
       heroTag: 'HomeScreen_UserProfile',
       backgroundColor: theme.backgroundColor,
-      // mini: true,
       onPressed: () {
         profileCubit.addNotification();
       },
       child: CircleAvatar(
         radius: 26.0,
         backgroundColor: theme.backgroundColor,
-        backgroundImage:
-            (data.userAvatarImage != null && data.userAvatarImage.isNotEmpty)
-                ? NetworkImage(data.userAvatarImage)
-                : AssetImage('${kAssetPath}placeholder_avatar.png'),
+        backgroundImage: getNetworkOrAssetImage(
+          url: data.userAvatarImage,
+          asset: '${kAssetPath}placeholder_avatar.png',
+        ),
       ),
     );
   }
@@ -366,7 +362,6 @@ class _StaticSearchBar extends StatelessWidget {
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(32.0),
               bottomLeft: Radius.circular(32.0),
@@ -399,8 +394,8 @@ class _ScreenSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
-    List<Widget> children = [];
+    final ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
+    final List<Widget> children = [];
     if (profileCubit.state.visibleSections[index] == true) {
       children.add(_Header(index: index, text: text));
       if (index == 0) {
@@ -435,7 +430,7 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
+    final ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
     return Padding(
       padding: EdgeInsets.fromLTRB(kHorizontalPadding, 4.0, 8.0, 4.0),
       child: Row(
@@ -470,12 +465,12 @@ class _Header extends StatelessWidget {
 class _CategoryGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
-    HomeState data = cubit.state;
+    final HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
+    final HomeState data = cubit.state;
     final screenWidth = MediaQuery.of(context).size.width;
-    var itemHeight = 60;
-    var itemWidth = (screenWidth - 3 * kHorizontalPadding) / 2;
-    var innerPadding = itemWidth > 160 ? 16.0 : 8.0;
+    final itemHeight = 60;
+    final itemWidth = (screenWidth - 3 * kHorizontalPadding) / 2;
+    final innerPadding = itemWidth > 160 ? 16.0 : 8.0;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
       child: GridView.count(
@@ -513,7 +508,6 @@ class _CategoryGridItem extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          shape: BoxShape.rectangle,
           border: Border.all(
             color: theme.primaryColorLight,
             width: 2.0,
@@ -575,11 +569,11 @@ class _CategoryGridItem extends StatelessWidget {
 class _NewestPetsCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
-    HomeState data = cubit.state;
+    final HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
+    final HomeState data = cubit.state;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
-      child: Container(
+      child: SizedBox(
         height: 255,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
@@ -601,10 +595,8 @@ class _NewestCarouselItem extends StatelessWidget {
   final PetModel item;
   @override
   Widget build(BuildContext context) {
-    HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
-    var theme = Theme.of(context);
-    // ConditionModel itemCondition = data.conditions
-    //     .firstWhere((ConditionModel e) => e.id == item.condition);
+    final HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
+    final theme = Theme.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final cardWidth = (screenWidth - (kHorizontalPadding * 4)) / 2;
     return GestureDetector(
@@ -629,7 +621,7 @@ class _NewestCarouselItem extends StatelessWidget {
             Stack(
               children: [
                 Hero(
-                  tag: '${item.id}',
+                  tag: item.id,
                   child: Container(
                     height: 150,
                     decoration: BoxDecoration(
@@ -678,7 +670,7 @@ class _NewestCarouselItem extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
                       child: Text(
-                        item.condition.name ?? item.condition,
+                        item.condition.name,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: item.condition.textColor ?? theme.primaryColor,
@@ -719,8 +711,8 @@ class _NewestCarouselItem extends StatelessWidget {
 class _VetsCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
-    HomeState data = homeCubit.state;
+    final HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
+    final HomeState data = homeCubit.state;
     return Container(
       height: 120,
       margin: EdgeInsets.only(bottom: kHorizontalPadding),
@@ -739,12 +731,11 @@ class _VetsCarouselItem extends StatelessWidget {
   final VetModel item;
   @override
   Widget build(BuildContext context) {
-    HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
-    var borderWidth = 2.0;
+    final HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
+    final borderWidth = 2.0;
     return Container(
       margin: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
       decoration: BoxDecoration(
-        shape: BoxShape.rectangle,
         border: Border.all(
           color: theme.primaryColorLight,
           width: borderWidth,
@@ -760,14 +751,14 @@ class _VetsCarouselItem extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Row(
             children: [
-              Container(
+              SizedBox(
                 width: 100,
                 child: Image(
                   image: NetworkImage(item.logoImage),
                   fit: BoxFit.scaleDown,
                 ),
               ),
-              SizedBox(width: 16.0),
+              SizedBox(width: 16),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -806,7 +797,6 @@ class _VetsCarouselItem extends StatelessWidget {
                         color: item.isOpenNow
                             ? Colors.green[100]
                             : Colors.blue[100],
-                        shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       child: Padding(

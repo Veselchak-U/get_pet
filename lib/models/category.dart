@@ -21,6 +21,7 @@ class CategoryModel {
   @JsonKey(fromJson: _colorFromString, toJson: _colorToString)
   Color backgroundColor;
 
+  @override
   String toString() => name;
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) =>

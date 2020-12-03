@@ -77,11 +77,11 @@ class _AddPetBody extends StatelessWidget {
 class _AddPhotoButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    AddPetCubit cubit = BlocProvider.of<AddPetCubit>(context);
+    final AddPetCubit cubit = BlocProvider.of<AddPetCubit>(context);
     return ElevatedButton(
       onPressed: () {
         // изменяем URL фото "извне" формы
-        cubit.setExternalUpdate(true);
+        cubit.setExternalUpdate(externalUpdate: true);
         cubit.updateNewPet(cubit.state.newPet.copyWith(
             photos:
                 'https://cdn.pixabay.com/photo/2014/11/30/14/11/cat-551554_960_720.jpg'));
@@ -122,14 +122,14 @@ class _AddPetFormState extends State<_AddPetForm> {
 
   @override
   Widget build(BuildContext context) {
-    PetModel newPet = cubit.state.newPet;
+    final PetModel newPet = cubit.state.newPet;
     // при изменении URL фото "извне" обновляем содержимое соответствующего поля
     return BlocListener<AddPetCubit, AddPetState>(
       listenWhen: (AddPetState previous, AddPetState current) =>
-          (current.externalUpdate &&
-              previous.newPet.photos != current.newPet.photos),
+          current.externalUpdate &&
+          previous.newPet.photos != current.newPet.photos,
       listener: (BuildContext context, AddPetState state) {
-        cubit.setExternalUpdate(false);
+        cubit.setExternalUpdate(externalUpdate: false);
         _controller.text = state.newPet.photos ?? '';
       },
       child: Form(
@@ -183,9 +183,9 @@ class _AddPetFormState extends State<_AddPetForm> {
                 helperText: '',
               ),
               focusNode: _breedFocusNode,
-              value: (cubit.state.newPet.breed?.name == null
+              value: cubit.state.newPet.breed?.name == null
                   ? null
-                  : cubit.state.newPet.breed),
+                  : cubit.state.newPet.breed,
               items: _getDropdownItemsFromList(cubit.state.breedsByCategory),
               onChanged: (BreedModel value) {
                 cubit.updateNewPet(newPet.copyWith(breed: value));
@@ -308,7 +308,7 @@ class _AddPetFormState extends State<_AddPetForm> {
               child: ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
-                    print('Form OK');
+                    out('Form OK');
                     cubit.addPet();
                     navigator.pop();
                   }
@@ -334,7 +334,7 @@ class _AddPetFormState extends State<_AddPetForm> {
         list.length,
         (index) => DropdownMenuItem<T>(
               value: list[index],
-              child: Text('${list[index].toString()}'),
+              child: Text(list[index].toString()),
             ));
   }
 }

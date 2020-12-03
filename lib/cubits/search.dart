@@ -27,7 +27,7 @@ class SearchCubit extends Cubit<SearchState> {
       ));
       _searchPet();
     } catch (error) {
-      print(error);
+      out(error);
       result = false;
       return Future.error(error);
     }

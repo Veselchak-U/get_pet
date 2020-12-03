@@ -25,7 +25,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         userAvatarImage: userAvatarImage,
       ));
     } catch (error) {
-      print(error);
+      out(error);
       result = false;
       return Future.error(error);
     }
@@ -41,13 +41,13 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   void hideSection(int index) {
-    var newVisibleSections = [...state.visibleSections];
+    final newVisibleSections = [...state.visibleSections];
     newVisibleSections[index] = false;
     emit(state.copyWith(visibleSections: newVisibleSections));
   }
 
   void restoreSectionsVisibility() {
-    var newVisibleSections = const [true, true, true];
+    final newVisibleSections = const [true, true, true];
     emit(state.copyWith(visibleSections: newVisibleSections));
   }
 }

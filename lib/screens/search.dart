@@ -57,11 +57,10 @@ class _SearchBody extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           } else {
-            SearchCubit cubit = BlocProvider.of<SearchCubit>(context);
+            final SearchCubit cubit = BlocProvider.of<SearchCubit>(context);
             return Stack(
               children: [
                 Column(
-                  mainAxisSize: MainAxisSize.max,
                   children: [
                     _searchBar,
                     _ChipFilter<CategoryModel>(
@@ -123,7 +122,6 @@ class _SearchBarState extends State<_SearchBar> {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          shape: BoxShape.rectangle,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(32.0),
             bottomLeft: Radius.circular(32.0),
@@ -191,7 +189,7 @@ class _ChipFilter<T> extends StatelessWidget {
             (index) => Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: FilterChip(
-                    label: Text('${items[index].toString()}'),
+                    label: Text(items[index].toString()),
                     elevation: 2.0,
                     selectedColor: Theme.of(context).accentColor,
                     selected: filter.toString() == items[index].toString(),
@@ -208,7 +206,7 @@ class _ChipFilter<T> extends StatelessWidget {
 class _PetGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SearchCubit cubit = BlocProvider.of<SearchCubit>(context);
+    final SearchCubit cubit = BlocProvider.of<SearchCubit>(context);
     if (cubit.state.foundPets.isEmpty) {
       return Expanded(
         child: Center(
@@ -249,8 +247,7 @@ class _PetGridItem extends StatelessWidget {
   final PetModel item;
   @override
   Widget build(BuildContext context) {
-    SearchCubit cubit = BlocProvider.of<SearchCubit>(context);
-    var theme = Theme.of(context);
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: () {
         // navigator.push(DetailScreen(cubit: cubit, item: item).getRoute());
@@ -272,7 +269,7 @@ class _PetGridItem extends StatelessWidget {
             Stack(
               children: [
                 Hero(
-                  tag: '${item.id}',
+                  tag: item.id,
                   child: Container(
                     height: 150,
                     decoration: BoxDecoration(
@@ -321,7 +318,7 @@ class _PetGridItem extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
                       child: Text(
-                        item.condition.name ?? item.condition,
+                        item.condition.name,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: item.condition.textColor ?? theme.primaryColor,

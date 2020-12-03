@@ -58,7 +58,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 children: [
                   FlexibleSpaceBar(
                     background: Hero(
-                      tag: '${item.id}',
+                      tag: item.id,
                       child: Container(
                         decoration: BoxDecoration(
                           image: DecorationImage(
@@ -105,9 +105,9 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   void _swapItem({DragEndDetails details, PetModel item}) {
-    var items = cubit.state.newestPets;
+    final items = cubit.state.newestPets;
     var needUpdate = false;
-    var newItemIndex;
+    int newItemIndex;
     if (details.primaryVelocity > 0) {
       // swipe left
       newItemIndex = items.indexOf(item) - 1;
@@ -122,7 +122,7 @@ class _DetailScreenState extends State<DetailScreen> {
       }
     }
     if (needUpdate) {
-      // print('newIndex = $newIndex');
+      // out('newIndex = $newIndex');
       setState(() {
         itemId = items[newItemIndex].id;
       });
@@ -141,7 +141,6 @@ class _SliderCover extends StatelessWidget {
         height: 40,
         decoration: BoxDecoration(
           color: theme.backgroundColor,
-          shape: BoxShape.rectangle,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(40.0),
             topRight: Radius.circular(40.0),
@@ -153,7 +152,6 @@ class _SliderCover extends StatelessWidget {
             height: 4,
             decoration: BoxDecoration(
               color: theme.textSelectionColor,
-              shape: BoxShape.rectangle,
               borderRadius: BorderRadius.all(
                 Radius.circular(2),
               ),
@@ -173,25 +171,20 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
+    final theme = Theme.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      // crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Column(
-          // mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.only(left: 0),
-              child: Text(
-                item.breed.name,
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.0),
-              ),
+            Text(
+              item.breed.name,
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.0),
             ),
             SizedBox(height: 8),
             Row(
@@ -256,7 +249,6 @@ class _DetailsItem extends StatelessWidget {
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
-          shape: BoxShape.rectangle,
           border: Border.all(
             color: theme.primaryColorLight,
             width: 2.0,
@@ -331,10 +323,10 @@ class _Contact extends StatelessWidget {
             child: CircleAvatar(
               radius: 26.0,
               backgroundColor: theme.backgroundColor,
-              backgroundImage:
-                  (item.member.photo != null && item.member.photo.isNotEmpty)
-                      ? NetworkImage(item.member.photo)
-                      : AssetImage('${kAssetPath}placeholder_avatar.png'),
+              backgroundImage: getNetworkOrAssetImage(
+                url: item.member.photo,
+                asset: '${kAssetPath}placeholder_avatar.png',
+              ),
             ),
           ),
           SizedBox(width: 8),

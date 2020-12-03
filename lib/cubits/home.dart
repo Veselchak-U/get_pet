@@ -35,7 +35,7 @@ class HomeCubit extends Cubit<HomeState> {
         nearestVets: nearestVets,
       ));
     } catch (error) {
-      print(error);
+      out(error);
       result = false;
       return Future.error(error);
     }
@@ -46,7 +46,7 @@ class HomeCubit extends Cubit<HomeState> {
     if (phone == null || phone.isEmpty) {
       return;
     } else {
-      var url = 'tel:$phone';
+      final url = 'tel:$phone';
       if (await canLaunch(url)) {
         await launch(url);
       } else {
@@ -60,10 +60,10 @@ class HomeCubit extends Cubit<HomeState> {
       return;
     } else {
       // local changes
-      List<PetModel> newPets = [...state.newestPets];
-      PetModel changedPet = newPets.firstWhere((PetModel e) => e.id == petId);
-      PetModel newPet = changedPet.copyWith(liked: !changedPet.liked);
-      var index = newPets.indexOf(changedPet);
+      final List<PetModel> newPets = [...state.newestPets];
+      final PetModel changedPet = newPets.firstWhere((PetModel e) => e.id == petId);
+      final PetModel newPet = changedPet.copyWith(liked: !changedPet.liked);
+      final index = newPets.indexOf(changedPet);
       newPets[index] = newPet;
       emit(state.copyWith(newestPets: newPets));
       // database changes

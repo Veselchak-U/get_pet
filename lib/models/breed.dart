@@ -14,6 +14,7 @@ class BreedModel {
   final String categoryId;
   final String name;
 
+  @override
   String toString() => name;
 
   factory BreedModel.fromJson(Map<String, dynamic> json) =>

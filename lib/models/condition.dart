@@ -19,6 +19,7 @@ class ConditionModel {
   @JsonKey(fromJson: _colorFromString, toJson: _colorToString)
   final Color backgroundColor;
 
+  @override
   String toString() => name;
 
   factory ConditionModel.fromJson(Map<String, dynamic> json) =>
