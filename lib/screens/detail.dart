@@ -256,13 +256,13 @@ class _DetailsItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.0),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
           child: Column(
             children: [
               Text(value,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   overflow: TextOverflow.ellipsis),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(name,
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
                   overflow: TextOverflow.ellipsis),
