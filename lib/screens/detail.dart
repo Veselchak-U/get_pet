@@ -11,7 +11,6 @@ class DetailScreen extends StatefulWidget {
     return buildRoute<T>(
       '/detail?id=${item.id}',
       builder: (_) => this,
-      fullscreenDialog: false,
     );
   }
 

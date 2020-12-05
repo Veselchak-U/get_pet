@@ -7,7 +7,6 @@ class AddPetScreen extends StatelessWidget {
     return buildRoute<T>(
       '/add_pet',
       builder: (_) => this,
-      fullscreenDialog: false,
     );
   }
 

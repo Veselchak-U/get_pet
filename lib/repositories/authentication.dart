@@ -10,9 +10,9 @@ class AuthenticationRepository {
   /// the authentication state changes.
   ///
   /// Emits [User.empty] if the user is not authenticated.
-  Stream<UserModel> get user {
+  Stream<UserModel> get userChanges {
     return _firebaseAuth.authStateChanges().map((User firebaseUser) {
-      return firebaseUser == null ? UserModel() : firebaseUser.toUserModel;
+      return firebaseUser == null ? UserModel.empty : firebaseUser.toUserModel;
     });
   }
 
@@ -32,6 +32,21 @@ class AuthenticationRepository {
       throw LogInWithGoogleFailure();
     }
   }
+
+/// Signs out the current user which will emit
+  /// [User.empty] from the [userChanges] Stream.
+  ///
+  /// Throws a [LogOutFailure] if an exception occurs.
+  Future<void> logOut() async {
+    try {
+      await Future.wait([
+        _firebaseAuth.signOut(),
+        _googleSignIn.signOut(),
+      ]);
+    } on Exception {
+      throw LogOutFailure();
+    }
+  }
 }
 
 extension on User {
@@ -42,3 +57,6 @@ extension on User {
 
 /// Thrown during the sign in with google process if a failure occurs.
 class LogInWithGoogleFailure implements Exception {}
+
+/// Thrown during the logout process if a failure occurs.
+class LogOutFailure implements Exception {}

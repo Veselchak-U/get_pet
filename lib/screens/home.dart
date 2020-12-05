@@ -9,8 +9,6 @@ class HomeScreen extends StatelessWidget {
     return buildRoute<T>(
       '/home',
       builder: (_) => this,
-      fullscreenDialog: false,
-      isInitialRoute: true,
     );
   }
 
@@ -237,7 +235,8 @@ class _DrawerButton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: ElevatedButton(
         onPressed: () {
-          navigator.pop();
+          // navigator.pop();
+          RepositoryProvider.of<AuthenticationRepository>(context).logOut();
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: kHorizontalPadding),

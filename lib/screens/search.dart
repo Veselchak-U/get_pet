@@ -11,7 +11,6 @@ class SearchScreen extends StatelessWidget {
     return buildRoute<T>(
       '/search?id=${category?.id}',
       builder: (_) => this,
-      fullscreenDialog: false,
     );
   }
 

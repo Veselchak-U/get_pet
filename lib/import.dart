@@ -18,4 +18,6 @@ export 'repositories/database.dart';
 export 'screens/add_pet.dart';
 export 'screens/detail.dart';
 export 'screens/home.dart';
+export 'screens/login.dart';
 export 'screens/search.dart';
+export 'screens/splash.dart';
