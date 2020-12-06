@@ -29,6 +29,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         user: UserModel.empty,
       );
     } else {
+      // out('user.displayName = ${user.displayName}');
+      // out('user.photoURL = ${user.photoURL}');
       newState = state.copyWith(
         status: AuthenticationStatus.authenticated,
         user: user,

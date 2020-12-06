@@ -1,3 +1,4 @@
+import 'package:get_pet/cubits/authentication.dart';
 import 'package:get_pet/import.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -250,6 +251,8 @@ class _DrawerButton extends StatelessWidget {
 class _UserProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final AuthenticationCubit authenticationCubit =
+        BlocProvider.of<AuthenticationCubit>(context);
     return Container(
       height: 120,
       color: Theme.of(context).primaryColorLight,
@@ -260,13 +263,13 @@ class _UserProfileCard extends StatelessWidget {
             _UserProfileAvatar(),
             SizedBox(width: 16),
             Text(
-              'John Doe',
+              authenticationCubit.state.user.displayName,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
       ),
-      //Placeholder(),
     );
   }
 }
@@ -274,20 +277,18 @@ class _UserProfileCard extends StatelessWidget {
 class _UserProfileAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
-    final ProfileState data = profileCubit.state;
+    final AuthenticationCubit authenticationCubit =
+        BlocProvider.of<AuthenticationCubit>(context);
     return FloatingActionButton(
       tooltip: 'Your profile',
       heroTag: 'HomeScreen_UserProfile',
       backgroundColor: theme.backgroundColor,
-      onPressed: () {
-        profileCubit.addNotification();
-      },
+      onPressed: null,
       child: CircleAvatar(
         radius: 26.0,
         backgroundColor: theme.backgroundColor,
         backgroundImage: getNetworkOrAssetImage(
-          url: data.userAvatarImage,
+          url: authenticationCubit.state.user.photoURL,
           asset: '${kAssetPath}placeholder_avatar.png',
         ),
       ),
