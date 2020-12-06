@@ -6,18 +6,18 @@ import 'package:get_pet/import.dart';
 part 'profile.g.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
-  ProfileCubit({this.repo}) : super(const ProfileState());
+  ProfileCubit({this.dataRepository}) : super(const ProfileState());
 
-  final DatabaseRepository repo;
+  final DatabaseRepository dataRepository;
 
   Future<bool> load() async {
     var result = true;
     emit(state.copyWith(status: ProfileStatus.busy));
     try {
-      final int notificationCount = await repo.readNotificationCount();
+      final int notificationCount = await dataRepository.readNotificationCount();
       final String userName =
           'John Do Junior'; //await repo.readUserAvatarImage();
-      final String userAvatarImage = await repo.readUserAvatarImage();
+      final String userAvatarImage = await dataRepository.readUserAvatarImage();
       emit(state.copyWith(
         status: ProfileStatus.ready,
         notificationCount: notificationCount,

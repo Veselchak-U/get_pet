@@ -8,11 +8,11 @@ import 'package:get_pet/import.dart';
 part 'authentication.g.dart';
 
 class AuthenticationCubit extends Cubit<AuthenticationState> {
-  AuthenticationCubit({this.repo}) : super(const AuthenticationState()) {
-    _userSubscription = repo.userChanges.listen(onUserChange);
+  AuthenticationCubit({this.authRepository}) : super(const AuthenticationState()) {
+    _userSubscription = authRepository.userChanges.listen(onUserChange);
   }
 
-  final AuthenticationRepository repo;
+  final AuthenticationRepository authRepository;
   StreamSubscription<UserModel> _userSubscription;
 
   @override
@@ -40,7 +40,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   }
 
   void requestLogout() {
-    repo.logOut();
+    authRepository.logOut();
   }
 }
 

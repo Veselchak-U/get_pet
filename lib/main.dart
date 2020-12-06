@@ -1,5 +1,4 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:get_pet/cubits/authentication.dart';
 import 'package:get_pet/import.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,36 +11,49 @@ void main() async {
   } catch (error) {
     out(error);
   }
-  runApp(App());
+  final authRepository = AuthenticationRepository();
+  final dataRepository = DatabaseRepository(authRepository: authRepository);
+  runApp(App(
+    authRepository: authRepository,
+    dataRepository: dataRepository,
+  ));
 }
 
 class App extends StatelessWidget {
+  App({
+    @required this.authRepository,
+    @required this.dataRepository,
+  });
+
+  final AuthenticationRepository authRepository;
+  final DatabaseRepository dataRepository;
+
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider(
-          create: (context) => AuthenticationRepository(),
+        RepositoryProvider.value(
+          value: authRepository,
         ),
-        RepositoryProvider(
-          create: (context) => DatabaseRepository(),
+        RepositoryProvider.value(
+          value: dataRepository,
         ),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider<AuthenticationCubit>(
             create: (context) => AuthenticationCubit(
-              repo: RepositoryProvider.of<AuthenticationRepository>(context),
+              authRepository: authRepository,
             ),
           ),
           BlocProvider<ProfileCubit>(
             create: (context) => ProfileCubit(
-              repo: RepositoryProvider.of<DatabaseRepository>(context),
+              dataRepository: dataRepository,
             )..load(),
           ),
           BlocProvider<HomeCubit>(
             create: (context) => HomeCubit(
-              repo: RepositoryProvider.of<DatabaseRepository>(context),
+              dataRepository: dataRepository,
             )..load(),
           ),
         ],
@@ -78,7 +90,7 @@ class AppView extends StatelessWidget {
                 LoginScreen().getRoute(),
                 (Route route) => false,
               );
-            } else {}
+            } else {} // AuthenticationStatus.unknown
           },
           child: child,
         );

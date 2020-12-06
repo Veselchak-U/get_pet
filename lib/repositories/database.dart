@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get_pet/import.dart';
 import 'package:graphql/client.dart';
 
@@ -7,15 +8,26 @@ import '../local.dart';
 const _kTimeoutMillisec = 10000;
 
 class DatabaseRepository {
-  final GraphQLClient _client = _getClient();
+  DatabaseRepository({@required this.authRepository}) {
+    _client = _getClient();
+  }
+
+  final AuthenticationRepository authRepository;
+  GraphQLClient _client;
 
   List<CategoryModel> _cashedCategories;
   List<ConditionModel> _cashedConditions;
   List<BreedModel> _cashedBreeds;
 
-  static GraphQLClient _getClient() {
-    final httpLink = HttpLink(uri: kGraphqlUri);
-    final authLink = AuthLink(getToken: () async => 'Bearer $kDatabaseToken');
+  GraphQLClient _getClient() {
+    final httpLink = HttpLink(uri: kGraphQLEndpoint);
+    final authLink = AuthLink(
+      getToken: () async {
+        final idToken = await authRepository.getIdToken(forceRefresh: true);
+        out(idToken);
+        return 'Bearer $idToken';
+      },
+    );
     final link = authLink.concat(httpLink);
     return GraphQLClient(
       cache: InMemoryCache(),
@@ -129,13 +141,17 @@ class DatabaseRepository {
   }
 
   Future<List<PetModel>> searchPets(
-      {String categoryId, String conditionId, String query, int limit = 20}) async {
+      {String categoryId,
+      String conditionId,
+      String query,
+      int limit = 20}) async {
     assert(categoryId != null || query != null);
     final List<PetModel> result = [];
     final options = QueryOptions(
       documentNode: _API.searchPets,
       variables: {
-        'member_id': kDatabaseUserId,
+        // 'member_id': kDatabaseUserId,
+        'member_id': authRepository.currentUser.id,
         'category_id': categoryId,
         'condition_id': conditionId,
         'query': '%$query%',
@@ -171,7 +187,8 @@ class DatabaseRepository {
     final options = QueryOptions(
       documentNode: _API.readNewestPets,
       variables: {
-        'member_id': kDatabaseUserId,
+        // 'member_id': kDatabaseUserId,
+        'member_id': authRepository.currentUser.id,
       },
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
@@ -231,7 +248,8 @@ class DatabaseRepository {
     final options = MutationOptions(
       documentNode: isLike ? _API.insertPetLike : _API.deletePetLike,
       variables: {
-        'member_id': kDatabaseUserId,
+        // 'member_id': kDatabaseUserId,
+        'member_id': authRepository.currentUser.id,
         'pet_id': petId,
       },
       fetchPolicy: FetchPolicy.noCache,
@@ -254,7 +272,8 @@ class DatabaseRepository {
         'category_id': newPet.category.id,
         'breed_id': newPet.breed.id,
         'condition_id': newPet.condition.id,
-        'member_id': kDatabaseUserId,
+        // 'member_id': kDatabaseUserId,
+        'member_id': authRepository.currentUser.id,
         'coloring': newPet.coloring,
         'age': newPet.age,
         'weight': newPet.weight,

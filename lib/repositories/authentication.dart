@@ -6,13 +6,25 @@ class AuthenticationRepository {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn.standard();
 
+  UserModel _currentUser;
+  UserModel get currentUser => _currentUser;
+
+  Future<String> getIdToken({bool forceRefresh}) {
+    out('AuthenticationRepository: getIdToken()');
+    return _firebaseAuth.currentUser.getIdToken(forceRefresh);
+  }
+
   /// Stream of [User] which will emit the current user when
   /// the authentication state changes.
   ///
   /// Emits [User.empty] if the user is not authenticated.
   Stream<UserModel> get userChanges {
     return _firebaseAuth.authStateChanges().map((User firebaseUser) {
-      return firebaseUser == null ? UserModel.empty : firebaseUser.toUserModel;
+      final newUser =
+          firebaseUser == null ? UserModel.empty : firebaseUser.toUserModel;
+      _currentUser = newUser;
+      out('AuthenticationRepository: userChanges()');
+      return newUser;
     });
   }
 
@@ -33,7 +45,7 @@ class AuthenticationRepository {
     }
   }
 
-/// Signs out the current user which will emit
+  /// Signs out the current user which will emit
   /// [User.empty] from the [userChanges] Stream.
   ///
   /// Throws a [LogOutFailure] if an exception occurs.

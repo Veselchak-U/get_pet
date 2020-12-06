@@ -2,6 +2,7 @@ export 'common/helper.dart';
 export 'common/route.dart';
 export 'common/theme.dart';
 export 'cubits/add_pet.dart';
+export 'cubits/authentication.dart';
 export 'cubits/home.dart';
 export 'cubits/profile.dart';
 export 'cubits/search.dart';

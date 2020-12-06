@@ -7,9 +7,9 @@ import 'package:url_launcher/url_launcher.dart';
 part 'home.g.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  HomeCubit({this.repo}) : super(const HomeState());
+  HomeCubit({this.dataRepository}) : super(const HomeState());
 
-  final DatabaseRepository repo;
+  final DatabaseRepository dataRepository;
 
   // TODO: subscribe to update newestPets from repo
 
@@ -22,11 +22,11 @@ class HomeCubit extends Cubit<HomeState> {
     }
     try {
       final List<ConditionModel> conditions =
-          await repo.readConditions(fromCash: false);
+          await dataRepository.readConditions(fromCash: false);
       final List<CategoryModel> petCategories =
-          await repo.readCategories(fromCash: false);
-      final List<PetModel> newestPets = await repo.readNewestPets();
-      final List<VetModel> nearestVets = await repo.readNearestVets();
+          await dataRepository.readCategories(fromCash: false);
+      final List<PetModel> newestPets = await dataRepository.readNewestPets();
+      final List<VetModel> nearestVets = await dataRepository.readNearestVets();
       emit(state.copyWith(
         status: HomeStatus.ready,
         conditions: conditions,
@@ -67,7 +67,7 @@ class HomeCubit extends Cubit<HomeState> {
       newPets[index] = newPet;
       emit(state.copyWith(newestPets: newPets));
       // database changes
-      repo.updatePetLike(petId: petId, isLike: newPet.liked);
+      dataRepository.updatePetLike(petId: petId, isLike: newPet.liked);
     }
   }
 }
