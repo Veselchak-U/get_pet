@@ -14,18 +14,37 @@ class AuthenticationRepository {
     return _firebaseAuth.currentUser.getIdToken(forceRefresh);
   }
 
+  Future<void> setUserIdFromToken(Future<IdTokenResult> tokenResult) async {
+    await tokenResult;
+  }
+
   /// Stream of [User] which will emit the current user when
   /// the authentication state changes.
   ///
   /// Emits [User.empty] if the user is not authenticated.
   Stream<UserModel> get userChanges {
     return _firebaseAuth.authStateChanges().map((User firebaseUser) {
+      out('AuthenticationRepository: userChanges()');
       final newUser =
           firebaseUser == null ? UserModel.empty : firebaseUser.toUserModel;
       _currentUser = newUser;
-      out('AuthenticationRepository: userChanges()');
+      setHasuraUserId();
       return newUser;
     });
+  }
+
+  void setHasuraUserId() {
+    if (_firebaseAuth.currentUser != null) {
+      _firebaseAuth.currentUser.getIdTokenResult().then((tokenResult) {
+        // out('tokenResult = ${tokenResult.claims}');
+        final String hasuraUserId =
+            tokenResult.claims['https://hasura.io/jwt/claims']
+                ['x-hasura-user-id'] as String;
+        // out('hasuraUserId = $hasuraUserId');
+        _currentUser = _currentUser.copyWith(id: hasuraUserId);
+        out('_currentUser.id = ${_currentUser.id}');
+      });
+    }
   }
 
   /// Starts the Sign In with Google Flow.

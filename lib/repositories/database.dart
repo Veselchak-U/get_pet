@@ -24,7 +24,7 @@ class DatabaseRepository {
     final authLink = AuthLink(
       getToken: () async {
         final idToken = await authRepository.getIdToken(forceRefresh: true);
-        out(idToken);
+        // out(idToken);
         return 'Bearer $idToken';
       },
     );
@@ -33,6 +33,38 @@ class DatabaseRepository {
       cache: InMemoryCache(),
       link: link,
     );
+  }
+
+  // Future<MemberModel> upsertMember(MemberData data) {
+  //   final result = _service.mutate<MemberModel>(
+  //     document: _API.upsertMember,
+  //     variables: data.toJson(),
+  //     root: 'insert_member_one',
+  //     convert: MemberModel.fromJson,
+  //   );
+  //   return result;
+  // }
+
+  Future<bool> upsertMember(UserModel user) async {
+    var result = true;
+
+    final options = MutationOptions(
+      documentNode: _API.upsertMember,
+      variables: {
+        'name': user.displayName,
+        'photo': user.photoURL,
+      },
+      fetchPolicy: FetchPolicy.noCache,
+      errorPolicy: ErrorPolicy.all,
+    );
+    final mutationResult = await _client
+        .mutate(options)
+        .timeout(Duration(milliseconds: _kTimeoutMillisec));
+    if (mutationResult.hasException) {
+      result = false;
+      throw mutationResult.exception;
+    }
+    return result;
   }
 
   Future<int> readNotificationCount() async {
@@ -247,7 +279,11 @@ class DatabaseRepository {
 
     final options = MutationOptions(
       documentNode: isLike ? _API.insertPetLike : _API.deletePetLike,
-      variables: {
+      variables: isLike ? {
+        // 'member_id': kDatabaseUserId,
+        // 'member_id': authRepository.currentUser.id,
+        'pet_id': petId,
+      } : {
         // 'member_id': kDatabaseUserId,
         'member_id': authRepository.currentUser.id,
         'pet_id': petId,
@@ -273,7 +309,7 @@ class DatabaseRepository {
         'breed_id': newPet.breed.id,
         'condition_id': newPet.condition.id,
         // 'member_id': kDatabaseUserId,
-        'member_id': authRepository.currentUser.id,
+        // 'member_id': authRepository.currentUser.id,
         'coloring': newPet.coloring,
         'age': newPet.age,
         'weight': newPet.weight,
@@ -305,12 +341,21 @@ class DatabaseRepository {
 }
 
 class _API {
+  static final upsertMember = gql(r'''
+    mutation UpsertMember($name: String $photo: String) {
+      insert_member_one(object: {name: $name, photo: $photo},
+      on_conflict: {constraint: member_pkey, update_columns: [name, photo]}) {
+        ...MemberFields
+      }
+    }
+  ''')..definitions.addAll(fragments.definitions);
+
   static final createPet = gql(r'''
     mutation CreatePet(
       $category_id: uuid!,
       $breed_id: uuid!,
       $condition_id: uuid!,
-      $member_id: uuid!,
+      # $member_id: uuid!,
       $coloring: String!,
       $age: String!,
       $weight: numeric!,
@@ -323,7 +368,7 @@ class _API {
         category_id: $category_id,
         breed_id: $breed_id,
         condition_id: $condition_id,
-        member_id: $member_id,
+        # member_id: $member_id,
         coloring: $coloring,
         age: $age,
         weight: $weight,
@@ -357,8 +402,8 @@ class _API {
   ''')..definitions.addAll(fragments.definitions);
 
   static final insertPetLike = gql(r'''
-    mutation InsertPetLike($member_id: uuid!, $pet_id: uuid!) {
-      insert_liked_one(object: {member_id: $member_id, pet_id: $pet_id}) {
+    mutation InsertPetLike($pet_id: uuid!) {
+      insert_liked_one(object: {pet_id: $pet_id}) {
         member_id
         pet_id
       }

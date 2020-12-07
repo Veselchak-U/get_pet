@@ -8,11 +8,13 @@ import 'package:get_pet/import.dart';
 part 'authentication.g.dart';
 
 class AuthenticationCubit extends Cubit<AuthenticationState> {
-  AuthenticationCubit({this.authRepository}) : super(const AuthenticationState()) {
+  AuthenticationCubit({this.authRepository, this.dataRepository})
+      : super(const AuthenticationState()) {
     _userSubscription = authRepository.userChanges.listen(onUserChange);
   }
 
   final AuthenticationRepository authRepository;
+  final DatabaseRepository dataRepository;
   StreamSubscription<UserModel> _userSubscription;
 
   @override
@@ -26,15 +28,14 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     if (user == UserModel.empty) {
       newState = state.copyWith(
         status: AuthenticationStatus.unauthenticated,
-        user: UserModel.empty,
+        user: user,
       );
     } else {
-      // out('user.displayName = ${user.displayName}');
-      // out('user.photoURL = ${user.photoURL}');
       newState = state.copyWith(
         status: AuthenticationStatus.authenticated,
         user: user,
       );
+      dataRepository.upsertMember(user);
     }
     emit(newState);
   }
