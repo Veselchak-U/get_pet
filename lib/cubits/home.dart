@@ -13,6 +13,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   // TODO: subscribe to update newestPets from repo
 
+  
   Future<bool> load({bool isReload}) async {
     var result = true;
     if (isReload != null && isReload) {
@@ -25,7 +26,9 @@ class HomeCubit extends Cubit<HomeState> {
           await dataRepository.readConditions(fromCash: false);
       final List<CategoryModel> petCategories =
           await dataRepository.readCategories(fromCash: false);
-      final List<PetModel> newestPets = await dataRepository.readNewestPets();
+      // final List<PetModel> newestPets = await dataRepository.readNewestPets();
+      final List<PetModel> newestPets =
+          await dataRepository.readNewestPetsWithLikes();
       final List<VetModel> nearestVets = await dataRepository.readNearestVets();
       emit(state.copyWith(
         status: HomeStatus.ready,
@@ -61,7 +64,8 @@ class HomeCubit extends Cubit<HomeState> {
     } else {
       // local changes
       final List<PetModel> newPets = [...state.newestPets];
-      final PetModel changedPet = newPets.firstWhere((PetModel e) => e.id == petId);
+      final PetModel changedPet =
+          newPets.firstWhere((PetModel e) => e.id == petId);
       final PetModel newPet = changedPet.copyWith(liked: !changedPet.liked);
       final index = newPets.indexOf(changedPet);
       newPets[index] = newPet;

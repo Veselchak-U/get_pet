@@ -24,7 +24,7 @@ class DatabaseRepository {
     final authLink = AuthLink(
       getToken: () async {
         final idToken = await authRepository.getIdToken(forceRefresh: true);
-        // out(idToken);
+        // out('!!! authRepository.getIdToken !!!');
         return 'Bearer $idToken';
       },
     );
@@ -217,7 +217,7 @@ class DatabaseRepository {
   Future<List<PetModel>> readNewestPets() async {
     final List<PetModel> result = [];
     final options = QueryOptions(
-      documentNode: _API.readNewestPets,
+      documentNode: _API.readNewestPets, //_API.readPets,
       variables: {
         // 'member_id': kDatabaseUserId,
         'member_id': authRepository.currentUser.id,
@@ -244,6 +244,54 @@ class DatabaseRepository {
     }
     // TODO: move sorting to server
     result.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+    return result;
+  }
+
+  Future<List<PetModel>> readNewestPetsWithLikes() async {
+    final options = QueryOptions(
+      documentNode: _API.readNewestPetsWithLikes,
+      // variables: {
+      //   // 'member_id': kDatabaseUserId,
+      //   'member_id': authRepository.currentUser.id,
+      // },
+      fetchPolicy: FetchPolicy.noCache,
+      errorPolicy: ErrorPolicy.all,
+    );
+    final queryResult = await _client
+        .query(options)
+        .timeout(Duration(milliseconds: _kTimeoutMillisec));
+    if (queryResult.hasException) {
+      throw queryResult.exception;
+    }
+    // out(queryResult.data);
+    final petItems =
+        (queryResult.data['pets'] as List).cast<Map<String, dynamic>>();
+    final List<PetModel> pets = [];
+    for (final item in petItems) {
+      try {
+        pets.add(PetModel.fromJson(item));
+      } catch (error) {
+        out(error);
+        return Future.error(error);
+      }
+    }
+    final likedItems =
+        (queryResult.data['liked'] as List).cast<Map<String, dynamic>>();
+    final List<String> likes = [];
+    for (final item in likedItems) {
+      try {
+        likes.add(item['pet_id'] as String);
+      } catch (error) {
+        out(error);
+        return Future.error(error);
+      }
+    }
+    final List<PetModel> result = [];
+    pets.forEach((pet) {
+      var liked = likes.contains(pet.id);
+      var petWhithLike = pet.copyWith(liked: liked);
+      result.add(petWhithLike);
+    });
     return result;
   }
 
@@ -279,15 +327,17 @@ class DatabaseRepository {
 
     final options = MutationOptions(
       documentNode: isLike ? _API.insertPetLike : _API.deletePetLike,
-      variables: isLike ? {
-        // 'member_id': kDatabaseUserId,
-        // 'member_id': authRepository.currentUser.id,
-        'pet_id': petId,
-      } : {
-        // 'member_id': kDatabaseUserId,
-        'member_id': authRepository.currentUser.id,
-        'pet_id': petId,
-      },
+      variables: isLike
+          ? {
+              // 'member_id': kDatabaseUserId,
+              // 'member_id': authRepository.currentUser.id,
+              'pet_id': petId,
+            }
+          : {
+              // 'member_id': kDatabaseUserId,
+              'member_id': authRepository.currentUser.id,
+              'pet_id': petId,
+            },
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
     );
@@ -451,6 +501,25 @@ class _API {
     }
   ''')..definitions.addAll(fragments.definitions);
 
+  static final readPets = gql(r'''
+    query ReadPets() {
+      pets() {
+        ...PetFields
+      }
+    }
+  ''')..definitions.addAll(fragments.definitions);
+
+  static final readNewestPetsWithLikes = gql(r'''
+    query ReadPets() {
+      pets(order_by: {updated_at: desc}, limit: 10) {
+        ...PetFields
+      }
+      liked() {
+        ...LikedFields
+      }
+    }
+  ''')..definitions.addAll(fragments.definitions);
+
   // static final readAllPets = gql(r'''
   //   query ReadAllPets {
   //     pets {
@@ -508,7 +577,7 @@ class _API {
     }
     fragment LikedFields on liked {
       # __typename
-      member_id
+      # member_id
       pet_id
     }
     fragment PetFields on pet {

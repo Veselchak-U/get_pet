@@ -50,12 +50,12 @@ class App extends StatelessWidget {
           BlocProvider<ProfileCubit>(
             create: (context) => ProfileCubit(
               dataRepository: dataRepository,
-            )..load(),
+            ),
           ),
           BlocProvider<HomeCubit>(
             create: (context) => HomeCubit(
               dataRepository: dataRepository,
-            )..load(),
+            ),
           ),
         ],
         child: AppView(),
@@ -82,6 +82,8 @@ class AppView extends StatelessWidget {
         return BlocListener<AuthenticationCubit, AuthenticationState>(
           listener: (BuildContext context, AuthenticationState state) {
             if (state.status == AuthenticationStatus.authenticated) {
+              BlocProvider.of<ProfileCubit>(context).load();
+              BlocProvider.of<HomeCubit>(context).load();
               navigator.pushAndRemoveUntil(
                 HomeScreen().getRoute(),
                 (Route route) => false,
