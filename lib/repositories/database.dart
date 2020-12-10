@@ -178,7 +178,6 @@ class DatabaseRepository {
       String query,
       int limit = 20}) async {
     assert(categoryId != null || query != null);
-    final List<PetModel> result = [];
     final options = QueryOptions(
       documentNode: _API.searchPets,
       variables: {
@@ -199,18 +198,34 @@ class DatabaseRepository {
       throw queryResult.exception;
     }
     // out(queryResult.data);
-    final dataItems = (queryResult.data['get_pets_by_member_id'] as List)
-        .cast<Map<String, dynamic>>();
-    for (final item in dataItems) {
+    final petItems =
+        (queryResult.data['pets'] as List).cast<Map<String, dynamic>>();
+    final List<PetModel> pets = [];
+    for (final item in petItems) {
       try {
-        result.add(PetModel.fromJson(item));
-        // out(PetModel.fromJson(item).breed.name);
-        // out(PetModel.fromJson(item).address);
+        pets.add(PetModel.fromJson(item));
       } catch (error) {
         out(error);
         return Future.error(error);
       }
     }
+    final likedItems =
+        (queryResult.data['liked'] as List).cast<Map<String, dynamic>>();
+    final List<String> likes = [];
+    for (final item in likedItems) {
+      try {
+        likes.add(item['pet_id'] as String);
+      } catch (error) {
+        out(error);
+        return Future.error(error);
+      }
+    }
+    final List<PetModel> result = [];
+    pets.forEach((pet) {
+      var liked = likes.contains(pet.id);
+      var petWhithLike = pet.copyWith(liked: liked);
+      result.add(petWhithLike);
+    });
     return result;
   }
 
@@ -292,6 +307,7 @@ class DatabaseRepository {
       var petWhithLike = pet.copyWith(liked: liked);
       result.add(petWhithLike);
     });
+    out('readNewestPetsWithLikes()');
     return result;
   }
 
@@ -375,13 +391,13 @@ class DatabaseRepository {
         .mutate(options)
         .timeout(Duration(milliseconds: _kTimeoutMillisec));
     if (mutationResult.hasException) {
-      // out(mutationResult.exception);
       throw mutationResult.exception;
     }
     // out(mutationResult.data);
     final dataItem =
         mutationResult.data['insert_pet_one'] as Map<String, dynamic>;
     try {
+      out('createPet()');
       return PetModel.fromJson(dataItem);
     } catch (error) {
       out(error);
@@ -434,22 +450,43 @@ class _API {
 
   static final searchPets = gql(r'''
     query SearchPets($member_id: uuid!, $category_id: uuid, $condition_id: uuid, $query: String, $limit: Int!) {
-      get_pets_by_member_id(args: {member_id: $member_id},
-        where: {_and: [
-                  {category: {id: {_eq: $category_id}}},
-                  {condition: {id: {_eq: $condition_id}}},
-                  {_or: [
-                    {breed: {name: {_ilike: $query}}},
-                    {address: {_ilike: $query}},
+      pets(where: {_and: [
+                    {category: {id: {_eq: $category_id}}},
+                    {condition: {id: {_eq: $condition_id}}},
+                    {_or: [
+                      {breed: {name: {_ilike: $query}}},
+                      {address: {_ilike: $query}},
+                    ]},
                   ]},
-               ]},
         order_by: {updated_at: desc},
         limit: $limit
       ) {
         ...PetFields
       }
+      liked {
+        ...LikedFields
+      }
     }
   ''')..definitions.addAll(fragments.definitions);
+
+  // static final searchPets = gql(r'''
+  //   query SearchPets($member_id: uuid!, $category_id: uuid, $condition_id: uuid, $query: String, $limit: Int!) {
+  //     get_pets_by_member_id(args: {member_id: $member_id},
+  //       where: {_and: [
+  //                 {category: {id: {_eq: $category_id}}},
+  //                 {condition: {id: {_eq: $condition_id}}},
+  //                 {_or: [
+  //                   {breed: {name: {_ilike: $query}}},
+  //                   {address: {_ilike: $query}},
+  //                 ]},
+  //              ]},
+  //       order_by: {updated_at: desc},
+  //       limit: $limit
+  //     ) {
+  //       ...PetFields
+  //     }
+  //   }
+  // ''')..definitions.addAll(fragments.definitions);
 
   static final insertPetLike = gql(r'''
     mutation InsertPetLike($pet_id: uuid!) {
@@ -502,19 +539,19 @@ class _API {
   ''')..definitions.addAll(fragments.definitions);
 
   static final readPets = gql(r'''
-    query ReadPets() {
-      pets() {
+    query ReadPets {
+      pets {
         ...PetFields
       }
     }
   ''')..definitions.addAll(fragments.definitions);
 
   static final readNewestPetsWithLikes = gql(r'''
-    query ReadPets() {
+    query ReadPets {
       pets(order_by: {updated_at: desc}, limit: 10) {
         ...PetFields
       }
-      liked() {
+      liked {
         ...LikedFields
       }
     }

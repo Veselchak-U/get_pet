@@ -329,7 +329,10 @@ class _Greeting extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              navigator.push(AddPetScreen().getRoute());
+              final Future<PetModel> newPet =
+                  navigator.push<PetModel>(AddPetScreen().getRoute());
+              newPet.then((newPet) =>
+                  BlocProvider.of<HomeCubit>(context).addNewPet(newPet));
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(

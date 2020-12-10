@@ -13,7 +13,6 @@ class HomeCubit extends Cubit<HomeState> {
 
   // TODO: subscribe to update newestPets from repo
 
-  
   Future<bool> load({bool isReload}) async {
     var result = true;
     if (isReload != null && isReload) {
@@ -73,6 +72,19 @@ class HomeCubit extends Cubit<HomeState> {
       // database changes
       dataRepository.updatePetLike(petId: petId, isLike: newPet.liked);
     }
+  }
+
+  void addNewPet(PetModel newPet) async {
+    if (newPet == null) {
+      return;
+    }
+    // local changes
+    final List<PetModel> newPets = [newPet, ...state.newestPets];
+    emit(state.copyWith(newestPets: newPets));
+    // database changes
+    final List<PetModel> newestPets =
+        await dataRepository.readNewestPetsWithLikes();
+    emit(state.copyWith(newestPets: newestPets));
   }
 }
 

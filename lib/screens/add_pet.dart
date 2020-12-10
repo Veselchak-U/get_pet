@@ -309,7 +309,7 @@ class _AddPetFormState extends State<_AddPetForm> {
                   if (_formKey.currentState.validate()) {
                     out('Form OK');
                     cubit.addPet();
-                    navigator.pop();
+                    navigator.pop(cubit.state.newPet);
                   }
                 },
                 child: Padding(

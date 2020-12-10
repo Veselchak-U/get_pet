@@ -10,7 +10,7 @@ class AuthenticationRepository {
   UserModel get currentUser => _currentUser;
 
   Future<String> getIdToken({bool forceRefresh}) {
-    out('AuthenticationRepository: getIdToken()');
+    // out('AuthenticationRepository: getIdToken()');
     return _firebaseAuth.currentUser.getIdToken(forceRefresh);
   }
 
@@ -59,8 +59,9 @@ class AuthenticationRepository {
         idToken: googleAuth.idToken,
       );
       return _firebaseAuth.signInWithCredential(credential);
-    } on Exception {
-      throw LogInWithGoogleFailure();
+    } catch (error) {
+      rethrow;
+      // throw LogInWithGoogleFailure();
     }
   }
 
@@ -74,8 +75,9 @@ class AuthenticationRepository {
         _firebaseAuth.signOut(),
         _googleSignIn.signOut(),
       ]);
-    } on Exception {
-      throw LogOutFailure();
+    } catch (error) {
+      rethrow;
+      // throw LogOutFailure();
     }
   }
 }
