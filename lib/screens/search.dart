@@ -57,28 +57,30 @@ class _SearchBody extends StatelessWidget {
             );
           } else {
             final SearchCubit cubit = BlocProvider.of<SearchCubit>(context);
-            return Stack(
+            return Column(
               children: [
-                Column(
-                  children: [
-                    _searchBar,
-                    _ChipFilter<CategoryModel>(
-                      filter: state.categoryFilter,
-                      items: state.categories,
-                      onSelected: cubit.setCategoryFilter,
-                    ),
-                    _ChipFilter<ConditionModel>(
-                      filter: state.conditionFilter,
-                      items: state.conditions,
-                      onSelected: cubit.setConditionFilter,
-                    ),
-                    _PetGrid(),
-                  ],
+                _searchBar,
+                _ChipFilter<CategoryModel>(
+                  filter: state.categoryFilter,
+                  items: state.categories,
+                  onSelected: cubit.setCategoryFilter,
                 ),
-                if (state.status == SearchStatus.busy)
-                  Center(
-                    child: CircularProgressIndicator(),
-                  )
+                _ChipFilter<ConditionModel>(
+                  filter: state.conditionFilter,
+                  items: state.conditions,
+                  onSelected: cubit.setConditionFilter,
+                ),
+                Expanded(
+                  child: Stack(
+                    children: [
+                      _PetGrid(),
+                      if (state.status == SearchStatus.busy)
+                        Center(
+                          child: CircularProgressIndicator(),
+                        )
+                    ],
+                  ),
+                ),
               ],
             );
           }
@@ -207,36 +209,40 @@ class _PetGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final SearchCubit cubit = BlocProvider.of<SearchCubit>(context);
     if (cubit.state.foundPets.isEmpty) {
-      return Expanded(
-        child: Center(
-          child: Text(
-            'Nothing found',
-            style: TextStyle(
-              fontSize: 18.0,
-              color: Theme.of(context).primaryColor,
-            ),
+      return
+          // Expanded(
+          //   child:
+          Center(
+        child: Text(
+          'Nothing found',
+          style: TextStyle(
+            fontSize: 18.0,
+            color: Theme.of(context).primaryColor,
           ),
         ),
+        // ),
       );
     }
     final screenWidth = MediaQuery.of(context).size.width;
     final cardWidth = (screenWidth - (kHorizontalPadding * 3)) / 2;
     final cardHeight = 255.0;
-    return Expanded(
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(
-            kHorizontalPadding, 0.0, kHorizontalPadding, kHorizontalPadding),
-        child: GridView.count(
-          crossAxisCount: 2,
-          shrinkWrap: true,
-          childAspectRatio: cardWidth / cardHeight,
-          mainAxisSpacing: kHorizontalPadding,
-          crossAxisSpacing: kHorizontalPadding,
-          children: cubit.state.foundPets
-              .map((PetModel element) => _PetGridItem(item: element))
-              .toList(),
-        ),
+    return
+        // Expanded(
+        //   child:
+        Padding(
+      padding: EdgeInsets.fromLTRB(
+          kHorizontalPadding, 0.0, kHorizontalPadding, kHorizontalPadding),
+      child: GridView.count(
+        crossAxisCount: 2,
+        shrinkWrap: true,
+        childAspectRatio: cardWidth / cardHeight,
+        mainAxisSpacing: kHorizontalPadding,
+        crossAxisSpacing: kHorizontalPadding,
+        children: cubit.state.foundPets
+            .map((PetModel element) => _PetGridItem(item: element))
+            .toList(),
       ),
+      // ),
     );
   }
 }

@@ -182,7 +182,7 @@ class DatabaseRepository {
       documentNode: _API.searchPets,
       variables: {
         // 'member_id': kDatabaseUserId,
-        'member_id': authRepository.currentUser.id,
+        // 'member_id': authRepository.currentUser.id,
         'category_id': categoryId,
         'condition_id': conditionId,
         'query': '%$query%',
@@ -222,8 +222,8 @@ class DatabaseRepository {
     }
     final List<PetModel> result = [];
     pets.forEach((pet) {
-      var liked = likes.contains(pet.id);
-      var petWhithLike = pet.copyWith(liked: liked);
+      final liked = likes.contains(pet.id);
+      final petWhithLike = pet.copyWith(liked: liked);
       result.add(petWhithLike);
     });
     return result;
@@ -303,8 +303,8 @@ class DatabaseRepository {
     }
     final List<PetModel> result = [];
     pets.forEach((pet) {
-      var liked = likes.contains(pet.id);
-      var petWhithLike = pet.copyWith(liked: liked);
+      final liked = likes.contains(pet.id);
+      final petWhithLike = pet.copyWith(liked: liked);
       result.add(petWhithLike);
     });
     out('readNewestPetsWithLikes()');
@@ -449,7 +449,7 @@ class _API {
   ''')..definitions.addAll(fragments.definitions);
 
   static final searchPets = gql(r'''
-    query SearchPets($member_id: uuid!, $category_id: uuid, $condition_id: uuid, $query: String, $limit: Int!) {
+    query SearchPets($category_id: uuid, $condition_id: uuid, $query: String, $limit: Int!) {
       pets(where: {_and: [
                     {category: {id: {_eq: $category_id}}},
                     {condition: {id: {_eq: $condition_id}}},
@@ -538,13 +538,13 @@ class _API {
     }
   ''')..definitions.addAll(fragments.definitions);
 
-  static final readPets = gql(r'''
-    query ReadPets {
-      pets {
-        ...PetFields
-      }
-    }
-  ''')..definitions.addAll(fragments.definitions);
+  // static final readPets = gql(r'''
+  //   query ReadAllPets {
+  //     pets {
+  //       ...PetFields
+  //     }
+  //   }
+  // ''')..definitions.addAll(fragments.definitions);
 
   static final readNewestPetsWithLikes = gql(r'''
     query ReadPets {
