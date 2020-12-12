@@ -22,3 +22,4 @@ export 'screens/home.dart';
 export 'screens/login.dart';
 export 'screens/search.dart';
 export 'screens/splash.dart';
+export 'widgets/pet_card.dart';

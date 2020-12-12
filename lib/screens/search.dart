@@ -18,11 +18,11 @@ class SearchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) {
-        final cubit = SearchCubit(
-            repo: RepositoryProvider.of<DatabaseRepository>(context),
+        final searchCubit = SearchCubit(
+            dataRepository: RepositoryProvider.of<DatabaseRepository>(context),
             category: category);
-        cubit.init();
-        return cubit;
+        searchCubit.init();
+        return searchCubit;
       },
       lazy: false,
       child: _SearchBody(),
@@ -56,19 +56,20 @@ class _SearchBody extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           } else {
-            final SearchCubit cubit = BlocProvider.of<SearchCubit>(context);
+            final SearchCubit searchCubit =
+                BlocProvider.of<SearchCubit>(context);
             return Column(
               children: [
                 _searchBar,
                 _ChipFilter<CategoryModel>(
                   filter: state.categoryFilter,
                   items: state.categories,
-                  onSelected: cubit.setCategoryFilter,
+                  onSelected: searchCubit.setCategoryFilter,
                 ),
                 _ChipFilter<ConditionModel>(
                   filter: state.conditionFilter,
                   items: state.conditions,
-                  onSelected: cubit.setConditionFilter,
+                  onSelected: searchCubit.setConditionFilter,
                 ),
                 Expanded(
                   child: Stack(
@@ -97,15 +98,15 @@ class _SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<_SearchBar> {
   final _searchController = TextEditingController();
-  SearchCubit cubit;
+  SearchCubit searchCubit;
 
   @override
   void initState() {
     super.initState();
-    cubit = BlocProvider.of<SearchCubit>(context);
+    searchCubit = BlocProvider.of<SearchCubit>(context);
     _searchController.addListener(() {
       setState(() {
-        cubit.setQueryFilter(_searchController.text);
+        searchCubit.setQueryFilter(_searchController.text);
       });
     });
   }
@@ -207,12 +208,10 @@ class _ChipFilter<T> extends StatelessWidget {
 class _PetGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final SearchCubit cubit = BlocProvider.of<SearchCubit>(context);
-    if (cubit.state.foundPets.isEmpty) {
-      return
-          // Expanded(
-          //   child:
-          Center(
+    final SearchCubit searchCubit = BlocProvider.of<SearchCubit>(context);
+    final List<PetModel> foundedPets = searchCubit.state.foundedPets;
+    if (foundedPets.isEmpty) {
+      return Center(
         child: Text(
           'Nothing found',
           style: TextStyle(
@@ -220,16 +219,12 @@ class _PetGrid extends StatelessWidget {
             color: Theme.of(context).primaryColor,
           ),
         ),
-        // ),
       );
     }
     final screenWidth = MediaQuery.of(context).size.width;
     final cardWidth = (screenWidth - (kHorizontalPadding * 3)) / 2;
     final cardHeight = 255.0;
-    return
-        // Expanded(
-        //   child:
-        Padding(
+    return Padding(
       padding: EdgeInsets.fromLTRB(
           kHorizontalPadding, 0.0, kHorizontalPadding, kHorizontalPadding),
       child: GridView.count(
@@ -238,125 +233,134 @@ class _PetGrid extends StatelessWidget {
         childAspectRatio: cardWidth / cardHeight,
         mainAxisSpacing: kHorizontalPadding,
         crossAxisSpacing: kHorizontalPadding,
-        children: cubit.state.foundPets
-            .map((PetModel element) => _PetGridItem(item: element))
-            .toList(),
+        children: List.generate(
+            foundedPets.length,
+            (index) => PetCard(
+                  item: foundedPets[index],
+                  // onTap: () {
+                  //   navigator.push(DetailScreen(
+                  //           homeCubit: homeCubit, item: foundedPets[index])
+                  //       .getRoute());
+                  // },
+                  onTapLike: () {
+                    searchCubit.onTapLike(petId: foundedPets[index].id);
+                  },
+                )),
       ),
-      // ),
     );
   }
 }
 
-class _PetGridItem extends StatelessWidget {
-  const _PetGridItem({Key key, this.item}) : super(key: key);
-  final PetModel item;
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return GestureDetector(
-      onTap: () {
-        // navigator.push(DetailScreen(cubit: cubit, item: item).getRoute());
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: theme.primaryColorLight,
-            width: 2.0,
-          ),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16.0),
-            topRight: Radius.circular(16.0),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                Hero(
-                  tag: item.id,
-                  child: Container(
-                    height: 150,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(16.0),
-                        topRight: Radius.circular(16.0),
-                      ),
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage(item.photos),
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 7,
-                  right: -11,
-                  child: FlatButton(
-                    height: 30,
-                    color: item.liked ? theme.selectedRowColor : Colors.white,
-                    shape: CircleBorder(),
-                    onPressed: () {
-                      // cubit.onTapPetLike(petId: item.id);
-                    },
-                    child: Icon(
-                      Icons.favorite,
-                      color:
-                          item.liked ? Colors.white : theme.textSelectionColor,
-                      size: 16,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: item.condition.backgroundColor ??
-                          theme.primaryColorLight,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
-                      child: Text(
-                        item.condition.name,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: item.condition.textColor ?? theme.primaryColor,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    item.breed.name,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        size: 16,
-                      ),
-                      Text(
-                        '${item.address} ( ${item.distance} km )',
-                        style: TextStyle(fontSize: 11),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+// class _PetGridItem extends StatelessWidget {
+//   const _PetGridItem({Key key, this.item}) : super(key: key);
+//   final PetModel item;
+//   @override
+//   Widget build(BuildContext context) {
+//     final theme = Theme.of(context);
+//     return GestureDetector(
+//       onTap: () {
+//         // navigator.push(DetailScreen(cubit: cubit, item: item).getRoute());
+//       },
+//       child: Container(
+//         decoration: BoxDecoration(
+//           border: Border.all(
+//             color: theme.primaryColorLight,
+//             width: 2.0,
+//           ),
+//           borderRadius: BorderRadius.only(
+//             topLeft: Radius.circular(16.0),
+//             topRight: Radius.circular(16.0),
+//           ),
+//         ),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Stack(
+//               children: [
+//                 Hero(
+//                   tag: item.id,
+//                   child: Container(
+//                     height: 150,
+//                     decoration: BoxDecoration(
+//                       borderRadius: BorderRadius.only(
+//                         topLeft: Radius.circular(16.0),
+//                         topRight: Radius.circular(16.0),
+//                       ),
+//                       image: DecorationImage(
+//                         fit: BoxFit.cover,
+//                         image: NetworkImage(item.photos),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//                 Positioned(
+//                   top: 7,
+//                   right: -11,
+//                   child: FlatButton(
+//                     height: 30,
+//                     color: item.liked ? theme.selectedRowColor : Colors.white,
+//                     shape: CircleBorder(),
+//                     onPressed: () {
+//                       // cubit.onTapPetLike(petId: item.id);
+//                     },
+//                     child: Icon(
+//                       Icons.favorite,
+//                       color:
+//                           item.liked ? Colors.white : theme.textSelectionColor,
+//                       size: 16,
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//             Padding(
+//               padding: EdgeInsets.all(8.0),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Container(
+//                     decoration: BoxDecoration(
+//                       color: item.condition.backgroundColor ??
+//                           theme.primaryColorLight,
+//                       borderRadius: BorderRadius.circular(10),
+//                     ),
+//                     child: Padding(
+//                       padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
+//                       child: Text(
+//                         item.condition.name,
+//                         overflow: TextOverflow.ellipsis,
+//                         style: TextStyle(
+//                           color: item.condition.textColor ?? theme.primaryColor,
+//                           fontSize: 12,
+//                           fontWeight: FontWeight.bold,
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                   SizedBox(height: 4),
+//                   Text(
+//                     item.breed.name,
+//                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+//                   ),
+//                   SizedBox(height: 4),
+//                   Row(
+//                     children: [
+//                       Icon(
+//                         Icons.location_on_outlined,
+//                         size: 16,
+//                       ),
+//                       Text(
+//                         '${item.address} ( ${item.distance} km )',
+//                         style: TextStyle(fontSize: 11),
+//                       ),
+//                     ],
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

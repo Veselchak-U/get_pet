@@ -13,18 +13,19 @@ class HomeCubit extends Cubit<HomeState> {
 
   // TODO: subscribe to update newestPets from repo
 
-  Future<bool> load({bool isReload}) async {
+  Future<bool> load({bool isReload = false}) async {
     var result = true;
-    if (isReload != null && isReload) {
+    if (isReload) {
+      out('HomeCubit RELOADING');
       emit(state.copyWith(status: HomeStatus.reload));
     } else {
       emit(state.copyWith(status: HomeStatus.busy));
     }
     try {
       final List<ConditionModel> conditions =
-          await dataRepository.readConditions(fromCash: false);
+          await dataRepository.readConditions(fromCash: isReload);
       final List<CategoryModel> petCategories =
-          await dataRepository.readCategories(fromCash: false);
+          await dataRepository.readCategories(fromCash: isReload);
       // final List<PetModel> newestPets = await dataRepository.readNewestPets();
       final List<PetModel> newestPets =
           await dataRepository.readNewestPetsWithLikes();
@@ -57,7 +58,7 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  void onTapPetLike({String petId}) {
+  void onTapLike({String petId}) {
     if (state.status == HomeStatus.reload) {
       return;
     } else {

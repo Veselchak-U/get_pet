@@ -41,14 +41,14 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   void hideSection(int index) {
-    final newVisibleSections = [...state.visibleSections];
-    newVisibleSections[index] = false;
-    emit(state.copyWith(visibleSections: newVisibleSections));
+    final newSectionsVisibility = [...state.sectionsVisibility];
+    newSectionsVisibility[index] = false;
+    emit(state.copyWith(sectionsVisibility: newSectionsVisibility));
   }
 
   void restoreSectionsVisibility() {
-    final newVisibleSections = const [true, true, true];
-    emit(state.copyWith(visibleSections: newVisibleSections));
+    final newSectionsVisibility = const [true, true, true];
+    emit(state.copyWith(sectionsVisibility: newSectionsVisibility));
   }
 }
 
@@ -61,14 +61,14 @@ class ProfileState extends Equatable {
     this.notificationCount = 0,
     this.userName = '',
     this.userAvatarImage = '',
-    this.visibleSections = const [true, true, true],
+    this.sectionsVisibility = const [true, true, true],
   });
 
   final ProfileStatus status;
   final int notificationCount;
   final String userName;
   final String userAvatarImage;
-  final List<bool> visibleSections;
+  final List<bool> sectionsVisibility;
 
   @override
   List<Object> get props => [
@@ -76,6 +76,6 @@ class ProfileState extends Equatable {
         notificationCount,
         userName,
         userAvatarImage,
-        visibleSections,
+        sectionsVisibility,
       ];
 }

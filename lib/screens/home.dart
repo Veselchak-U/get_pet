@@ -359,9 +359,7 @@ class _StaticSearchBar extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(left: kHorizontalPadding, top: 16.0),
       child: GestureDetector(
-        onTap: () {
-          navigator.push(SearchScreen().getRoute());
-        },
+        onTap: () => _goToSearchScreen(context),
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
@@ -389,6 +387,17 @@ class _StaticSearchBar extends StatelessWidget {
   }
 }
 
+void _goToSearchScreen(BuildContext context, [CategoryModel category]) {
+  final result = navigator.push(SearchScreen(
+    category: category,
+  ).getRoute());
+  // on back from SearchScreen update pet likes
+  // TODO: remake to ChangeNotifier in DatabaseRepository
+  result.then((value) {
+    BlocProvider.of<HomeCubit>(context).load(isReload: true);
+  });
+}
+
 class _ScreenSection extends StatelessWidget {
   _ScreenSection({this.index, this.text});
 
@@ -398,8 +407,10 @@ class _ScreenSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
+    final sectionsVisibility = profileCubit.state.sectionsVisibility;
     final List<Widget> children = [];
-    if (profileCubit.state.visibleSections[index] == true) {
+
+    if (sectionsVisibility[index] == true) {
       children.add(_Header(index: index, text: text));
       if (index == 0) {
         children.add(_CategoryGrid());
@@ -410,7 +421,7 @@ class _ScreenSection extends StatelessWidget {
       if (index == 2) {
         children.add(_VetsCarousel());
       }
-      if (index > 2) {
+      if (index >= sectionsVisibility.length) {
         children.add(SizedBox.shrink());
       }
     } else {
@@ -468,8 +479,8 @@ class _Header extends StatelessWidget {
 class _CategoryGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
-    final HomeState data = cubit.state;
+    final HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
+    final HomeState data = homeCubit.state;
     final screenWidth = MediaQuery.of(context).size.width;
     final itemHeight = 60;
     final itemWidth = (screenWidth - 3 * kHorizontalPadding) / 2;
@@ -504,11 +515,12 @@ class _CategoryGridItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(16.0),
-      onTap: () {
-        navigator.push(SearchScreen(
-          category: item,
-        ).getRoute());
-      },
+      onTap: () => _goToSearchScreen(context, item),
+      // () {
+      //   navigator.push(SearchScreen(
+      //     category: item,
+      //   ).getRoute());
+      // },
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(
@@ -572,139 +584,29 @@ class _CategoryGridItem extends StatelessWidget {
 class _NewestPetsCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
-    final HomeState data = cubit.state;
+    final HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
+    final List<PetModel> newestPets = homeCubit.state.newestPets;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
       child: SizedBox(
         height: 255,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: data.newestPets.length,
+          itemCount: newestPets.length,
           itemBuilder: (context, index) => Padding(
             padding: const EdgeInsets.all(kHorizontalPadding / 2),
-            child: _NewestCarouselItem(
-              item: data.newestPets[index],
+            child: PetCard(
+              item: newestPets[index],
+              onTap: () {
+                navigator.push(
+                    DetailScreen(homeCubit: homeCubit, item: newestPets[index])
+                        .getRoute());
+              },
+              onTapLike: () {
+                homeCubit.onTapLike(petId: newestPets[index].id);
+              },
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _NewestCarouselItem extends StatelessWidget {
-  const _NewestCarouselItem({Key key, this.item}) : super(key: key);
-  final PetModel item;
-  @override
-  Widget build(BuildContext context) {
-    final HomeCubit cubit = BlocProvider.of<HomeCubit>(context);
-    final theme = Theme.of(context);
-    final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth = (screenWidth - (kHorizontalPadding * 4)) / 2;
-    return GestureDetector(
-      onTap: () {
-        navigator.push(DetailScreen(cubit: cubit, item: item).getRoute());
-      },
-      child: Container(
-        width: cardWidth < 200 ? cardWidth : 200,
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: theme.primaryColorLight,
-            width: 2.0,
-          ),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16.0),
-            topRight: Radius.circular(16.0),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                Hero(
-                  tag: item.id,
-                  child: Container(
-                    height: 150,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(14.0),
-                        topRight: Radius.circular(14.0),
-                      ),
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage(item.photos),
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 7,
-                  right: -11,
-                  child: FlatButton(
-                    height: 30,
-                    color: item.liked ? theme.selectedRowColor : Colors.white,
-                    shape: CircleBorder(),
-                    onPressed: () {
-                      cubit.onTapPetLike(petId: item.id);
-                    },
-                    child: Icon(
-                      Icons.favorite,
-                      color:
-                          item.liked ? Colors.white : theme.textSelectionColor,
-                      size: 16,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: item.condition.backgroundColor ??
-                          theme.primaryColorLight,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
-                      child: Text(
-                        item.condition.name,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: item.condition.textColor ?? theme.primaryColor,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    item.breed.name,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        size: 16,
-                      ),
-                      Text(
-                        '${item.address} ( ${item.distance} km )',
-                        style: TextStyle(fontSize: 11),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
         ),
       ),
     );

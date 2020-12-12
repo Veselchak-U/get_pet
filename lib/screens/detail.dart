@@ -2,9 +2,9 @@ import 'package:get_pet/import.dart';
 import 'package:flutter/material.dart';
 
 class DetailScreen extends StatefulWidget {
-  DetailScreen({@required this.cubit, @required this.item});
+  DetailScreen({@required this.homeCubit, @required this.item});
 
-  final HomeCubit cubit;
+  final HomeCubit homeCubit;
   final PetModel item;
 
   Route<T> getRoute<T>() {
@@ -19,20 +19,20 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  HomeCubit cubit;
+  HomeCubit homeCubit;
   String itemId;
 
   @override
   void initState() {
     super.initState();
-    cubit = widget.cubit;
+    homeCubit = widget.homeCubit;
     itemId = widget.item.id;
   }
 
   @override
   Widget build(BuildContext context) {
     final PetModel item =
-        cubit.state.newestPets.firstWhere((PetModel e) => e.id == itemId);
+        homeCubit.state.newestPets.firstWhere((PetModel e) => e.id == itemId);
     final screenHeight = MediaQuery.of(context).size.height;
     return GestureDetector(
       onHorizontalDragEnd: (details) {
@@ -85,7 +85,7 @@ class _DetailScreenState extends State<DetailScreen> {
                         item: item,
                         onLiked: () {
                           setState(() {
-                            cubit.onTapPetLike(petId: item.id);
+                            homeCubit.onTapLike(petId: item.id);
                           });
                         },
                       ),
@@ -104,7 +104,7 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   void _swapItem({DragEndDetails details, PetModel item}) {
-    final items = cubit.state.newestPets;
+    final items = homeCubit.state.newestPets;
     var needUpdate = false;
     int newItemIndex;
     if (details.primaryVelocity > 0) {

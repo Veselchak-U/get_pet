@@ -5,10 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // TODO: add Firebase error handle
   try {
     await Firebase.initializeApp();
   } catch (error) {
+    // TODO: add Firebase error handle
     out(error);
   }
   final authRepository = AuthenticationRepository();

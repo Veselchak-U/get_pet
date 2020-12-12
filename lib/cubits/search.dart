@@ -6,9 +6,9 @@ import 'package:get_pet/import.dart';
 part 'search.g.dart';
 
 class SearchCubit extends Cubit<SearchState> {
-  SearchCubit({this.repo, this.category}) : super(const SearchState());
+  SearchCubit({this.dataRepository, this.category}) : super(const SearchState());
 
-  final DatabaseRepository repo;
+  final DatabaseRepository dataRepository;
   final CategoryModel category;
 
   Future<bool> init() async {
@@ -18,8 +18,8 @@ class SearchCubit extends Cubit<SearchState> {
       categoryFilter: category,
     ));
     try {
-      final List<CategoryModel> categories = await repo.readCategories();
-      final List<ConditionModel> conditions = await repo.readConditions();
+      final List<CategoryModel> categories = await dataRepository.readCategories();
+      final List<ConditionModel> conditions = await dataRepository.readConditions();
       emit(state.copyWith(
         status: SearchStatus.ready,
         categories: categories,
@@ -57,16 +57,35 @@ class SearchCubit extends Cubit<SearchState> {
 
   void _searchPet() async {
     emit(state.copyWith(status: SearchStatus.busy));
-    final List<PetModel> foundPets = await repo.searchPets(
+    final List<PetModel> foundedPets = await dataRepository.searchPets(
       categoryId: state.categoryFilter?.id,
       conditionId: state.conditionFilter?.id,
       query: state.queryFilter,
     );
     emit(state.copyWith(
       status: SearchStatus.ready,
-      foundPets: foundPets,
+      foundedPets: foundedPets,
     ));
   }
+
+  void onTapLike({String petId}) {
+    if (state.status == SearchStatus.reload) {
+      return;
+    } else {
+      // local changes
+      final List<PetModel> newPets = [...state.foundedPets];
+      final PetModel changedPet =
+          newPets.firstWhere((PetModel e) => e.id == petId);
+      final PetModel newPet = changedPet.copyWith(liked: !changedPet.liked);
+      final index = newPets.indexOf(changedPet);
+      newPets[index] = newPet;
+      emit(state.copyWith(foundedPets: newPets));
+      // database changes
+      dataRepository.updatePetLike(petId: petId, isLike: newPet.liked);
+    }
+  }
+
+
 }
 
 enum SearchStatus { initial, busy, reload, ready }
@@ -80,7 +99,7 @@ class SearchState extends Equatable {
     this.conditionFilter,
     this.conditions = const [],
     this.categories = const [],
-    this.foundPets = const [],
+    this.foundedPets = const [],
   });
 
   final SearchStatus status;
@@ -89,7 +108,7 @@ class SearchState extends Equatable {
   final ConditionModel conditionFilter;
   final List<ConditionModel> conditions;
   final List<CategoryModel> categories;
-  final List<PetModel> foundPets;
+  final List<PetModel> foundedPets;
 
   @override
   List<Object> get props => [
@@ -99,6 +118,6 @@ class SearchState extends Equatable {
         conditionFilter,
         conditions,
         categories,
-        foundPets,
+        foundedPets,
       ];
 }

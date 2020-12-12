@@ -14,11 +14,11 @@ class AddPetScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) {
-        final cubit = AddPetCubit(
+        final addPetCubit = AddPetCubit(
           repo: RepositoryProvider.of<DatabaseRepository>(context),
         );
-        cubit.init();
-        return cubit;
+        addPetCubit.init();
+        return addPetCubit;
       },
       lazy: false,
       child: _AddPetBody(),
@@ -76,12 +76,12 @@ class _AddPetBody extends StatelessWidget {
 class _AddPhotoButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final AddPetCubit cubit = BlocProvider.of<AddPetCubit>(context);
+    final AddPetCubit addPetCubit = BlocProvider.of<AddPetCubit>(context);
     return ElevatedButton(
       onPressed: () {
         // изменяем URL фото "извне" формы
-        cubit.setExternalUpdate(externalUpdate: true);
-        cubit.updateNewPet(cubit.state.newPet.copyWith(
+        addPetCubit.setExternalUpdate(externalUpdate: true);
+        addPetCubit.updateNewPet(addPetCubit.state.newPet.copyWith(
             photos:
                 'https://cdn.pixabay.com/photo/2014/11/30/14/11/cat-551554_960_720.jpg'));
       },
@@ -111,24 +111,24 @@ class _AddPetFormState extends State<_AddPetForm> {
   final _breedFocusNode = FocusNode();
   final _conditionFocusNode = FocusNode();
   final _coloringFocusNode = FocusNode();
-  AddPetCubit cubit;
+  AddPetCubit addPetCubit;
 
   @override
   void initState() {
     super.initState();
-    cubit = BlocProvider.of<AddPetCubit>(context);
+    addPetCubit = BlocProvider.of<AddPetCubit>(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    final PetModel newPet = cubit.state.newPet;
+    final PetModel newPet = addPetCubit.state.newPet;
     // при изменении URL фото "извне" обновляем содержимое соответствующего поля
     return BlocListener<AddPetCubit, AddPetState>(
       listenWhen: (AddPetState previous, AddPetState current) =>
           current.externalUpdate &&
           previous.newPet.photos != current.newPet.photos,
       listener: (BuildContext context, AddPetState state) {
-        cubit.setExternalUpdate(externalUpdate: false);
+        addPetCubit.setExternalUpdate(externalUpdate: false);
         _controller.text = state.newPet.photos ?? '';
       },
       child: Form(
@@ -145,7 +145,7 @@ class _AddPetFormState extends State<_AddPetForm> {
               textInputAction: TextInputAction.next,
               controller: _controller,
               onChanged: (value) {
-                cubit.updateNewPet(newPet.copyWith(photos: value));
+                addPetCubit.updateNewPet(newPet.copyWith(photos: value));
               },
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) {
@@ -153,7 +153,7 @@ class _AddPetFormState extends State<_AddPetForm> {
                 if (value.isEmpty) {
                   result = 'Input pet photo url';
                 } else if (Uri.parse(value).isAbsolute) {
-                  cubit.updateNewPet(newPet.copyWith(photos: value));
+                  addPetCubit.updateNewPet(newPet.copyWith(photos: value));
                   result = null;
                 } else {
                   result = 'Input correct url';
@@ -166,10 +166,10 @@ class _AddPetFormState extends State<_AddPetForm> {
                 labelText: 'Category',
                 helperText: '',
               ),
-              value: cubit.state.newPet.category,
-              items: _getDropdownItemsFromList(cubit.state.categories),
+              value: addPetCubit.state.newPet.category,
+              items: _getDropdownItemsFromList(addPetCubit.state.categories),
               onChanged: (CategoryModel value) {
-                cubit.setCategory(value);
+                addPetCubit.setCategory(value);
                 _breedFocusNode.requestFocus();
               },
               autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -182,12 +182,12 @@ class _AddPetFormState extends State<_AddPetForm> {
                 helperText: '',
               ),
               focusNode: _breedFocusNode,
-              value: cubit.state.newPet.breed?.name == null
+              value: addPetCubit.state.newPet.breed?.name == null
                   ? null
-                  : cubit.state.newPet.breed,
-              items: _getDropdownItemsFromList(cubit.state.breedsByCategory),
+                  : addPetCubit.state.newPet.breed,
+              items: _getDropdownItemsFromList(addPetCubit.state.breedsByCategory),
               onChanged: (BreedModel value) {
-                cubit.updateNewPet(newPet.copyWith(breed: value));
+                addPetCubit.updateNewPet(newPet.copyWith(breed: value));
                 _conditionFocusNode.requestFocus();
               },
               autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -199,10 +199,10 @@ class _AddPetFormState extends State<_AddPetForm> {
                 helperText: '',
               ),
               focusNode: _conditionFocusNode,
-              value: cubit.state.newPet.condition,
-              items: _getDropdownItemsFromList(cubit.state.conditions),
+              value: addPetCubit.state.newPet.condition,
+              items: _getDropdownItemsFromList(addPetCubit.state.conditions),
               onChanged: (ConditionModel value) {
-                cubit.updateNewPet(newPet.copyWith(condition: value));
+                addPetCubit.updateNewPet(newPet.copyWith(condition: value));
                 _coloringFocusNode.requestFocus();
               },
               autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -218,7 +218,7 @@ class _AddPetFormState extends State<_AddPetForm> {
               focusNode: _coloringFocusNode,
               textInputAction: TextInputAction.next,
               onFieldSubmitted: (value) {
-                cubit.updateNewPet(newPet.copyWith(coloring: value));
+                addPetCubit.updateNewPet(newPet.copyWith(coloring: value));
               },
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) => (value == null || value.isEmpty)
@@ -233,7 +233,7 @@ class _AddPetFormState extends State<_AddPetForm> {
               initialValue: '4 months',
               textInputAction: TextInputAction.next,
               onFieldSubmitted: (value) {
-                cubit.updateNewPet(newPet.copyWith(age: value));
+                addPetCubit.updateNewPet(newPet.copyWith(age: value));
               },
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
@@ -248,7 +248,7 @@ class _AddPetFormState extends State<_AddPetForm> {
               textInputAction: TextInputAction.next,
               keyboardType: TextInputType.number,
               onFieldSubmitted: (value) {
-                cubit
+                addPetCubit
                     .updateNewPet(newPet.copyWith(weight: double.parse(value)));
               },
               autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -263,7 +263,7 @@ class _AddPetFormState extends State<_AddPetForm> {
               initialValue: 'Address',
               textInputAction: TextInputAction.next,
               onFieldSubmitted: (value) {
-                cubit.updateNewPet(newPet.copyWith(address: value));
+                addPetCubit.updateNewPet(newPet.copyWith(address: value));
               },
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
@@ -278,7 +278,7 @@ class _AddPetFormState extends State<_AddPetForm> {
               textInputAction: TextInputAction.next,
               keyboardType: TextInputType.number,
               onFieldSubmitted: (value) {
-                cubit.updateNewPet(
+                addPetCubit.updateNewPet(
                     newPet.copyWith(distance: double.parse(value)));
               },
               autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -297,7 +297,7 @@ class _AddPetFormState extends State<_AddPetForm> {
               textInputAction: TextInputAction.done,
               keyboardType: TextInputType.multiline,
               onFieldSubmitted: (value) {
-                cubit.updateNewPet(newPet.copyWith(description: value));
+                addPetCubit.updateNewPet(newPet.copyWith(description: value));
               },
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
@@ -308,8 +308,8 @@ class _AddPetFormState extends State<_AddPetForm> {
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
                     out('Form OK');
-                    cubit.addPet();
-                    navigator.pop(cubit.state.newPet);
+                    addPetCubit.addPet();
+                    navigator.pop(addPetCubit.state.newPet);
                   }
                 },
                 child: Padding(
