@@ -1,11 +1,18 @@
 import 'package:get_pet/import.dart';
 import 'package:flutter/material.dart';
 
-class DetailScreen extends StatefulWidget {
-  DetailScreen({@required this.homeCubit, @required this.item});
+typedef OnTapLike = void Function(String petId);
 
-  final HomeCubit homeCubit;
+class DetailScreen extends StatefulWidget {
+  DetailScreen({
+    @required this.itemList,
+    @required this.item,
+    @required this.onTapLike,
+  });
+
+  final List<PetModel> itemList;
   final PetModel item;
+  final OnTapLike onTapLike;
 
   Route<T> getRoute<T>() {
     return buildRoute<T>(
@@ -19,24 +26,29 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  HomeCubit homeCubit;
-  String itemId;
+  List<PetModel> itemList;
+  PetModel item;
+  OnTapLike onTapLike;
 
   @override
   void initState() {
     super.initState();
-    homeCubit = widget.homeCubit;
-    itemId = widget.item.id;
+    itemList = widget.itemList;
+    item = widget.item;
+    onTapLike = (_) {
+      item = item.copyWith(liked: !item.liked);
+      setState(() {
+        widget.onTapLike(item.id);
+      });
+    };
   }
 
   @override
   Widget build(BuildContext context) {
-    final PetModel item =
-        homeCubit.state.newestPets.firstWhere((PetModel e) => e.id == itemId);
     final screenHeight = MediaQuery.of(context).size.height;
     return GestureDetector(
-      onHorizontalDragEnd: (details) {
-        _swapItem(details: details, item: item);
+      onHorizontalDragEnd: (dragDetails) {
+        _swapItem(details: dragDetails);
       },
       child: Scaffold(
         body: CustomScrollView(
@@ -83,15 +95,11 @@ class _DetailScreenState extends State<DetailScreen> {
                     children: [
                       _Header(
                         item: item,
-                        onLiked: () {
-                          setState(() {
-                            homeCubit.onTapLike(petId: item.id);
-                          });
-                        },
+                        onTapLike: onTapLike,
                       ),
-                      _Details(item: item),
-                      _Story(item: item),
-                      _Contact(item: item),
+                      _Details(item),
+                      _Story(item),
+                      _Contact(item),
                     ],
                   ),
                 ),
@@ -103,27 +111,25 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
-  void _swapItem({DragEndDetails details, PetModel item}) {
-    final items = homeCubit.state.newestPets;
+  void _swapItem({DragEndDetails details}) {
     var needUpdate = false;
     int newItemIndex;
     if (details.primaryVelocity > 0) {
       // swipe left
-      newItemIndex = items.indexOf(item) - 1;
+      newItemIndex = itemList.indexOf(item) - 1;
       if (newItemIndex >= 0) {
         needUpdate = true;
       }
     } else if (details.primaryVelocity < 0) {
       // swipe right
-      newItemIndex = items.indexOf(item) + 1;
-      if (newItemIndex < items.length) {
+      newItemIndex = itemList.indexOf(item) + 1;
+      if (newItemIndex < itemList.length) {
         needUpdate = true;
       }
     }
     if (needUpdate) {
-      // out('newIndex = $newIndex');
       setState(() {
-        itemId = items[newItemIndex].id;
+        item = itemList[newItemIndex];
       });
     }
   }
@@ -163,10 +169,10 @@ class _SliderCover extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  _Header({this.item, this.onLiked});
+  _Header({this.item, this.onTapLike});
 
-  final VoidCallback onLiked;
   final PetModel item;
+  final OnTapLike onTapLike;
 
   @override
   Widget build(BuildContext context) {
@@ -202,7 +208,9 @@ class _Header extends StatelessWidget {
           height: 48,
           color: item.liked ? theme.selectedRowColor : theme.primaryColorLight,
           shape: CircleBorder(),
-          onPressed: onLiked,
+          onPressed: () {
+            onTapLike(item.id);
+          },
           child: Icon(
             Icons.favorite,
             color: item.liked ? Colors.white : theme.textSelectionColor,
@@ -215,7 +223,7 @@ class _Header extends StatelessWidget {
 }
 
 class _Details extends StatelessWidget {
-  _Details({this.item});
+  _Details(this.item);
 
   final PetModel item;
 
@@ -274,7 +282,7 @@ class _DetailsItem extends StatelessWidget {
 }
 
 class _Story extends StatelessWidget {
-  _Story({this.item});
+  _Story(this.item);
 
   final PetModel item;
 
@@ -289,15 +297,18 @@ class _Story extends StatelessWidget {
               fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 0.5),
         ),
         SizedBox(height: 8),
-        Text(
-          item.description,
-          style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
-              height: 2,
-              letterSpacing: 0.5),
-          overflow: TextOverflow.ellipsis,
-          maxLines: 3,
+        SizedBox(
+          height: 78,
+          child: Text(
+            item.description,
+            style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                height: 2,
+                letterSpacing: 0.5),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 3,
+          ),
         ),
       ],
     );
@@ -305,7 +316,7 @@ class _Story extends StatelessWidget {
 }
 
 class _Contact extends StatelessWidget {
-  _Contact({this.item});
+  _Contact(this.item);
 
   final PetModel item;
 
@@ -351,13 +362,14 @@ class _Contact extends StatelessWidget {
             ],
           ),
           Spacer(),
+          SizedBox(width: 8),
           ElevatedButton(
             onPressed: () {
               // cubit.onTapPetLike(petId: item.id);
             },
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: kHorizontalPadding),
+              padding: const EdgeInsets.symmetric(
+                  /* horizontal: kHorizontalPadding */),
               child: Text('Contact Me'),
             ),
           ),

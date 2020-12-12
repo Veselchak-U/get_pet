@@ -68,7 +68,8 @@ class SearchCubit extends Cubit<SearchState> {
     ));
   }
 
-  void onTapLike({String petId}) {
+  void onTapLike(String petId) {
+    out('SEARCHCUBIT onTapLike()');
     if (state.status == SearchStatus.reload) {
       return;
     } else {

@@ -58,7 +58,8 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  void onTapLike({String petId}) {
+  void onTapLike(String petId) {
+    out('HOMECUBIT onTapLike()');
     if (state.status == HomeStatus.reload) {
       return;
     } else {

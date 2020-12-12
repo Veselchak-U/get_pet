@@ -241,7 +241,7 @@ class _DrawerButton extends StatelessWidget {
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: kHorizontalPadding),
-          child: Text('Log out'),
+          child: Text('Log Out'),
         ),
       ),
     );
@@ -388,7 +388,7 @@ class _StaticSearchBar extends StatelessWidget {
 }
 
 void _goToSearchScreen(BuildContext context, [CategoryModel category]) {
-  final result = navigator.push(SearchScreen(
+  final Future<dynamic> result = navigator.push(SearchScreen(
     category: category,
   ).getRoute());
   // on back from SearchScreen update pet likes
@@ -516,11 +516,6 @@ class _CategoryGridItem extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(16.0),
       onTap: () => _goToSearchScreen(context, item),
-      // () {
-      //   navigator.push(SearchScreen(
-      //     category: item,
-      //   ).getRoute());
-      // },
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(
@@ -598,12 +593,14 @@ class _NewestPetsCarousel extends StatelessWidget {
             child: PetCard(
               item: newestPets[index],
               onTap: () {
-                navigator.push(
-                    DetailScreen(homeCubit: homeCubit, item: newestPets[index])
-                        .getRoute());
+                navigator.push(DetailScreen(
+                  itemList: newestPets,
+                  item: newestPets[index],
+                  onTapLike: homeCubit.onTapLike,
+                ).getRoute());
               },
               onTapLike: () {
-                homeCubit.onTapLike(petId: newestPets[index].id);
+                homeCubit.onTapLike(newestPets[index].id);
               },
             ),
           ),

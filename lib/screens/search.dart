@@ -37,7 +37,7 @@ class _SearchBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Search Your pet'),
+        title: Text('Search Your Pet'),
         centerTitle: true,
         elevation: 0.0,
         // automaticallyImplyLeading: false,
@@ -62,12 +62,12 @@ class _SearchBody extends StatelessWidget {
               children: [
                 _searchBar,
                 _ChipFilter<CategoryModel>(
-                  filter: state.categoryFilter,
+                  selected: state.categoryFilter,
                   items: state.categories,
                   onSelected: searchCubit.setCategoryFilter,
                 ),
                 _ChipFilter<ConditionModel>(
-                  filter: state.conditionFilter,
+                  selected: state.conditionFilter,
                   items: state.conditions,
                   onSelected: searchCubit.setConditionFilter,
                 ),
@@ -167,12 +167,12 @@ class _SearchBarState extends State<_SearchBar> {
 
 class _ChipFilter<T> extends StatelessWidget {
   _ChipFilter({
-    @required this.filter,
+    @required this.selected,
     @required this.items,
     @required this.onSelected,
   });
 
-  final T filter;
+  final T selected;
   final List<T> items;
   final Function(T value) onSelected;
 
@@ -194,7 +194,7 @@ class _ChipFilter<T> extends StatelessWidget {
                     label: Text(items[index].toString()),
                     elevation: 2.0,
                     selectedColor: Theme.of(context).accentColor,
-                    selected: filter.toString() == items[index].toString(),
+                    selected: selected.toString() == items[index].toString(),
                     onSelected: (bool value) {
                       onSelected(value ? items[index] : null);
                     },
@@ -237,130 +237,18 @@ class _PetGrid extends StatelessWidget {
             foundedPets.length,
             (index) => PetCard(
                   item: foundedPets[index],
-                  // onTap: () {
-                  //   navigator.push(DetailScreen(
-                  //           homeCubit: homeCubit, item: foundedPets[index])
-                  //       .getRoute());
-                  // },
+                  onTap: () {
+                    navigator.push(DetailScreen(
+                      itemList: foundedPets,
+                      item: foundedPets[index],
+                      onTapLike: searchCubit.onTapLike,
+                    ).getRoute());
+                  },
                   onTapLike: () {
-                    searchCubit.onTapLike(petId: foundedPets[index].id);
+                    searchCubit.onTapLike(foundedPets[index].id);
                   },
                 )),
       ),
     );
   }
 }
-
-// class _PetGridItem extends StatelessWidget {
-//   const _PetGridItem({Key key, this.item}) : super(key: key);
-//   final PetModel item;
-//   @override
-//   Widget build(BuildContext context) {
-//     final theme = Theme.of(context);
-//     return GestureDetector(
-//       onTap: () {
-//         // navigator.push(DetailScreen(cubit: cubit, item: item).getRoute());
-//       },
-//       child: Container(
-//         decoration: BoxDecoration(
-//           border: Border.all(
-//             color: theme.primaryColorLight,
-//             width: 2.0,
-//           ),
-//           borderRadius: BorderRadius.only(
-//             topLeft: Radius.circular(16.0),
-//             topRight: Radius.circular(16.0),
-//           ),
-//         ),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Stack(
-//               children: [
-//                 Hero(
-//                   tag: item.id,
-//                   child: Container(
-//                     height: 150,
-//                     decoration: BoxDecoration(
-//                       borderRadius: BorderRadius.only(
-//                         topLeft: Radius.circular(16.0),
-//                         topRight: Radius.circular(16.0),
-//                       ),
-//                       image: DecorationImage(
-//                         fit: BoxFit.cover,
-//                         image: NetworkImage(item.photos),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 Positioned(
-//                   top: 7,
-//                   right: -11,
-//                   child: FlatButton(
-//                     height: 30,
-//                     color: item.liked ? theme.selectedRowColor : Colors.white,
-//                     shape: CircleBorder(),
-//                     onPressed: () {
-//                       // cubit.onTapPetLike(petId: item.id);
-//                     },
-//                     child: Icon(
-//                       Icons.favorite,
-//                       color:
-//                           item.liked ? Colors.white : theme.textSelectionColor,
-//                       size: 16,
-//                     ),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//             Padding(
-//               padding: EdgeInsets.all(8.0),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Container(
-//                     decoration: BoxDecoration(
-//                       color: item.condition.backgroundColor ??
-//                           theme.primaryColorLight,
-//                       borderRadius: BorderRadius.circular(10),
-//                     ),
-//                     child: Padding(
-//                       padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
-//                       child: Text(
-//                         item.condition.name,
-//                         overflow: TextOverflow.ellipsis,
-//                         style: TextStyle(
-//                           color: item.condition.textColor ?? theme.primaryColor,
-//                           fontSize: 12,
-//                           fontWeight: FontWeight.bold,
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                   SizedBox(height: 4),
-//                   Text(
-//                     item.breed.name,
-//                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-//                   ),
-//                   SizedBox(height: 4),
-//                   Row(
-//                     children: [
-//                       Icon(
-//                         Icons.location_on_outlined,
-//                         size: 16,
-//                       ),
-//                       Text(
-//                         '${item.address} ( ${item.distance} km )',
-//                         style: TextStyle(fontSize: 11),
-//                       ),
-//                     ],
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
