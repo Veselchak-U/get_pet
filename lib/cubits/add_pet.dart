@@ -55,8 +55,18 @@ class AddPetCubit extends Cubit<AddPetState> {
     emit(state.copyWith(breedsByCategory: breedsByCategory));
   }
 
-  void addPet() async {
-    await repo.createPet(state.newPet);
+  Future<bool> addPet() async {
+    bool result = false;
+    emit(state.copyWith(status: AddPetStatus.busy));
+    try {
+      await repo.createPet(state.newPet);
+      result = true;
+    } catch (e) {
+      out(e);
+    } finally {
+      emit(state.copyWith(status: AddPetStatus.ready));
+    }
+    return result;
   }
 }
 

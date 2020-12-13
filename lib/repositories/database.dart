@@ -35,24 +35,16 @@ class DatabaseRepository {
     );
   }
 
-  // Future<MemberModel> upsertMember(MemberData data) {
-  //   final result = _service.mutate<MemberModel>(
-  //     document: _API.upsertMember,
-  //     variables: data.toJson(),
-  //     root: 'insert_member_one',
-  //     convert: MemberModel.fromJson,
-  //   );
-  //   return result;
-  // }
-
   Future<bool> upsertMember(UserModel user) async {
     var result = true;
 
     final options = MutationOptions(
       documentNode: _API.upsertMember,
       variables: {
-        'name': user.displayName,
-        'photo': user.photoURL,
+        'name': user.name,
+        'photo': user.photo,
+        'email': user.email,
+        'phone': user.phone,
       },
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
@@ -64,17 +56,12 @@ class DatabaseRepository {
       result = false;
       throw mutationResult.exception;
     }
+    out('DATA_REPO upsertMember()');
     return result;
   }
 
   Future<int> readNotificationCount() async {
     final result = 2;
-    return result;
-  }
-
-  Future<String> readUserAvatarImage() async {
-    final result =
-        'https://images.unsplash.com/photo-1602773890240-87ce74fc752e?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80';
     return result;
   }
 
@@ -307,7 +294,7 @@ class DatabaseRepository {
       final petWhithLike = pet.copyWith(liked: liked);
       result.add(petWhithLike);
     });
-    out('readNewestPetsWithLikes()');
+    out('DATA_REPO readNewestPetsWithLikes()');
     return result;
   }
 
@@ -366,35 +353,6 @@ class DatabaseRepository {
     return result;
   }
 
-  // Future<bool> updatePetLike({String petId, bool isLike}) async {
-  //   var result = true;
-
-  //   final options = MutationOptions(
-  //     documentNode: isLike ? _API.insertPetLike : _API.deletePetLike,
-  //     variables: isLike
-  //         ? {
-  //             // 'member_id': kDatabaseUserId,
-  //             // 'member_id': authRepository.currentUser.id,
-  //             'pet_id': petId,
-  //           }
-  //         : {
-  //             // 'member_id': kDatabaseUserId,
-  //             'member_id': authRepository.currentUser.id,
-  //             'pet_id': petId,
-  //           },
-  //     fetchPolicy: FetchPolicy.noCache,
-  //     errorPolicy: ErrorPolicy.all,
-  //   );
-  //   final mutationResult = await _client
-  //       .mutate(options)
-  //       .timeout(Duration(milliseconds: _kTimeoutMillisec));
-  //   if (mutationResult.hasException) {
-  //     result = false;
-  //     throw mutationResult.exception;
-  //   }
-  //   return result;
-  // }
-
   Future<PetModel> createPet(PetModel newPet) async {
     final options = MutationOptions(
       documentNode: _API.createPet,
@@ -425,20 +383,69 @@ class DatabaseRepository {
     final dataItem =
         mutationResult.data['insert_pet_one'] as Map<String, dynamic>;
     try {
-      out('createPet()');
+      out('DATAREPO createPet()');
       return PetModel.fromJson(dataItem);
     } catch (error) {
       out(error);
       return Future.error(error);
     }
   }
+
+  Future<UserModel> readUserProfile() async {
+    // out('DATA_REPO readUserProfile() start');
+    final options = QueryOptions(
+      documentNode: _API.readMember,
+      fetchPolicy: FetchPolicy.noCache,
+      errorPolicy: ErrorPolicy.all,
+    );
+    final queryResult = await _client
+        .query(options)
+        .timeout(Duration(milliseconds: _kTimeoutMillisec));
+    if (queryResult.hasException) {
+      throw queryResult.exception;
+    }
+    final dataItems = (queryResult.data['current_member'] as List)
+        .cast<Map<String, dynamic>>();
+    UserModel result;
+    for (final item in dataItems) {
+      try {
+        result = UserModel.fromJson(item);
+      } catch (error) {
+        out(error);
+        return Future.error(error);
+      }
+    }
+    // out('DATA_REPO readUserProfile() end');
+    return result;
+  }
 }
 
 class _API {
+  static final readMember = gql(r'''
+    query ReadMember {
+      current_member {
+        ...UserFields
+      }
+    }
+  ''')..definitions.addAll(fragments.definitions);
+
   static final upsertMember = gql(r'''
-    mutation UpsertMember($name: String $photo: String) {
-      insert_member_one(object: {name: $name, photo: $photo},
-      on_conflict: {constraint: member_pkey, update_columns: [name, photo]}) {
+    mutation UpsertMember(
+      $name: String,
+      $photo: String,
+      $email: String,
+      $phone: String,
+    ) {
+      insert_member_one(object: {
+        name: $name,
+        photo: $photo,
+        email: $email,
+        phone: $phone
+      },
+      on_conflict: {
+        constraint: member_pkey,
+        update_columns: [name, photo, email, phone]
+      }) {
         ...MemberFields
       }
     }
@@ -497,25 +504,6 @@ class _API {
     }
   ''')..definitions.addAll(fragments.definitions);
 
-  // static final searchPets = gql(r'''
-  //   query SearchPets($member_id: uuid!, $category_id: uuid, $condition_id: uuid, $query: String, $limit: Int!) {
-  //     get_pets_by_member_id(args: {member_id: $member_id},
-  //       where: {_and: [
-  //                 {category: {id: {_eq: $category_id}}},
-  //                 {condition: {id: {_eq: $condition_id}}},
-  //                 {_or: [
-  //                   {breed: {name: {_ilike: $query}}},
-  //                   {address: {_ilike: $query}},
-  //                 ]},
-  //              ]},
-  //       order_by: {updated_at: desc},
-  //       limit: $limit
-  //     ) {
-  //       ...PetFields
-  //     }
-  //   }
-  // ''')..definitions.addAll(fragments.definitions);
-
   static final insertPetLike = gql(r'''
     mutation InsertPetLike($pet_id: uuid!) {
       insert_liked_one(object: {pet_id: $pet_id}) {
@@ -566,14 +554,6 @@ class _API {
     }
   ''')..definitions.addAll(fragments.definitions);
 
-  // static final readPets = gql(r'''
-  //   query ReadAllPets {
-  //     pets {
-  //       ...PetFields
-  //     }
-  //   }
-  // ''')..definitions.addAll(fragments.definitions);
-
   static final readNewestPetsWithLikes = gql(r'''
     query ReadPets {
       pets(order_by: {updated_at: desc}, limit: 10) {
@@ -584,14 +564,6 @@ class _API {
       }
     }
   ''')..definitions.addAll(fragments.definitions);
-
-  // static final readAllPets = gql(r'''
-  //   query ReadAllPets {
-  //     pets {
-  //       ...PetFields
-  //     }
-  //   }
-  // ''')..definitions.addAll(fragments.definitions);
 
   static final readBreeds = gql(r'''
     query ReadBreeds {
@@ -639,7 +611,19 @@ class _API {
       photo
       email
       phone
+      is_active
     }
+
+    fragment UserFields on current_member {
+      # __typename
+      id
+      name
+      photo
+      email
+      phone
+      is_active
+    }
+
     fragment LikedFields on liked {
       # __typename
       # member_id

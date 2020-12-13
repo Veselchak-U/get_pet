@@ -76,7 +76,8 @@ class HomeCubit extends Cubit<HomeState> {
     if (newPet == null) {
       return;
     }
-    // local changes
+    out('HOME_CUBIT addNewPet()');
+    // local changes (optimistic update)
     final List<PetModel> newPets = [newPet, ...state.newestPets];
     emit(state.copyWith(newestPets: newPets));
     // database changes

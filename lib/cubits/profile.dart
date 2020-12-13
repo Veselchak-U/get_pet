@@ -11,24 +11,24 @@ class ProfileCubit extends Cubit<ProfileState> {
   final DatabaseRepository dataRepository;
 
   Future<bool> load() async {
-    var result = true;
+    var result = false;
     emit(state.copyWith(status: ProfileStatus.busy));
     try {
-      final int notificationCount = await dataRepository.readNotificationCount();
-      final String userName =
-          'John Do Junior'; //await repo.readUserAvatarImage();
-      final String userAvatarImage = await dataRepository.readUserAvatarImage();
+      final int notificationCount =
+          await dataRepository.readNotificationCount();
+      final UserModel user = await dataRepository.readUserProfile();
+      out(user.toJson());
       emit(state.copyWith(
         status: ProfileStatus.ready,
+        user: user,
         notificationCount: notificationCount,
-        userName: userName,
-        userAvatarImage: userAvatarImage,
       ));
+      result = true;
     } catch (error) {
       out(error);
-      result = false;
       return Future.error(error);
     }
+    out('PROFILE_CUBIT load()');
     return result;
   }
 
@@ -58,24 +58,21 @@ enum ProfileStatus { initial, busy, ready }
 class ProfileState extends Equatable {
   const ProfileState({
     this.status = ProfileStatus.initial,
+    this.user = UserModel.empty,
     this.notificationCount = 0,
-    this.userName = '',
-    this.userAvatarImage = '',
     this.sectionsVisibility = const [true, true, true],
   });
 
   final ProfileStatus status;
+  final UserModel user;
   final int notificationCount;
-  final String userName;
-  final String userAvatarImage;
   final List<bool> sectionsVisibility;
 
   @override
   List<Object> get props => [
         status,
+        user,
         notificationCount,
-        userName,
-        userAvatarImage,
         sectionsVisibility,
       ];
 }

@@ -24,12 +24,14 @@ class AuthenticationRepository {
   /// Emits [User.empty] if the user is not authenticated.
   Stream<UserModel> get userChanges {
     return _firebaseAuth.authStateChanges().map((User firebaseUser) {
-      out('AuthenticationRepository: userChanges()');
-      final newUser =
-          firebaseUser == null ? UserModel.empty : firebaseUser.toUserModel;
-      _currentUser = newUser;
-      setHasuraUserId();
-      return newUser;
+      out('AUTH_REPO userChanges()');
+      if (firebaseUser == null) {
+        _currentUser = UserModel.empty;
+      } else {
+        _currentUser = firebaseUser.toUserModel;
+        setHasuraUserId();
+      }
+      return _currentUser;
     });
   }
 
@@ -42,7 +44,7 @@ class AuthenticationRepository {
                 ['x-hasura-user-id'] as String;
         // out('hasuraUserId = $hasuraUserId');
         _currentUser = _currentUser.copyWith(id: hasuraUserId);
-        out('_currentUser.id = ${_currentUser.id}');
+        out('AUTH_REPO _currentUser.id = ${_currentUser.id}');
       });
     }
   }
@@ -84,7 +86,13 @@ class AuthenticationRepository {
 
 extension on User {
   UserModel get toUserModel {
-    return UserModel(id: uid, displayName: displayName, photoURL: photoURL);
+    return UserModel(
+      id: uid,
+      name: displayName,
+      photo: photoURL,
+      email: email,
+      phone: phoneNumber,
+    );
   }
 }
 

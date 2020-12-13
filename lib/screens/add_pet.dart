@@ -30,43 +30,81 @@ class _AddPetBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+    final isActiveUser =
+        BlocProvider.of<ProfileCubit>(context).state.user.isActive;
     return BlocBuilder<AddPetCubit, AddPetState>(
-      builder: (BuildContext context, AddPetState state) {
-        return Scaffold(
-          body: CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                elevation: 0.0,
-                expandedHeight: screenHeight / 2,
-                title: Text(
-                  'Add Your Pet',
-                  // style: TextStyle(color: theme.primaryColor),
-                ),
-                centerTitle: true,
-                flexibleSpace:
-                    (state.newPet.photos == null || state.newPet.photos.isEmpty)
+      builder: (BuildContext context, AddPetState addPetState) {
+        if (!isActiveUser) {
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Unfortunately, your account is restricted.'),
+                  Text("You can't create a new pet."),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => navigator.pop(),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.pets),
+                          SizedBox(width: 8),
+                          Text('Back'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        return Stack(
+          children: [
+            Scaffold(
+              body: CustomScrollView(
+                slivers: [
+                  SliverAppBar(
+                    elevation: 0.0,
+                    expandedHeight: screenHeight / 2,
+                    title: Text(
+                      'Add Your Pet',
+                      // style: TextStyle(color: theme.primaryColor),
+                    ),
+                    centerTitle: true,
+                    flexibleSpace: (addPetState.newPet.photos == null ||
+                            addPetState.newPet.photos.isEmpty)
                         ? Center(
                             child: _AddPhotoButton(),
                           )
                         : FadeInImage.assetNetwork(
-                            image: state.newPet.photos,
+                            image: addPetState.newPet.photos,
                             fit: BoxFit.cover,
                             placeholder: '${kAssetPath}placeholder_pet.png',
                             imageErrorBuilder: (context, object, stack) =>
                                 Image.asset('${kAssetPath}placeholder_pet.png'),
                           ),
-              ),
-              SliverToBoxAdapter(
-                child: Container(
-                  color: theme.backgroundColor,
-                  child: Padding(
-                    padding: const EdgeInsets.all(kHorizontalPadding),
-                    child: _AddPetForm(),
                   ),
-                ),
+                  SliverToBoxAdapter(
+                    child: Container(
+                      color: theme.backgroundColor,
+                      child: Padding(
+                        padding: const EdgeInsets.all(kHorizontalPadding),
+                        child: _AddPetForm(),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            if (addPetState.status == AddPetStatus.busy)
+              Center(
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+          ],
         );
       },
     );
@@ -185,7 +223,8 @@ class _AddPetFormState extends State<_AddPetForm> {
               value: addPetCubit.state.newPet.breed?.name == null
                   ? null
                   : addPetCubit.state.newPet.breed,
-              items: _getDropdownItemsFromList(addPetCubit.state.breedsByCategory),
+              items:
+                  _getDropdownItemsFromList(addPetCubit.state.breedsByCategory),
               onChanged: (BreedModel value) {
                 addPetCubit.updateNewPet(newPet.copyWith(breed: value));
                 _conditionFocusNode.requestFocus();
@@ -305,16 +344,17 @@ class _AddPetFormState extends State<_AddPetForm> {
             ),
             Center(
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState.validate()) {
                     out('Form OK');
-                    addPetCubit.addPet();
-                    navigator.pop(addPetCubit.state.newPet);
+                    final result = await addPetCubit.addPet();
+                    if (result) {
+                      navigator.pop(addPetCubit.state.newPet);
+                    }
                   }
                 },
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: Text('Add Pet'),
                 ),
               ),
