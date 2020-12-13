@@ -1,7 +1,7 @@
 import 'package:get_pet/import.dart';
 import 'package:flutter/material.dart';
 
-typedef OnTapLike = void Function(String petId);
+typedef OnTapLike = void Function(PetModel pet);
 
 class DetailScreen extends StatefulWidget {
   DetailScreen({
@@ -28,7 +28,7 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   List<PetModel> itemList;
   PetModel item;
-  OnTapLike onTapLike;
+  OnTapLike onTapLikeInner;
   PageController _pageController;
 
   @override
@@ -36,11 +36,16 @@ class _DetailScreenState extends State<DetailScreen> {
     super.initState();
     itemList = widget.itemList;
     item = widget.item;
-    onTapLike = (_) {
-      item = item.copyWith(liked: !item.liked);
+    onTapLikeInner = (_) {
+      // top-level widget changes
+      widget.onTapLike(item);
+      // local list changes
       setState(() {
-        widget.onTapLike(item.id);
+        final index = itemList.indexOf(item);
+        itemList[index] = item.copyWith(liked: !item.liked);
+        item = itemList[index];
       });
+
     };
     _pageController = PageController(initialPage: itemList.indexOf(item));
   }
@@ -105,7 +110,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   children: [
                     _Header(
                       item: item,
-                      onTapLike: onTapLike,
+                      onTapLike: onTapLikeInner,
                     ),
                     _Details(item),
                     _Story(item),
@@ -196,7 +201,7 @@ class _Header extends StatelessWidget {
           color: item.liked ? theme.selectedRowColor : theme.primaryColorLight,
           shape: CircleBorder(),
           onPressed: () {
-            onTapLike(item.id);
+            onTapLike(item);
           },
           child: Icon(
             Icons.favorite,

@@ -58,22 +58,18 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  void onTapLike(String petId) {
-    out('HOMECUBIT onTapLike()');
+  void onTapLike(PetModel pet) {
     if (state.status == HomeStatus.reload) {
       return;
-    } else {
-      // local changes
-      final List<PetModel> newPets = [...state.newestPets];
-      final PetModel changedPet =
-          newPets.firstWhere((PetModel e) => e.id == petId);
-      final PetModel newPet = changedPet.copyWith(liked: !changedPet.liked);
-      final index = newPets.indexOf(changedPet);
-      newPets[index] = newPet;
-      emit(state.copyWith(newestPets: newPets));
-      // database changes
-      dataRepository.updatePetLike(petId: petId, isLike: newPet.liked);
     }
+    out('HOMECUBIT onTapLike()');
+    // database changes
+    Future<bool> result = dataRepository.updatePetLike(pet);
+    // local changes (optimistic update)
+    final List<PetModel> newestPets = [...state.newestPets];
+    final index = newestPets.indexOf(pet);
+    newestPets[index] = pet.copyWith(liked: !pet.liked);
+    emit(state.copyWith(newestPets: newestPets));
   }
 
   void addNewPet(PetModel newPet) async {

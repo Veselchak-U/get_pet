@@ -338,19 +338,18 @@ class DatabaseRepository {
     return result;
   }
 
-  Future<bool> updatePetLike({String petId, bool isLike}) async {
+  Future<bool> updatePetLike(PetModel pet) async {
+    final String petId = pet.id;
+    final bool isLike = !pet.liked;
     var result = true;
 
     final options = MutationOptions(
       documentNode: isLike ? _API.insertPetLike : _API.deletePetLike,
       variables: isLike
           ? {
-              // 'member_id': kDatabaseUserId,
-              // 'member_id': authRepository.currentUser.id,
               'pet_id': petId,
             }
           : {
-              // 'member_id': kDatabaseUserId,
               'member_id': authRepository.currentUser.id,
               'pet_id': petId,
             },
@@ -366,6 +365,35 @@ class DatabaseRepository {
     }
     return result;
   }
+
+  // Future<bool> updatePetLike({String petId, bool isLike}) async {
+  //   var result = true;
+
+  //   final options = MutationOptions(
+  //     documentNode: isLike ? _API.insertPetLike : _API.deletePetLike,
+  //     variables: isLike
+  //         ? {
+  //             // 'member_id': kDatabaseUserId,
+  //             // 'member_id': authRepository.currentUser.id,
+  //             'pet_id': petId,
+  //           }
+  //         : {
+  //             // 'member_id': kDatabaseUserId,
+  //             'member_id': authRepository.currentUser.id,
+  //             'pet_id': petId,
+  //           },
+  //     fetchPolicy: FetchPolicy.noCache,
+  //     errorPolicy: ErrorPolicy.all,
+  //   );
+  //   final mutationResult = await _client
+  //       .mutate(options)
+  //       .timeout(Duration(milliseconds: _kTimeoutMillisec));
+  //   if (mutationResult.hasException) {
+  //     result = false;
+  //     throw mutationResult.exception;
+  //   }
+  //   return result;
+  // }
 
   Future<PetModel> createPet(PetModel newPet) async {
     final options = MutationOptions(

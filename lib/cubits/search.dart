@@ -6,7 +6,8 @@ import 'package:get_pet/import.dart';
 part 'search.g.dart';
 
 class SearchCubit extends Cubit<SearchState> {
-  SearchCubit({this.dataRepository, this.category}) : super(const SearchState());
+  SearchCubit({this.dataRepository, this.category})
+      : super(const SearchState());
 
   final DatabaseRepository dataRepository;
   final CategoryModel category;
@@ -18,8 +19,10 @@ class SearchCubit extends Cubit<SearchState> {
       categoryFilter: category,
     ));
     try {
-      final List<CategoryModel> categories = await dataRepository.readCategories();
-      final List<ConditionModel> conditions = await dataRepository.readConditions();
+      final List<CategoryModel> categories =
+          await dataRepository.readCategories();
+      final List<ConditionModel> conditions =
+          await dataRepository.readConditions();
       emit(state.copyWith(
         status: SearchStatus.ready,
         categories: categories,
@@ -68,25 +71,19 @@ class SearchCubit extends Cubit<SearchState> {
     ));
   }
 
-  void onTapLike(String petId) {
-    out('SEARCHCUBIT onTapLike()');
+  void onTapLike(PetModel pet) {
     if (state.status == SearchStatus.reload) {
       return;
-    } else {
-      // local changes
-      final List<PetModel> newPets = [...state.foundedPets];
-      final PetModel changedPet =
-          newPets.firstWhere((PetModel e) => e.id == petId);
-      final PetModel newPet = changedPet.copyWith(liked: !changedPet.liked);
-      final index = newPets.indexOf(changedPet);
-      newPets[index] = newPet;
-      emit(state.copyWith(foundedPets: newPets));
-      // database changes
-      dataRepository.updatePetLike(petId: petId, isLike: newPet.liked);
     }
+    out('SEARCHCUBIT onTapLike()');
+    // database changes
+    Future<bool> result = dataRepository.updatePetLike(pet);
+    // local changes (optimistic update)
+    final List<PetModel> foundedPets = [...state.foundedPets];
+    final index = foundedPets.indexOf(pet);
+    foundedPets[index] = pet.copyWith(liked: !pet.liked);
+    emit(state.copyWith(foundedPets: foundedPets));
   }
-
-
 }
 
 enum SearchStatus { initial, busy, reload, ready }

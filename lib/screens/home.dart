@@ -596,7 +596,7 @@ class _NewestPetsCarousel extends StatelessWidget {
                 ).getRoute());
               },
               onTapLike: () {
-                homeCubit.onTapLike(newestPets[index].id);
+                homeCubit.onTapLike(newestPets[index]);
               },
             ),
           ),

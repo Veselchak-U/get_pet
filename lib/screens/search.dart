@@ -245,7 +245,7 @@ class _PetGrid extends StatelessWidget {
                     ).getRoute());
                   },
                   onTapLike: () {
-                    searchCubit.onTapLike(foundedPets[index].id);
+                    searchCubit.onTapLike(foundedPets[index]);
                   },
                 )),
       ),
