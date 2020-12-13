@@ -53,7 +53,7 @@ class _SearchBody extends StatelessWidget {
         builder: (BuildContext context, SearchState state) {
           if (state.status == SearchStatus.initial) {
             return Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(strokeWidth: 2),
             );
           } else {
             final SearchCubit searchCubit =
@@ -77,7 +77,7 @@ class _SearchBody extends StatelessWidget {
                       _PetGrid(),
                       if (state.status == SearchStatus.busy)
                         Center(
-                          child: CircularProgressIndicator(),
+                          child: CircularProgressIndicator(strokeWidth: 2),
                         )
                     ],
                   ),

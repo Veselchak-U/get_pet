@@ -86,7 +86,7 @@ class _AddPhotoButton extends StatelessWidget {
                 'https://cdn.pixabay.com/photo/2014/11/30/14/11/cat-551554_960_720.jpg'));
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: kHorizontalPadding),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -314,7 +314,7 @@ class _AddPetFormState extends State<_AddPetForm> {
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: kHorizontalPadding),
+                      horizontal: 8),
                   child: Text('Add Pet'),
                 ),
               ),

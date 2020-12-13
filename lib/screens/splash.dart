@@ -38,7 +38,7 @@ class SplashScreen extends StatelessWidget {
                     decoration: TextDecoration.none),
               ),
               SizedBox(height: 50),
-              CircularProgressIndicator(),
+              CircularProgressIndicator(strokeWidth: 2),
             ],
           ),
         ),

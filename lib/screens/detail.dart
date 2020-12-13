@@ -29,6 +29,7 @@ class _DetailScreenState extends State<DetailScreen> {
   List<PetModel> itemList;
   PetModel item;
   OnTapLike onTapLike;
+  PageController _pageController;
 
   @override
   void initState() {
@@ -41,97 +42,83 @@ class _DetailScreenState extends State<DetailScreen> {
         widget.onTapLike(item.id);
       });
     };
+    _pageController = PageController(initialPage: itemList.indexOf(item));
   }
 
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    return GestureDetector(
-      onHorizontalDragEnd: (dragDetails) {
-        _swapItem(details: dragDetails);
-      },
-      child: Scaffold(
-        body: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              // automaticallyImplyLeading: false,
-              // leading: RaisedButton(
-              //   shape: CircleBorder(),
-              //   color: Colors.transparent.withOpacity(0.001),
-              //   onPressed: () {
-              //     navigator.pop(context);
-              //   },
-              //   child: Icon(Icons.arrow_back),
-              // ),
-              elevation: 0.0,
-              expandedHeight: screenHeight - 20,
-              flexibleSpace: Stack(
-                children: [
-                  FlexibleSpaceBar(
-                    background: Hero(
-                      tag: item.id,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(item.photos),
-                            fit: BoxFit.cover,
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            automaticallyImplyLeading: false,
+            leading: RaisedButton(
+              shape: CircleBorder(),
+              color: Colors.white.withOpacity(0.3),
+              elevation: 0,
+              onPressed: () {
+                navigator.pop(context);
+              },
+              child: Icon(Icons.arrow_back),
+            ),
+            elevation: 0.0,
+            expandedHeight: screenHeight - 20,
+            flexibleSpace: Stack(
+              children: [
+                PageView(
+                  controller: _pageController,
+                  onPageChanged: (int index) {
+                    setState(() {
+                      item = itemList[index];
+                    });
+                  },
+                  children: List.generate(
+                    itemList.length,
+                    (index) => FlexibleSpaceBar(
+                      background: Hero(
+                        tag: itemList[index].id,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage(itemList[index].photos),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                  _SliderCover(),
-                ],
-              ),
+                ),
+                _SliderCover(),
+              ],
             ),
-            SliverToBoxAdapter(
-              child: Container(
-                color: theme.backgroundColor,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: kHorizontalPadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _Header(
-                        item: item,
-                        onTapLike: onTapLike,
-                      ),
-                      _Details(item),
-                      _Story(item),
-                      _Contact(item),
-                    ],
-                  ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              color: theme.backgroundColor,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: kHorizontalPadding),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _Header(
+                      item: item,
+                      onTapLike: onTapLike,
+                    ),
+                    _Details(item),
+                    _Story(item),
+                    _Contact(item),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
+      // ),
     );
-  }
-
-  void _swapItem({DragEndDetails details}) {
-    var needUpdate = false;
-    int newItemIndex;
-    if (details.primaryVelocity > 0) {
-      // swipe left
-      newItemIndex = itemList.indexOf(item) - 1;
-      if (newItemIndex >= 0) {
-        needUpdate = true;
-      }
-    } else if (details.primaryVelocity < 0) {
-      // swipe right
-      newItemIndex = itemList.indexOf(item) + 1;
-      if (newItemIndex < itemList.length) {
-        needUpdate = true;
-      }
-    }
-    if (needUpdate) {
-      setState(() {
-        item = itemList[newItemIndex];
-      });
-    }
   }
 }
 
@@ -365,11 +352,10 @@ class _Contact extends StatelessWidget {
           SizedBox(width: 8),
           ElevatedButton(
             onPressed: () {
-              // cubit.onTapPetLike(petId: item.id);
+              //
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                  /* horizontal: kHorizontalPadding */),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Text('Contact Me'),
             ),
           ),

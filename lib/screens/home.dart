@@ -50,7 +50,7 @@ class HomeScreen extends StatelessWidget {
           result = Container(
             color: theme.backgroundColor,
             child: Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(strokeWidth: 2),
             ),
           );
         } else if (state.status == HomeStatus.initial) {
@@ -240,7 +240,7 @@ class _DrawerButton extends StatelessWidget {
           RepositoryProvider.of<AuthenticationRepository>(context).logOut();
         },
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: kHorizontalPadding),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Text('Log Out'),
         ),
       ),
@@ -408,28 +408,24 @@ class _ScreenSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
     final sectionsVisibility = profileCubit.state.sectionsVisibility;
-    final List<Widget> children = [];
+    final List<Widget> sectionsWidgets = [
+      _CategoryGrid(),
+      _NewestPetsCarousel(),
+      _VetsCarousel(),
+    ];
+    assert(sectionsVisibility.length == sectionsWidgets.length);
+    assert(index < sectionsVisibility.length);
 
     if (sectionsVisibility[index] == true) {
-      children.add(_Header(index: index, text: text));
-      if (index == 0) {
-        children.add(_CategoryGrid());
-      }
-      if (index == 1) {
-        children.add(_NewestPetsCarousel());
-      }
-      if (index == 2) {
-        children.add(_VetsCarousel());
-      }
-      if (index >= sectionsVisibility.length) {
-        children.add(SizedBox.shrink());
-      }
+      return Column(
+        children: [
+          _Header(index: index, text: text),
+          sectionsWidgets[index],
+        ],
+      );
     } else {
-      children.add(SizedBox.shrink());
+      return SizedBox.shrink();
     }
-    return Column(
-      children: children,
-    );
   }
 }
 
