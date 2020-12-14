@@ -11,6 +11,7 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    out('SPLASH_SCREEN build()');
     return Stack(
       alignment: AlignmentDirectional.bottomCenter,
       children: <Widget>[

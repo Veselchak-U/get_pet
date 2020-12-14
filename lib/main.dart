@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:get_pet/import.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:in_app_update/in_app_update.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -79,24 +80,48 @@ class AppView extends StatelessWidget {
       onGenerateRoute: (_) => SplashScreen().getRoute(),
       // home: HomeScreen(),
       builder: (BuildContext context, Widget child) {
-        return BlocListener<AuthenticationCubit, AuthenticationState>(
-          listener: (BuildContext context, AuthenticationState state) {
-            if (state.status == AuthenticationStatus.authenticated) {
-              BlocProvider.of<ProfileCubit>(context).load();
-              BlocProvider.of<HomeCubit>(context).load();
-              navigator.pushAndRemoveUntil(
-                HomeScreen().getRoute(),
-                (Route route) => false,
-              );
-            } else if (state.status == AuthenticationStatus.unauthenticated) {
-              navigator.pushAndRemoveUntil(
-                LoginScreen().getRoute(),
-                (Route route) => false,
-              );
-            } else {} // AuthenticationStatus.unknown
+        return FutureBuilder(
+          future: InAppUpdate.checkForUpdate(),
+          builder:
+              (BuildContext context, AsyncSnapshot<AppUpdateInfo> snapshot) {
+            if (snapshot.hasData) {
+              out('MAIN availableVersionCode = ${snapshot.data.availableVersionCode}');
+              if (snapshot.data.updateAvailable) {
+                InAppUpdate.performImmediateUpdate();
+              } else {
+                return Container(
+                  color: Theme.of(context).backgroundColor,
+                  child: Center(
+                    child: Text('No Update'),
+                  ),
+                );
+              }
+            } else if (snapshot.hasError) {
+              out('MAIN checkForUpdate() ERROR');
+              Future.error(snapshot.error);
+            }
+            return SplashScreen();
           },
-          child: child,
         );
+
+        // return BlocListener<AuthenticationCubit, AuthenticationState>(
+        //   listener: (BuildContext context, AuthenticationState state) {
+        //     if (state.status == AuthenticationStatus.authenticated) {
+        //       BlocProvider.of<ProfileCubit>(context).load();
+        //       BlocProvider.of<HomeCubit>(context).load();
+        //       navigator.pushAndRemoveUntil(
+        //         HomeScreen().getRoute(),
+        //         (Route route) => false,
+        //       );
+        //     } else if (state.status == AuthenticationStatus.unauthenticated) {
+        //       navigator.pushAndRemoveUntil(
+        //         LoginScreen().getRoute(),
+        //         (Route route) => false,
+        //       );
+        //     } else {} // AuthenticationStatus.unknown
+        //   },
+        //   child: child,
+        // );
       },
     );
   }

@@ -21,7 +21,10 @@ class HomeScreen extends StatelessWidget {
         if (state.status == HomeStatus.ready ||
             state.status == HomeStatus.reload) {
           result = RefreshIndicator(
-            onRefresh: () => homeCubit.load(isReload: true),
+            onRefresh: () {
+              BlocProvider.of<ProfileCubit>(context).load();
+              return homeCubit.load(isReload: true);
+            },
             child: BlocBuilder<ProfileCubit, ProfileState>(
                 builder: (BuildContext context, ProfileState state) {
               return Scaffold(
