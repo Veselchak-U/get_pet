@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:get_pet/import.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:in_app_update/in_app_update.dart';
+import 'package:upgrader/upgrader.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -80,6 +80,8 @@ class AppView extends StatelessWidget {
       onGenerateRoute: (_) => SplashScreen().getRoute(),
       // home: HomeScreen(),
       builder: (BuildContext context, Widget child) {
+        Upgrader().clearSavedSettings();
+        final appCastUrl = '';
         return FutureBuilder(
           future: InAppUpdate.checkForUpdate(),
           builder:

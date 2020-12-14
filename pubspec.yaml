@@ -38,7 +38,7 @@ dependencies:
   firebase_auth: ^0.18.4
   google_sign_in: ^4.5.6
   font_awesome_flutter: ^8.10.0
-  in_app_update: ^1.1.14
+  upgrader: ^2.7.3
 
 
 dev_dependencies:
