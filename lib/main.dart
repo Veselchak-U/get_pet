@@ -1,17 +1,23 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:get_pet/import.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:upgrader/upgrader.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     await Firebase.initializeApp();
   } catch (error) {
-    // TODO: add Firebase error handle
     out(error);
   }
+  // Force enable Crashlytics collection while doing every day development.
+  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+  // Pass all uncaught errors from the framework to Crashlytics.
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+
   final authRepository = AuthenticationRepository();
   final dataRepository = DatabaseRepository(authRepository: authRepository);
   runApp(App(
@@ -42,6 +48,9 @@ class App extends StatelessWidget {
       ],
       child: MultiBlocProvider(
         providers: [
+          BlocProvider<AppUpdateCubit>(
+            create: (context) => AppUpdateCubit(),
+          ),
           BlocProvider<AuthenticationCubit>(
             create: (context) => AuthenticationCubit(
               authRepository: authRepository,
@@ -70,60 +79,50 @@ final navigatorKey = GlobalKey<NavigatorState>();
 NavigatorState get navigator => navigatorKey.currentState;
 
 class AppView extends StatelessWidget {
+  final FirebaseAnalytics analytics = FirebaseAnalytics();
+  bool needUpdateApp = true;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Get Pet',
       navigatorKey: navigatorKey,
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: analytics),
+      ],
       theme: theme,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: (_) => SplashScreen().getRoute(),
-      // home: HomeScreen(),
       builder: (BuildContext context, Widget child) {
-        Upgrader().clearSavedSettings();
-        final appCastUrl = '';
-        return FutureBuilder(
-          future: InAppUpdate.checkForUpdate(),
-          builder:
-              (BuildContext context, AsyncSnapshot<AppUpdateInfo> snapshot) {
-            if (snapshot.hasData) {
-              out('MAIN availableVersionCode = ${snapshot.data.availableVersionCode}');
-              if (snapshot.data.updateAvailable) {
-                InAppUpdate.performImmediateUpdate();
-              } else {
-                return Container(
-                  color: Theme.of(context).backgroundColor,
-                  child: Center(
-                    child: Text('No Update'),
-                  ),
-                );
-              }
-            } else if (snapshot.hasError) {
-              out('MAIN checkForUpdate() ERROR');
-              Future.error(snapshot.error);
+        return BlocListener<AppUpdateCubit, AppUpdateState>(
+          listener: (BuildContext context, AppUpdateState appUpdateState) {
+            if (appUpdateState.status == AppUpdateStatus.no_update) {
+              needUpdateApp = false;
             }
-            return SplashScreen();
           },
+          child: BlocListener<AuthenticationCubit, AuthenticationState>(
+            listener: (BuildContext context, AuthenticationState authState) {
+              // if (needUpdateApp) {
+              //   return;
+              // }
+              if (authState.status == AuthenticationStatus.authenticated) {
+                BlocProvider.of<ProfileCubit>(context).load();
+                BlocProvider.of<HomeCubit>(context).load();
+                navigator.pushAndRemoveUntil(
+                  HomeScreen().getRoute(),
+                  (Route route) => false,
+                );
+              } else if (authState.status ==
+                  AuthenticationStatus.unauthenticated) {
+                navigator.pushAndRemoveUntil(
+                  LoginScreen().getRoute(),
+                  (Route route) => false,
+                );
+              } else {} // AuthenticationStatus.unknown
+            },
+            child: child,
+          ),
         );
-
-        // return BlocListener<AuthenticationCubit, AuthenticationState>(
-        //   listener: (BuildContext context, AuthenticationState state) {
-        //     if (state.status == AuthenticationStatus.authenticated) {
-        //       BlocProvider.of<ProfileCubit>(context).load();
-        //       BlocProvider.of<HomeCubit>(context).load();
-        //       navigator.pushAndRemoveUntil(
-        //         HomeScreen().getRoute(),
-        //         (Route route) => false,
-        //       );
-        //     } else if (state.status == AuthenticationStatus.unauthenticated) {
-        //       navigator.pushAndRemoveUntil(
-        //         LoginScreen().getRoute(),
-        //         (Route route) => false,
-        //       );
-        //     } else {} // AuthenticationStatus.unknown
-        //   },
-        //   child: child,
-        // );
       },
     );
   }

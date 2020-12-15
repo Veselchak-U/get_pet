@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_pet/import.dart';
+import 'package:package_info/package_info.dart';
 
 class SplashScreen extends StatelessWidget {
   Route<T> getRoute<T>() {
@@ -12,6 +13,14 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     out('SPLASH_SCREEN build()');
+
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      out(packageInfo.appName);
+      out(packageInfo.packageName);
+      out(packageInfo.version);
+      out(packageInfo.buildNumber);
+    });
+
     return Stack(
       alignment: AlignmentDirectional.bottomCenter,
       children: <Widget>[

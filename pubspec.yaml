@@ -34,11 +34,14 @@ dependencies:
   json_annotation: ^3.1.0
   copy_with_extension: ^1.4.0
   url_launcher: ^5.7.10
+  font_awesome_flutter: ^8.10.0
   firebase_core: ^0.5.3
   firebase_auth: ^0.18.4
   google_sign_in: ^4.5.6
-  font_awesome_flutter: ^8.10.0
-  upgrader: ^2.7.3
+  firebase_analytics: ^6.3.0
+  firebase_crashlytics: ^0.2.4
+  firebase_remote_config: "^0.4.3"
+  package_info: ^0.4.3+2
 
 
 dev_dependencies:
