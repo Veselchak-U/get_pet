@@ -99,4 +99,7 @@ class AddPetState extends Equatable {
         newPet,
         externalUpdate,
       ];
+
+  @override
+  String toString() => status.toString();
 }

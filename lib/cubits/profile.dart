@@ -75,4 +75,7 @@ class ProfileState extends Equatable {
         notificationCount,
         sectionsVisibility,
       ];
+
+  @override
+  String toString() => status.toString();
 }

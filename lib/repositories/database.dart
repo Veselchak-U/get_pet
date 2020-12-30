@@ -418,9 +418,46 @@ class DatabaseRepository {
     // out('DATA_REPO readUserProfile() end');
     return result;
   }
+
+  Future<SysParamModel> readSysParam(String label) async {
+    assert(label != null && label.isNotEmpty);
+
+    final options = QueryOptions(
+      documentNode: _API.readSysParam,
+      variables: {
+        'label': label.toLowerCase(),
+      },
+      fetchPolicy: FetchPolicy.noCache,
+      errorPolicy: ErrorPolicy.all,
+    );
+    final queryResult = await _client
+        .query(options)
+        .timeout(Duration(milliseconds: _kTimeoutMillisec));
+    if (queryResult.hasException) {
+      throw queryResult.exception;
+    }
+    final dataItem =
+        queryResult.data['sys_param_by_pk'] as Map<String, dynamic>;
+    SysParamModel result;
+    try {
+      result = SysParamModel.fromJson(dataItem);
+    } catch (error) {
+      out(error);
+      return Future.error(error);
+    }
+    return result;
+  }
 }
 
 class _API {
+  static final readSysParam = gql(r'''
+    query ReadSysParam($label: String!) {
+      sys_param_by_pk(label: $label) {
+        ...SysParamFields
+      }
+    }
+  ''')..definitions.addAll(fragments.definitions);
+
   static final readMember = gql(r'''
     query ReadMember {
       current_member {
@@ -574,6 +611,12 @@ class _API {
   ''')..definitions.addAll(fragments.definitions);
 
   static final fragments = gql(r'''
+    fragment SysParamFields on sys_param {
+      label
+      value
+      value_txt
+      note
+    }
     fragment CategoryFields on category {
       # __typename
       id

@@ -37,6 +37,8 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Bloc.observer = AppBlocObserver();
+
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider.value(
@@ -49,7 +51,10 @@ class App extends StatelessWidget {
       child: MultiBlocProvider(
         providers: [
           BlocProvider<AppUpdateCubit>(
-            create: (context) => AppUpdateCubit(),
+            create: (context) => AppUpdateCubit(
+              dataRepository: dataRepository,
+            ),
+            lazy: false,
           ),
           BlocProvider<AuthenticationCubit>(
             create: (context) => AuthenticationCubit(
@@ -80,7 +85,7 @@ NavigatorState get navigator => navigatorKey.currentState;
 
 class AppView extends StatelessWidget {
   final FirebaseAnalytics analytics = FirebaseAnalytics();
-  bool needUpdateApp = true;
+  // bool needUpdateApp = true;
 
   @override
   Widget build(BuildContext context) {
@@ -93,37 +98,37 @@ class AppView extends StatelessWidget {
       theme: theme,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: (_) => SplashScreen().getRoute(),
-      builder: (BuildContext context, Widget child) {
-        return BlocListener<AppUpdateCubit, AppUpdateState>(
-          listener: (BuildContext context, AppUpdateState appUpdateState) {
-            if (appUpdateState.status == AppUpdateStatus.no_update) {
-              needUpdateApp = false;
-            }
-          },
-          child: BlocListener<AuthenticationCubit, AuthenticationState>(
-            listener: (BuildContext context, AuthenticationState authState) {
-              // if (needUpdateApp) {
-              //   return;
-              // }
-              if (authState.status == AuthenticationStatus.authenticated) {
-                BlocProvider.of<ProfileCubit>(context).load();
-                BlocProvider.of<HomeCubit>(context).load();
-                navigator.pushAndRemoveUntil(
-                  HomeScreen().getRoute(),
-                  (Route route) => false,
-                );
-              } else if (authState.status ==
-                  AuthenticationStatus.unauthenticated) {
-                navigator.pushAndRemoveUntil(
-                  LoginScreen().getRoute(),
-                  (Route route) => false,
-                );
-              } else {} // AuthenticationStatus.unknown
-            },
-            child: child,
-          ),
-        );
-      },
+      // builder: (BuildContext context, Widget child) {
+      //   return BlocListener<AppUpdateCubit, AppUpdateState>(
+      //     listener: (BuildContext context, AppUpdateState appUpdateState) {
+      //       if (appUpdateState.status == AppUpdateStatus.no_update) {
+      //         needUpdateApp = false;
+      //       }
+      //     },
+      //     child: BlocListener<AuthenticationCubit, AuthenticationState>(
+      //       listener: (BuildContext context, AuthenticationState authState) {
+      //         // if (needUpdateApp) {
+      //         //   return;
+      //         // }
+      //         if (authState.status == AuthenticationStatus.authenticated) {
+      //           BlocProvider.of<ProfileCubit>(context).load();
+      //           BlocProvider.of<HomeCubit>(context).load();
+      //           navigator.pushAndRemoveUntil(
+      //             HomeScreen().getRoute(),
+      //             (Route route) => false,
+      //           );
+      //         } else if (authState.status ==
+      //             AuthenticationStatus.unauthenticated) {
+      //           navigator.pushAndRemoveUntil(
+      //             LoginScreen().getRoute(),
+      //             (Route route) => false,
+      //           );
+      //         } else {} // AuthenticationStatus.unknown
+      //       },
+      //       child: child,
+      //     ),
+      //   );
+      // },
     );
   }
 }

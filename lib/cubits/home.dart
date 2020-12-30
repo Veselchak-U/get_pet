@@ -113,4 +113,7 @@ class HomeState extends Equatable {
         newestPets,
         nearestVets,
       ];
+
+  @override
+  String toString() => status.toString();
 }

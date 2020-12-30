@@ -62,4 +62,7 @@ class AuthenticationState extends Equatable {
         status,
         user,
       ];
+
+  @override
+  String toString() => status.toString();
 }

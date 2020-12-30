@@ -118,4 +118,7 @@ class SearchState extends Equatable {
         categories,
         foundedPets,
       ];
+
+  @override
+  String toString() => status.toString();
 }
