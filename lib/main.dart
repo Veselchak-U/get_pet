@@ -61,6 +61,7 @@ class App extends StatelessWidget {
               authRepository: authRepository,
               dataRepository: dataRepository,
             ),
+            lazy: false,
           ),
           BlocProvider<ProfileCubit>(
             create: (context) => ProfileCubit(
@@ -73,7 +74,16 @@ class App extends StatelessWidget {
             ),
           ),
         ],
-        child: AppView(),
+        child: BlocProvider<AppNavigatorCubit>(
+          create: (context) => AppNavigatorCubit(
+            BlocProvider.of<AppUpdateCubit>(context),
+            BlocProvider.of<AuthenticationCubit>(context),
+            BlocProvider.of<ProfileCubit>(context),
+            BlocProvider.of<HomeCubit>(context),
+          ),
+          lazy: false,
+          child: AppView(),
+        ),
       ),
     );
   }

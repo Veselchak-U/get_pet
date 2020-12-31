@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-const String kAssetPath = 'assets/image/';
-const double kHorizontalPadding = 16.0;
-
 final theme = ThemeData(
   visualDensity: VisualDensity.adaptivePlatformDensity,
   primarySwatch: Colors.grey,
