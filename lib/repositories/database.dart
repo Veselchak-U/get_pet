@@ -5,7 +5,6 @@ import 'package:graphql/client.dart';
 import '../local.dart';
 
 // const _kEnableWebSockets = false;
-const _kTimeoutMillisec = 10000;
 
 class DatabaseRepository {
   DatabaseRepository({@required this.authRepository}) {
@@ -51,7 +50,7 @@ class DatabaseRepository {
     );
     final mutationResult = await _client
         .mutate(options)
-        .timeout(Duration(milliseconds: _kTimeoutMillisec));
+        .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (mutationResult.hasException) {
       result = false;
       throw mutationResult.exception;
@@ -77,7 +76,7 @@ class DatabaseRepository {
     );
     final queryResult = await _client
         .query(options)
-        .timeout(Duration(milliseconds: _kTimeoutMillisec));
+        .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
@@ -108,7 +107,7 @@ class DatabaseRepository {
     );
     final queryResult = await _client
         .query(options)
-        .timeout(Duration(milliseconds: _kTimeoutMillisec));
+        .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
@@ -140,7 +139,7 @@ class DatabaseRepository {
     );
     final queryResult = await _client
         .query(options)
-        .timeout(Duration(milliseconds: _kTimeoutMillisec));
+        .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
@@ -180,7 +179,7 @@ class DatabaseRepository {
     );
     final queryResult = await _client
         .query(options)
-        .timeout(Duration(milliseconds: _kTimeoutMillisec));
+        .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
@@ -229,7 +228,7 @@ class DatabaseRepository {
     );
     final queryResult = await _client
         .query(options)
-        .timeout(Duration(milliseconds: _kTimeoutMillisec));
+        .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
@@ -261,7 +260,7 @@ class DatabaseRepository {
     );
     final queryResult = await _client
         .query(options)
-        .timeout(Duration(milliseconds: _kTimeoutMillisec));
+        .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
@@ -307,7 +306,7 @@ class DatabaseRepository {
     );
     final queryResult = await _client
         .query(options)
-        .timeout(Duration(milliseconds: _kTimeoutMillisec));
+        .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
@@ -345,7 +344,7 @@ class DatabaseRepository {
     );
     final mutationResult = await _client
         .mutate(options)
-        .timeout(Duration(milliseconds: _kTimeoutMillisec));
+        .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (mutationResult.hasException) {
       result = false;
       throw mutationResult.exception;
@@ -375,7 +374,7 @@ class DatabaseRepository {
     );
     final mutationResult = await _client
         .mutate(options)
-        .timeout(Duration(milliseconds: _kTimeoutMillisec));
+        .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (mutationResult.hasException) {
       throw mutationResult.exception;
     }
@@ -400,7 +399,7 @@ class DatabaseRepository {
     );
     final queryResult = await _client
         .query(options)
-        .timeout(Duration(milliseconds: _kTimeoutMillisec));
+        .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
@@ -432,7 +431,7 @@ class DatabaseRepository {
     );
     final queryResult = await _client
         .query(options)
-        .timeout(Duration(milliseconds: _kTimeoutMillisec));
+        .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
       throw queryResult.exception;
     }
