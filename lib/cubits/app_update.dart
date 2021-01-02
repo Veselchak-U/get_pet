@@ -9,13 +9,16 @@ part 'app_update.g.dart';
 class AppUpdateCubit extends Cubit<AppUpdateState> {
   AppUpdateCubit({this.dataRepository}) : super(const AppUpdateState()) {
     out('APP_UPDATE_CUBIT create');
-    _init();
+    checkUpdate();
   }
 
   final DatabaseRepository dataRepository;
 
-  Future<void> _init() async {
-    out('APP_UPDATE_CUBIT init()');
+  Future<void> checkUpdate() async {
+    out('APP_UPDATE_CUBIT checkUpdate()');
+    if (state.status != AppUpdateStatus.unknown) {
+      emit(state.copyWith(status: AppUpdateStatus.unknown));
+    }
 
     int minVersion;
     try {

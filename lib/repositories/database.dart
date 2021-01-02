@@ -8,11 +8,11 @@ import '../local.dart';
 
 class DatabaseRepository {
   DatabaseRepository({@required this.authRepository}) {
-    _client = _getClient();
+    // _client = _getClient();
   }
 
   final AuthenticationRepository authRepository;
-  GraphQLClient _client;
+  // GraphQLClient _client;
 
   List<CategoryModel> _cashedCategories;
   List<ConditionModel> _cashedConditions;
@@ -23,11 +23,10 @@ class DatabaseRepository {
     final authLink = AuthLink(
       getToken: () async {
         final idToken = await authRepository.getIdToken(forceRefresh: true);
-        // out('!!! authRepository.getIdToken !!!');
-        return 'Bearer $idToken';
+        return idToken == null ? null : 'Bearer $idToken';
       },
     );
-    final link = authLink.concat(httpLink);
+    final Link link = (authLink != null) ? authLink.concat(httpLink) : httpLink;
     return GraphQLClient(
       cache: InMemoryCache(),
       link: link,
@@ -48,7 +47,8 @@ class DatabaseRepository {
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
     );
-    final mutationResult = await _client
+    final GraphQLClient client = _getClient();
+    final mutationResult = await client
         .mutate(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (mutationResult.hasException) {
@@ -74,7 +74,8 @@ class DatabaseRepository {
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
     );
-    final queryResult = await _client
+    final GraphQLClient client = _getClient();
+    final queryResult = await client
         .query(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
@@ -105,7 +106,8 @@ class DatabaseRepository {
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
     );
-    final queryResult = await _client
+    final GraphQLClient client = _getClient();
+    final queryResult = await client
         .query(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
@@ -137,7 +139,8 @@ class DatabaseRepository {
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
     );
-    final queryResult = await _client
+    final GraphQLClient client = _getClient();
+    final queryResult = await client
         .query(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
@@ -163,6 +166,8 @@ class DatabaseRepository {
       String conditionId,
       String query,
       int limit = 20}) async {
+    final GraphQLClient client = _getClient();
+
     assert(categoryId != null || query != null);
     final options = QueryOptions(
       documentNode: _API.searchPets,
@@ -177,7 +182,7 @@ class DatabaseRepository {
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
     );
-    final queryResult = await _client
+    final queryResult = await client
         .query(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
@@ -226,7 +231,8 @@ class DatabaseRepository {
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
     );
-    final queryResult = await _client
+    final GraphQLClient client = _getClient();
+    final queryResult = await client
         .query(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
@@ -258,7 +264,8 @@ class DatabaseRepository {
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
     );
-    final queryResult = await _client
+    final GraphQLClient client = _getClient();
+    final queryResult = await client
         .query(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
@@ -304,7 +311,8 @@ class DatabaseRepository {
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
     );
-    final queryResult = await _client
+    final GraphQLClient client = _getClient();
+    final queryResult = await client
         .query(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
@@ -342,7 +350,8 @@ class DatabaseRepository {
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
     );
-    final mutationResult = await _client
+    final GraphQLClient client = _getClient();
+    final mutationResult = await client
         .mutate(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (mutationResult.hasException) {
@@ -372,7 +381,8 @@ class DatabaseRepository {
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
     );
-    final mutationResult = await _client
+    final GraphQLClient client = _getClient();
+    final mutationResult = await client
         .mutate(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (mutationResult.hasException) {
@@ -397,7 +407,8 @@ class DatabaseRepository {
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
     );
-    final queryResult = await _client
+    final GraphQLClient client = _getClient();
+    final queryResult = await client
         .query(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
@@ -429,7 +440,8 @@ class DatabaseRepository {
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
     );
-    final queryResult = await _client
+    final GraphQLClient client = _getClient();
+    final queryResult = await client
         .query(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {

@@ -15,7 +15,6 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     out('SPLASH_SCREEN build()');
-
     return BlocConsumer<AppNavigatorCubit, AppNavigatorState>(
       listener: (context, state) {
         if (state.status == AppNavigatorStatus.need_update) {
@@ -24,6 +23,7 @@ class SplashScreen extends StatelessWidget {
             if (result) {
               launch(kUpdateUrl);
             }
+            // Close app
             SystemChannels.platform.invokeMethod('SystemNavigator.pop');
           });
         }
@@ -55,9 +55,9 @@ class SplashScreen extends StatelessWidget {
                         fontFamily: 'Roboto',
                         decoration: TextDecoration.none),
                   ),
-                  SizedBox(height: 50),
+                  SizedBox(height: 32),
                   CircularProgressIndicator(strokeWidth: 2),
-                  SizedBox(height: 50),
+                  SizedBox(height: 32),
                   Text(
                     state.statusText,
                     textAlign: TextAlign.center,
@@ -94,7 +94,7 @@ class SplashScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
-              child: const Text("Ok"),
+              child: const Text("OK"),
             ),
           ],
         );

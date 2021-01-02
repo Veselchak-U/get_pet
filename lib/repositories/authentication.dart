@@ -11,7 +11,7 @@ class AuthenticationRepository {
 
   Future<String> getIdToken({bool forceRefresh}) {
     // out('AuthenticationRepository: getIdToken()');
-    return _firebaseAuth.currentUser.getIdToken(forceRefresh);
+    return _firebaseAuth.currentUser?.getIdToken(forceRefresh);
   }
 
   Future<void> setUserIdFromToken(Future<IdTokenResult> tokenResult) async {
