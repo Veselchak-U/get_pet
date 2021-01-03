@@ -1,6 +1,10 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get_pet/import.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddPetScreen extends StatelessWidget {
   Route<T> getRoute<T>() {
@@ -114,14 +118,42 @@ class _AddPetBody extends StatelessWidget {
 class _AddPhotoButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final AddPetCubit addPetCubit = BlocProvider.of<AddPetCubit>(context);
     return ElevatedButton(
-      onPressed: () {
+      onPressed: () async {
+        final AddPetCubit addPetCubit = BlocProvider.of<AddPetCubit>(context);
+        final ProfileCubit profileCubit =
+            BlocProvider.of<ProfileCubit>(context);
+        ImagePicker imagePicker;
+        PickedFile pickedFile;
+        String photoUrl;
+        try {
+          imagePicker = ImagePicker();
+          pickedFile = await imagePicker.getImage(source: ImageSource.gallery);
+        } on dynamic catch (error, stackTrace) {
+          addPetCubit.saveError(error, stackTrace);
+        }
+        if (pickedFile != null) {
+          // out(pickedFile.path);
+          final FirebaseStorage storage = FirebaseStorage.instance;
+          final File file = File(pickedFile.path);
+          final String fileDir = profileCubit.state.user.id;
+          final String fileName = pickedFile.path.split('/').last;
+          // out(fileName);
+          final Reference reference = storage.ref('$fileDir/$fileName');
+          try {
+            await reference.putFile(file);
+            photoUrl = await reference.getDownloadURL();
+            // out(await reference.getDownloadURL());
+          } on dynamic catch (error, stackTrace) {
+            addPetCubit.saveError(error, stackTrace);
+          }
+        }
         // изменяем URL фото "извне" формы
-        addPetCubit.setExternalUpdate(externalUpdate: true);
-        addPetCubit.updateNewPet(addPetCubit.state.newPet.copyWith(
-            photos:
-                'https://cdn.pixabay.com/photo/2014/11/30/14/11/cat-551554_960_720.jpg'));
+        addPetCubit.setExternalUpdateFlag(value: true);
+        addPetCubit.updateNewPet(
+          addPetCubit.state.newPet.copyWith(photos: photoUrl),
+        );
+        // 'https://cdn.pixabay.com/photo/2014/11/30/14/11/cat-551554_960_720.jpg'
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -166,7 +198,7 @@ class _AddPetFormState extends State<_AddPetForm> {
           current.externalUpdate &&
           previous.newPet.photos != current.newPet.photos,
       listener: (BuildContext context, AddPetState state) {
-        addPetCubit.setExternalUpdate(externalUpdate: false);
+        addPetCubit.setExternalUpdateFlag(value: false);
         _controller.text = state.newPet.photos ?? '';
       },
       child: Form(
@@ -182,20 +214,23 @@ class _AddPetFormState extends State<_AddPetForm> {
               // initialValue: 'Photo url',
               textInputAction: TextInputAction.next,
               controller: _controller,
-              onChanged: (value) {
-                addPetCubit.updateNewPet(newPet.copyWith(photos: value));
-              },
+              readOnly: true,
+              // enabled: false,
+              // onChanged: (value) {
+              //   addPetCubit.updateNewPet(newPet.copyWith(photos: value));
+              // },
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) {
-                var result = 'Unknown error';
+                String result;
                 if (value.isEmpty) {
-                  result = 'Input pet photo url';
-                } else if (Uri.parse(value).isAbsolute) {
-                  addPetCubit.updateNewPet(newPet.copyWith(photos: value));
-                  result = null;
-                } else {
-                  result = 'Input correct url';
+                  result = 'Select photo';
                 }
+                // else if (Uri.parse(value).isAbsolute) {
+                //   addPetCubit.updateNewPet(newPet.copyWith(photos: value));
+                //   result = null;
+                // } else {
+                //   result = 'Input correct url';
+                // }
                 return result;
               },
             ),

@@ -36,8 +36,8 @@ class AddPetCubit extends Cubit<AddPetState> {
     emit(state.copyWith(newPet: newPet));
   }
 
-  void setExternalUpdate({bool externalUpdate}) {
-    emit(state.copyWith(externalUpdate: externalUpdate));
+  void setExternalUpdateFlag({bool value}) {
+    emit(state.copyWith(externalUpdate: value));
   }
 
   void setCategory(CategoryModel category) {
@@ -67,6 +67,10 @@ class AddPetCubit extends Cubit<AddPetState> {
       emit(state.copyWith(status: AddPetStatus.ready));
     }
     return result;
+  }
+
+  void saveError(dynamic error, StackTrace stackTrace) {
+    onError(error, stackTrace);
   }
 }
 
