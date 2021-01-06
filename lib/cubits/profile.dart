@@ -28,7 +28,6 @@ class ProfileCubit extends Cubit<ProfileState> {
       out(error);
       return Future.error(error);
     }
-    out('PROFILE_CUBIT load()');
     return result;
   }
 

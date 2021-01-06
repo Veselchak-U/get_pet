@@ -45,7 +45,6 @@ class AppNavigatorCubit extends Cubit<AppNavigatorState> {
         _onChange();
       }
     });
-    out('APP_NAVIGATOR_CUBIT create');
   }
 
   void _onChange() {
@@ -139,7 +138,6 @@ class AppNavigatorCubit extends Cubit<AppNavigatorState> {
 
   @override
   Future<void> close() {
-    out('APP_NAVIGATOR_CUBIT close');
     _appUpdateSubscription.cancel();
     _authenticationSubscription.cancel();
     return super.close();

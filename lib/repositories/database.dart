@@ -12,6 +12,7 @@ class DatabaseRepository {
   }
 
   final AuthenticationRepository authRepository;
+  final logger = AppLogger.logger;
   // GraphQLClient _client;
 
   List<CategoryModel> _cashedCategories;
@@ -53,9 +54,10 @@ class DatabaseRepository {
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (mutationResult.hasException) {
       result = false;
+      logger.e(
+          'DatabaseRepository upsertMember(${user.toJson()}) ${mutationResult.exception}');
       throw mutationResult.exception;
     }
-    out('DATA_REPO upsertMember()');
     return result;
   }
 
@@ -79,16 +81,17 @@ class DatabaseRepository {
         .query(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
+      logger.e('DatabaseRepository readConditions() ${queryResult.exception}');
       throw queryResult.exception;
     }
-    // out(queryResult.data);
+    logger.v('DatabaseRepository readConditions() ${queryResult.data}');
     final dataItems =
         (queryResult.data['conditions'] as List).cast<Map<String, dynamic>>();
     for (final item in dataItems) {
       try {
         result.add(ConditionModel.fromJson(item));
-      } catch (error) {
-        out(error);
+      } on dynamic catch (error, stackTrace) {
+        logger.e('DatabaseRepository readConditions()', error, stackTrace);
         return Future.error(error);
       }
     }
@@ -111,16 +114,17 @@ class DatabaseRepository {
         .query(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
+      logger.e('DatabaseRepository readCategories() ${queryResult.exception}');
       throw queryResult.exception;
     }
-    // out(queryResult.data);
+    logger.v('DatabaseRepository readCategories() ${queryResult.data}');
     final dataItems =
         (queryResult.data['categories'] as List).cast<Map<String, dynamic>>();
     for (final item in dataItems) {
       try {
         result.add(CategoryModel.fromJson(item));
-      } catch (error) {
-        out(error);
+      } on dynamic catch (error, stackTrace) {
+        logger.e('DatabaseRepository readCategories()', error, stackTrace);
         return Future.error(error);
       }
     }
@@ -144,16 +148,17 @@ class DatabaseRepository {
         .query(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
+      logger.e('DatabaseRepository readBreeds() ${queryResult.exception}');
       throw queryResult.exception;
     }
-    // out(queryResult.data);
+    logger.v('DatabaseRepository readBreeds() ${queryResult.data}');
     final dataItems =
         (queryResult.data['breeds'] as List).cast<Map<String, dynamic>>();
     for (final item in dataItems) {
       try {
         result.add(BreedModel.fromJson(item));
-      } catch (error) {
-        out(error);
+      } on dynamic catch (error, stackTrace) {
+        logger.e('DatabaseRepository readBreeds()', error, stackTrace);
         return Future.error(error);
       }
     }
@@ -172,8 +177,6 @@ class DatabaseRepository {
     final options = QueryOptions(
       documentNode: _API.searchPets,
       variables: {
-        // 'member_id': kDatabaseUserId,
-        // 'member_id': authRepository.currentUser.id,
         'category_id': categoryId,
         'condition_id': conditionId,
         'query': '%$query%',
@@ -186,17 +189,18 @@ class DatabaseRepository {
         .query(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
+      logger.e('DatabaseRepository searchPets() ${queryResult.exception}');
       throw queryResult.exception;
     }
-    // out(queryResult.data);
+    logger.v('DatabaseRepository searchPets() ${queryResult.data}');
     final petItems =
         (queryResult.data['pets'] as List).cast<Map<String, dynamic>>();
     final List<PetModel> pets = [];
     for (final item in petItems) {
       try {
         pets.add(PetModel.fromJson(item));
-      } catch (error) {
-        out(error);
+      } on dynamic catch (error, stackTrace) {
+        logger.e('DatabaseRepository searchPets()', error, stackTrace);
         return Future.error(error);
       }
     }
@@ -206,8 +210,8 @@ class DatabaseRepository {
     for (final item in likedItems) {
       try {
         likes.add(item['pet_id'] as String);
-      } catch (error) {
-        out(error);
+      } on dynamic catch (error, stackTrace) {
+        logger.e('DatabaseRepository searchPets()', error, stackTrace);
         return Future.error(error);
       }
     }
@@ -236,16 +240,17 @@ class DatabaseRepository {
         .query(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
+      logger.e('DatabaseRepository readNewestPets() ${queryResult.exception}');
       throw queryResult.exception;
     }
-    // out(queryResult.data);
+    logger.v('DatabaseRepository readNewestPets() ${queryResult.data}');
     final dataItems = (queryResult.data['get_pets_by_member_id'] as List)
         .cast<Map<String, dynamic>>();
     for (final item in dataItems) {
       try {
         result.add(PetModel.fromJson(item));
-      } catch (error) {
-        out(error);
+      } on dynamic catch (error, stackTrace) {
+        logger.e('DatabaseRepository readNewestPets()', error, stackTrace);
         return Future.error(error);
       }
     }
@@ -257,10 +262,6 @@ class DatabaseRepository {
   Future<List<PetModel>> readNewestPetsWithLikes() async {
     final options = QueryOptions(
       documentNode: _API.readNewestPetsWithLikes,
-      // variables: {
-      //   // 'member_id': kDatabaseUserId,
-      //   'member_id': authRepository.currentUser.id,
-      // },
       fetchPolicy: FetchPolicy.noCache,
       errorPolicy: ErrorPolicy.all,
     );
@@ -269,17 +270,21 @@ class DatabaseRepository {
         .query(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
+      logger.e(
+          'DatabaseRepository readNewestPetsWithLikes() ${queryResult.exception}');
       throw queryResult.exception;
     }
-    // out(queryResult.data);
+    logger
+        .v('DatabaseRepository readNewestPetsWithLikes() ${queryResult.data}');
     final petItems =
         (queryResult.data['pets'] as List).cast<Map<String, dynamic>>();
     final List<PetModel> pets = [];
     for (final item in petItems) {
       try {
         pets.add(PetModel.fromJson(item));
-      } catch (error) {
-        out(error);
+      } on dynamic catch (error, stackTrace) {
+        logger.e(
+            'DatabaseRepository readNewestPetsWithLikes()', error, stackTrace);
         return Future.error(error);
       }
     }
@@ -289,8 +294,9 @@ class DatabaseRepository {
     for (final item in likedItems) {
       try {
         likes.add(item['pet_id'] as String);
-      } catch (error) {
-        out(error);
+      } on dynamic catch (error, stackTrace) {
+        logger.e(
+            'DatabaseRepository readNewestPetsWithLikes()', error, stackTrace);
         return Future.error(error);
       }
     }
@@ -300,7 +306,6 @@ class DatabaseRepository {
       final petWhithLike = pet.copyWith(liked: liked);
       result.add(petWhithLike);
     });
-    out('DATA_REPO readNewestPetsWithLikes()');
     return result;
   }
 
@@ -316,16 +321,17 @@ class DatabaseRepository {
         .query(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
+      logger.e('DatabaseRepository readNearestVets() ${queryResult.exception}');
       throw queryResult.exception;
     }
-    // out(queryResult.data);
+    logger.v('DatabaseRepository readNearestVets() ${queryResult.data}');
     final dataItems =
         (queryResult.data['vets'] as List).cast<Map<String, dynamic>>();
     for (final item in dataItems) {
       try {
         result.add(VetModel.fromJson(item));
-      } catch (error) {
-        out(error);
+      } on dynamic catch (error, stackTrace) {
+        logger.e('DatabaseRepository readNearestVets()', error, stackTrace);
         return Future.error(error);
       }
     }
@@ -334,6 +340,7 @@ class DatabaseRepository {
 
   Future<bool> updatePetLike(PetModel pet) async {
     final String petId = pet.id;
+    final String memberId = authRepository.currentUser.id;
     final bool isLike = !pet.liked;
     var result = true;
 
@@ -344,7 +351,7 @@ class DatabaseRepository {
               'pet_id': petId,
             }
           : {
-              'member_id': authRepository.currentUser.id,
+              'member_id': memberId,
               'pet_id': petId,
             },
       fetchPolicy: FetchPolicy.noCache,
@@ -356,8 +363,12 @@ class DatabaseRepository {
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (mutationResult.hasException) {
       result = false;
+      logger.e(
+          'DatabaseRepository updatePetLike("pet_id": $petId, "member_id": $memberId) ${mutationResult.exception}');
       throw mutationResult.exception;
     }
+    logger.v(
+        'DatabaseRepository updatePetLike("pet_id": $petId, "member_id": $memberId ${mutationResult.data}');
     return result;
   }
 
@@ -368,8 +379,6 @@ class DatabaseRepository {
         'category_id': newPet.category.id,
         'breed_id': newPet.breed.id,
         'condition_id': newPet.condition.id,
-        // 'member_id': kDatabaseUserId,
-        // 'member_id': authRepository.currentUser.id,
         'coloring': newPet.coloring,
         'age': newPet.age,
         'weight': newPet.weight,
@@ -386,22 +395,25 @@ class DatabaseRepository {
         .mutate(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (mutationResult.hasException) {
+      logger.e(
+          'DatabaseRepository createPet("newPet": ${newPet.toJson()}) ${mutationResult.exception}');
       throw mutationResult.exception;
     }
-    // out(mutationResult.data);
+    logger.v('DatabaseRepository createPet() ${mutationResult.data}');
     final dataItem =
         mutationResult.data['insert_pet_one'] as Map<String, dynamic>;
+    PetModel result;
     try {
-      out('DATAREPO createPet()');
-      return PetModel.fromJson(dataItem);
-    } catch (error) {
-      out(error);
+      result = PetModel.fromJson(dataItem);
+    } on dynamic catch (error, stackTrace) {
+      logger.e('DatabaseRepository createPet("${newPet.toJson()}")', error,
+          stackTrace);
       return Future.error(error);
     }
+    return result;
   }
 
   Future<UserModel> readUserProfile() async {
-    // out('DATA_REPO readUserProfile() start');
     final options = QueryOptions(
       documentNode: _API.readMember,
       fetchPolicy: FetchPolicy.noCache,
@@ -412,20 +424,21 @@ class DatabaseRepository {
         .query(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
+      logger.e('DatabaseRepository readUserProfile() ${queryResult.exception}');
       throw queryResult.exception;
     }
+    logger.v('DatabaseRepository readUserProfile() ${queryResult.data}');
     final dataItems = (queryResult.data['current_member'] as List)
         .cast<Map<String, dynamic>>();
     UserModel result;
     for (final item in dataItems) {
       try {
         result = UserModel.fromJson(item);
-      } catch (error) {
-        out(error);
+      } on dynamic catch (error, stackTrace) {
+        logger.e('DatabaseRepository readUserProfile()', error, stackTrace);
         return Future.error(error);
       }
     }
-    // out('DATA_REPO readUserProfile() end');
     return result;
   }
 
@@ -445,15 +458,18 @@ class DatabaseRepository {
         .query(options)
         .timeout(Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
+      logger.e('DatabaseRepository readSysParam() ${queryResult.exception}');
       throw queryResult.exception;
     }
+    logger.v(
+        'DatabaseRepository readSysParam(label = "$label") ${queryResult.data}');
     final dataItem =
         queryResult.data['sys_param_by_pk'] as Map<String, dynamic>;
     SysParamModel result;
     try {
       result = SysParamModel.fromJson(dataItem);
-    } catch (error) {
-      out(error);
+    } on dynamic catch (error, stackTrace) {
+      logger.e('DatabaseRepository readSysParam("$label")', error, stackTrace);
       return Future.error(error);
     }
     return result;

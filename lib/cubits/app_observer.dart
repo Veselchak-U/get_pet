@@ -6,14 +6,26 @@ class AppBlocObserver extends BlocObserver {
 
   @override
   void onError(Cubit cubit, Object error, StackTrace stackTrace) {
-    logger.e('ERROR in Cubit ${cubit.runtimeType}', error, stackTrace);
+    logger.e('ERROR in ${cubit.runtimeType}', error, stackTrace);
     super.onError(cubit, error, stackTrace);
   }
 
   @override
+  void onCreate(Cubit cubit) {
+    logger.i('CREATE ${cubit.runtimeType}');
+    super.onCreate(cubit);
+  }
+
+  @override
   void onChange(Cubit cubit, Change change) {
-    super.onChange(cubit, change);
     logger.i(
-        'ON_CHANGE in Cubit ${cubit.runtimeType}: ${change.currentState} -> ${change.nextState}');
+        'CHANGE in ${cubit.runtimeType}: ${change.currentState} -> ${change.nextState}');
+    super.onChange(cubit, change);
+  }
+
+  @override
+  void onClose(Cubit cubit) {
+    logger.i('CLOSE ${cubit.runtimeType}');
+    super.onClose(cubit);
   }
 }

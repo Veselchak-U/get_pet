@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_pet/import.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class SplashScreen extends StatelessWidget {
   Route<T> getRoute<T>() {
@@ -14,18 +12,10 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    out('SPLASH_SCREEN build()');
     return BlocConsumer<AppNavigatorCubit, AppNavigatorState>(
       listener: (context, state) {
         if (state.status == AppNavigatorStatus.need_update) {
-          _showDialog(context, 'Found a new version of the app, update now?')
-              .then((result) {
-            if (result) {
-              launch(kUpdateUrl);
-            }
-            // Close app
-            SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-          });
+          forcedUpdate(context);
         }
       },
       builder: (context, state) {
@@ -69,32 +59,6 @@ class SplashScreen extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<bool> _showDialog(BuildContext context, String questionText) {
-    return showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          content: Text(questionText),
-          actions: <Widget>[
-            FlatButton(
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-              child: const Text("Cancel"),
-            ),
-            FlatButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              child: const Text("OK"),
             ),
           ],
         );
