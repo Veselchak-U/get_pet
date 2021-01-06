@@ -38,12 +38,15 @@ dependencies:
   firebase_core: ^0.5.3
   firebase_auth: ^0.18.4
   google_sign_in: ^4.5.6
-  firebase_analytics: ^6.3.0
+  firebase_analytics: ^6.2.0
   firebase_crashlytics: ^0.2.4
   firebase_remote_config: "^0.4.3"
   firebase_storage: ^5.2.0
   package_info: ^0.4.3+2
   image_picker: ^0.6.7+17
+  logger: ^0.9.4
+  path_provider: ^1.6.24
+  intl: ^0.16.1
 
 
 dev_dependencies:
