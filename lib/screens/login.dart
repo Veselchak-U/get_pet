@@ -68,13 +68,13 @@ class LoginScreen extends StatelessWidget {
                         SizedBox(height: 32),
                         ElevatedButton(
                           onPressed:
-                              state.status == AppNavigatorStatus.check_update
-                                  ? null
-                                  : () {
+                              state.status == AppNavigatorStatus.unauthenticated
+                                  ? () {
                                       RepositoryProvider.of<
                                               AuthenticationRepository>(context)
                                           .signInWithGoogle();
-                                    },
+                                    }
+                                  : null,
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [

@@ -11,6 +11,7 @@ final DateFormat dateFormatter = DateFormat('dd.MM.yyyy');
 
 void out(dynamic value) {
   if (kDebugMode) debugPrint('$value');
+  // print('$value');
 }
 
 void forcedUpdate(BuildContext context) {

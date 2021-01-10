@@ -267,7 +267,8 @@ class _UserProfileCard extends StatelessWidget {
             Text(
               profileCubit.state.user.name,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              overflow: TextOverflow.ellipsis,
+              softWrap: false,
+              overflow: TextOverflow.fade,
             ),
           ],
         ),
@@ -554,15 +555,16 @@ class _CategoryGridItem extends StatelessWidget {
                   children: [
                     Text(
                       item.name,
-                      overflow: TextOverflow.ellipsis,
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      softWrap: false,
+                      overflow: TextOverflow.fade,
                     ),
                     Text(
                       'Total of ${item.totalOf}',
-                      style: TextStyle(
-                        fontSize: 13,
-                      ),
+                      style: TextStyle(fontSize: 13),
+                      softWrap: false,
+                      overflow: TextOverflow.fade,
                     ),
                   ],
                 ),
@@ -667,13 +669,12 @@ class _VetsCarouselItem extends StatelessWidget {
                   children: [
                     Text(
                       item.name,
-                      maxLines: 1,
-                      softWrap: false,
-                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                           // color: _baseColor,
                           fontSize: 16,
                           fontWeight: FontWeight.bold),
+                      softWrap: false,
+                      overflow: TextOverflow.fade,
                     ),
                     SizedBox(height: 4),
                     Row(

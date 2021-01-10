@@ -6,6 +6,7 @@ import 'package:get_pet/import.dart';
 import 'package:logger/logger.dart';
 // import 'package:logger/src/outputs/file_output.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class AppLogger {
   static Logger _instance;
@@ -19,19 +20,17 @@ class AppLogger {
     if (_instance != null) {
       return;
     }
+    final Level logLevel = kDebugMode ? Level.verbose : Level.warning;
     File logFile;
     try {
-      // Get platform directory
-      Directory directory;
-      if (Platform.isAndroid) {
-        directory = await getExternalStorageDirectory();
-      } else if (Platform.isIOS) {
-        directory = await getApplicationDocumentsDirectory();
-      } else {
-        // Not mobile - return with log to console only
+      final directory = await _getPlatformAppDirectory();
+      if (directory == null) {
+        // Not mobile - creale logger to console only
         _instance = Logger(
-          printer: PlainPrinter(),
+          filter: _LogFilter(),
+          printer: _PlainPrinter(),
           output: ConsoleOutput(),
+          level: logLevel,
         );
         return;
       }
@@ -47,21 +46,57 @@ class AppLogger {
     }
 
     _instance = Logger(
-      printer: PlainPrinter(),
+      filter: _LogFilter(),
+      printer: _PlainPrinter(),
       output: MultiOutput([
         ConsoleOutput(),
-        FileOutput(file: logFile),
+        _FileOutput(file: logFile),
       ]),
+      level: logLevel,
     );
 
     // Write initial record
-    _instance.i('---------------------------------');
-    _instance.i('LOGGER STARTED.');
-    _instance.i('---------------------------------');
+    _instance.w('---------------------------------');
+    _instance.w('LOGGER STARTED.');
+    _instance.w('---------------------------------');
 
     // Not-awaiting service functions:
     // ignore: unawaited_futures
     _deleteOldFiles(currentFile: logFile);
+  }
+
+  static Future<Directory> _getPlatformAppDirectory() async {
+    Directory directory;
+    final bool isPermissionGranted = await _getPermission(Permission.storage);
+
+    if (Platform.isAndroid) {
+      if (isPermissionGranted) {
+        directory = await getExternalStorageDirectory();
+      } else {
+        directory = await getApplicationDocumentsDirectory();
+      }
+    } else if (Platform.isIOS) {
+      directory = await getApplicationDocumentsDirectory();
+    } else {
+      // Not mobile - return null
+    }
+    return directory;
+  }
+
+  static Future<bool> _getPermission(Permission permission) async {
+    var status = await permission.status;
+    if (status.isGranted) {
+      return true;
+    }
+    if (status.isPermanentlyDenied || status.isRestricted) {
+      return false;
+    }
+    // Try to get permission
+    status = await permission.request();
+    if (status.isGranted) {
+      return true;
+    }
+    return false;
   }
 
   static Future<void> _deleteOldFiles({
@@ -80,8 +115,20 @@ class AppLogger {
   }
 }
 
+// Turn on logging in release mode
+class _LogFilter extends LogFilter {
+  @override
+  bool shouldLog(LogEvent event) {
+    var shouldLog = false;
+    if (event.level.index >= level.index) {
+      shouldLog = true;
+    }
+    return shouldLog;
+  }
+}
+
 // Very simplified custom LogPrinter
-class PlainPrinter extends LogPrinter {
+class _PlainPrinter extends LogPrinter {
   @override
   List<String> log(LogEvent event) {
     final messageStr = _stringifyMessage(event.message);
@@ -103,13 +150,13 @@ class PlainPrinter extends LogPrinter {
 
 // In package:logger/logger.dart:
 // export 'src/log_output.dart' if (dart.io) 'src/outputs/file_output.dart';
-class FileOutput extends LogOutput {
+class _FileOutput extends LogOutput {
   final File file;
   final bool overrideExisting;
   final Encoding encoding;
   IOSink _sink;
 
-  FileOutput({
+  _FileOutput({
     this.file,
     this.overrideExisting = false,
     this.encoding = utf8,
@@ -125,10 +172,8 @@ class FileOutput extends LogOutput {
 
   @override
   void output(OutputEvent event) {
-    // _sink.writeAll(event.lines, '\n');
-    for (final String line in event.lines) {
-      _sink.writeln(line);
-    }
+    _sink.writeAll(event.lines, '\n');
+    _sink.writeln();
   }
 
   @override

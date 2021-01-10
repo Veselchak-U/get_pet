@@ -45,7 +45,6 @@ class _DetailScreenState extends State<DetailScreen> {
         itemList[index] = item.copyWith(liked: !item.liked);
         item = itemList[index];
       });
-
     };
     _pageController = PageController(initialPage: itemList.indexOf(item));
   }
@@ -173,6 +172,7 @@ class _Header extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Column(
+          // mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 8),
@@ -182,6 +182,8 @@ class _Header extends StatelessWidget {
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.0),
+              softWrap: false,
+              overflow: TextOverflow.fade,
             ),
             SizedBox(height: 8),
             Row(
@@ -191,6 +193,8 @@ class _Header extends StatelessWidget {
                 Text(
                   '${item.address} ( ${item.distance} Km )',
                   style: TextStyle(fontSize: 13),
+                  softWrap: false,
+                  overflow: TextOverflow.fade,
                 ),
               ],
             ),
@@ -198,6 +202,7 @@ class _Header extends StatelessWidget {
         ),
         FlatButton(
           height: 48,
+          
           color: item.liked ? theme.selectedRowColor : theme.primaryColorLight,
           shape: CircleBorder(),
           onPressed: () {
@@ -260,11 +265,13 @@ class _DetailsItem extends StatelessWidget {
             children: [
               Text(value,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  overflow: TextOverflow.ellipsis),
+                  softWrap: false,
+                  overflow: TextOverflow.fade),
               const SizedBox(height: 4),
               Text(name,
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-                  overflow: TextOverflow.ellipsis),
+                  softWrap: false,
+                  overflow: TextOverflow.fade),
             ],
           ),
         ),
@@ -298,8 +305,9 @@ class _Story extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 height: 2,
                 letterSpacing: 0.5),
-            overflow: TextOverflow.ellipsis,
             maxLines: 3,
+            // softWrap: false,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],
@@ -349,7 +357,8 @@ class _Contact extends StatelessWidget {
                     fontSize: 13,
                     fontWeight: FontWeight.normal,
                     letterSpacing: 0.5),
-                overflow: TextOverflow.ellipsis,
+                softWrap: false,
+                overflow: TextOverflow.fade,
               ),
             ],
           ),

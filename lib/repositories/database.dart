@@ -84,7 +84,7 @@ class DatabaseRepository {
       logger.e('DatabaseRepository readConditions() ${queryResult.exception}');
       throw queryResult.exception;
     }
-    logger.v('DatabaseRepository readConditions() ${queryResult.data}');
+    logger.i('DatabaseRepository readConditions() ${queryResult.data}');
     final dataItems =
         (queryResult.data['conditions'] as List).cast<Map<String, dynamic>>();
     for (final item in dataItems) {
@@ -117,7 +117,7 @@ class DatabaseRepository {
       logger.e('DatabaseRepository readCategories() ${queryResult.exception}');
       throw queryResult.exception;
     }
-    logger.v('DatabaseRepository readCategories() ${queryResult.data}');
+    logger.i('DatabaseRepository readCategories() ${queryResult.data}');
     final dataItems =
         (queryResult.data['categories'] as List).cast<Map<String, dynamic>>();
     for (final item in dataItems) {
@@ -151,7 +151,7 @@ class DatabaseRepository {
       logger.e('DatabaseRepository readBreeds() ${queryResult.exception}');
       throw queryResult.exception;
     }
-    logger.v('DatabaseRepository readBreeds() ${queryResult.data}');
+    logger.i('DatabaseRepository readBreeds() ${queryResult.data}');
     final dataItems =
         (queryResult.data['breeds'] as List).cast<Map<String, dynamic>>();
     for (final item in dataItems) {
@@ -192,7 +192,7 @@ class DatabaseRepository {
       logger.e('DatabaseRepository searchPets() ${queryResult.exception}');
       throw queryResult.exception;
     }
-    logger.v('DatabaseRepository searchPets() ${queryResult.data}');
+    logger.i('DatabaseRepository searchPets() ${queryResult.data}');
     final petItems =
         (queryResult.data['pets'] as List).cast<Map<String, dynamic>>();
     final List<PetModel> pets = [];
@@ -243,7 +243,7 @@ class DatabaseRepository {
       logger.e('DatabaseRepository readNewestPets() ${queryResult.exception}');
       throw queryResult.exception;
     }
-    logger.v('DatabaseRepository readNewestPets() ${queryResult.data}');
+    logger.i('DatabaseRepository readNewestPets() ${queryResult.data}');
     final dataItems = (queryResult.data['get_pets_by_member_id'] as List)
         .cast<Map<String, dynamic>>();
     for (final item in dataItems) {
@@ -324,7 +324,7 @@ class DatabaseRepository {
       logger.e('DatabaseRepository readNearestVets() ${queryResult.exception}');
       throw queryResult.exception;
     }
-    logger.v('DatabaseRepository readNearestVets() ${queryResult.data}');
+    logger.i('DatabaseRepository readNearestVets() ${queryResult.data}');
     final dataItems =
         (queryResult.data['vets'] as List).cast<Map<String, dynamic>>();
     for (final item in dataItems) {
@@ -367,7 +367,7 @@ class DatabaseRepository {
           'DatabaseRepository updatePetLike("pet_id": $petId, "member_id": $memberId) ${mutationResult.exception}');
       throw mutationResult.exception;
     }
-    logger.v(
+    logger.i(
         'DatabaseRepository updatePetLike("pet_id": $petId, "member_id": $memberId ${mutationResult.data}');
     return result;
   }
@@ -399,7 +399,7 @@ class DatabaseRepository {
           'DatabaseRepository createPet("newPet": ${newPet.toJson()}) ${mutationResult.exception}');
       throw mutationResult.exception;
     }
-    logger.v('DatabaseRepository createPet() ${mutationResult.data}');
+    logger.i('DatabaseRepository createPet() ${mutationResult.data}');
     final dataItem =
         mutationResult.data['insert_pet_one'] as Map<String, dynamic>;
     PetModel result;
@@ -427,7 +427,7 @@ class DatabaseRepository {
       logger.e('DatabaseRepository readUserProfile() ${queryResult.exception}');
       throw queryResult.exception;
     }
-    logger.v('DatabaseRepository readUserProfile() ${queryResult.data}');
+    logger.i('DatabaseRepository readUserProfile() ${queryResult.data}');
     final dataItems = (queryResult.data['current_member'] as List)
         .cast<Map<String, dynamic>>();
     UserModel result;
@@ -461,7 +461,7 @@ class DatabaseRepository {
       logger.e('DatabaseRepository readSysParam() ${queryResult.exception}');
       throw queryResult.exception;
     }
-    logger.v(
+    logger.i(
         'DatabaseRepository readSysParam(label = "$label") ${queryResult.data}');
     final dataItem =
         queryResult.data['sys_param_by_pk'] as Map<String, dynamic>;

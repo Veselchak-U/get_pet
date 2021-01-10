@@ -86,12 +86,13 @@ class PetCard extends StatelessWidget {
                       padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
                       child: Text(
                         item.condition.name,
-                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: item.condition.textColor ?? theme.primaryColor,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
+                        softWrap: false,
+                        overflow: TextOverflow.fade,
                       ),
                     ),
                   ),
@@ -99,6 +100,8 @@ class PetCard extends StatelessWidget {
                   Text(
                     item.breed.name,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    softWrap: false,
+                    overflow: TextOverflow.fade,
                   ),
                   SizedBox(height: 4),
                   Row(
@@ -110,6 +113,8 @@ class PetCard extends StatelessWidget {
                       Text(
                         '${item.address} ( ${item.distance} km )',
                         style: TextStyle(fontSize: 11),
+                        softWrap: false,
+                        overflow: TextOverflow.fade,
                       ),
                     ],
                   ),

@@ -47,6 +47,7 @@ dependencies:
   logger: ^0.9.4
   path_provider: ^1.6.24
   intl: ^0.16.1
+  permission_handler: ^5.0.1+1
 
 
 dev_dependencies:
