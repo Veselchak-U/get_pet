@@ -195,10 +195,26 @@ class _DrawerBody extends StatelessWidget {
     );
     menuItems.add(
       ListTile(
-        leading: Icon(Icons.restore_page),
+        leading: Icon(
+          Icons.restore_page,
+          color: Theme.of(context).accentColor,
+        ),
         title: Text('Restore sections visibility'),
         onTap: () {
           profileCubit.restoreSectionsVisibility();
+          navigator.pop();
+        },
+      ),
+    );
+    menuItems.add(
+      ListTile(
+        leading: Icon(
+          Icons.policy,
+          color: Theme.of(context).accentColor,
+        ),
+        title: Text('Privacy policy'),
+        onTap: () {
+          profileCubit.callToPrivacyPolicy();
           navigator.pop();
         },
       ),

@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
 import 'package:get_pet/import.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 part 'profile.g.dart';
 
@@ -48,6 +49,15 @@ class ProfileCubit extends Cubit<ProfileState> {
   void restoreSectionsVisibility() {
     final newSectionsVisibility = const [true, true, true];
     emit(state.copyWith(sectionsVisibility: newSectionsVisibility));
+  }
+
+  void callToPrivacyPolicy() async {
+    final url = kPrivacyPolicyUrl;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
 
