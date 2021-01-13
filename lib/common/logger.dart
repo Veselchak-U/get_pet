@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:get_pet/import.dart';
 import 'package:logger/logger.dart';
-// import 'package:logger/src/outputs/file_output.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -17,11 +16,11 @@ class AppLogger {
   }
 
   static Future<void> init() async {
-    if (_instance != null) {
-      return;
-    }
+    assert(_instance == null);
+
     final Level logLevel = kDebugMode ? Level.verbose : Level.warning;
     File logFile;
+
     try {
       final directory = await _getPlatformAppDirectory();
       if (directory == null) {
