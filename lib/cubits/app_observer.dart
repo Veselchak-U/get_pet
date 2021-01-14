@@ -18,8 +18,10 @@ class AppBlocObserver extends BlocObserver {
 
   @override
   void onChange(Cubit cubit, Change change) {
-    logger.i(
-        'CHANGE in ${cubit.runtimeType}: ${change.currentState} -> ${change.nextState}');
+    final type = cubit.runtimeType;
+    final currentState = change.currentState;
+    final nextState = change.nextState;
+    logger.i('CHANGE in $type: $currentState -> $nextState');
     super.onChange(cubit, change);
   }
 

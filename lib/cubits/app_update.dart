@@ -39,14 +39,14 @@ class AppUpdateCubit extends Cubit<AppUpdateState> {
     }
 
     if (currVersion < minVersion) {
-      emit(state.copyWith(status: AppUpdateStatus.need_update));
+      emit(state.copyWith(status: AppUpdateStatus.needUpdate));
     } else {
-      emit(state.copyWith(status: AppUpdateStatus.no_update));
+      emit(state.copyWith(status: AppUpdateStatus.noUpdate));
     }
   }
 }
 
-enum AppUpdateStatus { need_update, no_update, error, unknown }
+enum AppUpdateStatus { needUpdate, noUpdate, error, unknown }
 
 @CopyWith()
 class AppUpdateState extends Equatable {

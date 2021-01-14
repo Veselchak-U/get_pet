@@ -23,7 +23,7 @@ class AuthenticationRepository {
   ///
   /// Emits [User.empty] if the user is not authenticated.
   Stream<UserModel> get userChanges {
-    return _firebaseAuth.authStateChanges().map((User firebaseUser) {
+    return _firebaseAuth.authStateChanges().map((firebaseUser) {
       if (firebaseUser == null) {
         _currentUser = UserModel.empty;
       } else {
@@ -60,7 +60,7 @@ class AuthenticationRepository {
         idToken: googleAuth.idToken,
       );
       return _firebaseAuth.signInWithCredential(credential);
-    } catch (error) {
+    } on dynamic {
       rethrow;
       // throw LogInWithGoogleFailure();
     }
@@ -76,7 +76,7 @@ class AuthenticationRepository {
         _firebaseAuth.signOut(),
         _googleSignIn.signOut(),
       ]);
-    } catch (error) {
+    } on dynamic {
       rethrow;
       // throw LogOutFailure();
     }

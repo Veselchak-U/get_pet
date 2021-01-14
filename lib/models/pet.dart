@@ -57,6 +57,7 @@ class PetModel extends Equatable {
         member,
       ];
 
+  // ignore: sort_constructors_first
   factory PetModel.fromJson(Map<String, dynamic> json) =>
       _$PetModelFromJson(json);
 

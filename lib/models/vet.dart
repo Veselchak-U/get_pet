@@ -21,6 +21,7 @@ class VetModel {
   final bool isOpenNow; // сейчас открыто
   final String logoImage; // логотип
 
+  // ignore: sort_constructors_first
   factory VetModel.fromJson(Map<String, dynamic> json) =>
       _$VetModelFromJson(json);
 

@@ -14,7 +14,7 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<AppNavigatorCubit, AppNavigatorState>(
       listener: (context, state) {
-        if (state.status == AppNavigatorStatus.need_update) {
+        if (state.status == AppNavigatorStatus.needUpdate) {
           forcedUpdate(context);
         }
       },
@@ -23,7 +23,7 @@ class SplashScreen extends StatelessWidget {
           alignment: AlignmentDirectional.bottomCenter,
           children: <Widget>[
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -36,7 +36,7 @@ class SplashScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(
+                  const Text(
                     'Get Pet',
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -45,13 +45,13 @@ class SplashScreen extends StatelessWidget {
                         fontFamily: 'Roboto',
                         decoration: TextDecoration.none),
                   ),
-                  SizedBox(height: 32),
-                  CircularProgressIndicator(strokeWidth: 2),
-                  SizedBox(height: 32),
+                  const SizedBox(height: 32),
+                  const CircularProgressIndicator(strokeWidth: 2),
+                  const SizedBox(height: 32),
                   Text(
                     state.statusText,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16.0,
                         fontFamily: 'Roboto',

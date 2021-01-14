@@ -51,7 +51,7 @@ class DatabaseRepository {
     final GraphQLClient client = _getClient();
     final mutationResult = await client
         .mutate(options)
-        .timeout(Duration(milliseconds: kTimeoutMillisec));
+        .timeout(const Duration(milliseconds: kTimeoutMillisec));
     if (mutationResult.hasException) {
       result = false;
       logger.e(
@@ -62,7 +62,7 @@ class DatabaseRepository {
   }
 
   Future<int> readNotificationCount() async {
-    final result = 2;
+    const result = 2;
     return result;
   }
 
@@ -79,7 +79,7 @@ class DatabaseRepository {
     final GraphQLClient client = _getClient();
     final queryResult = await client
         .query(options)
-        .timeout(Duration(milliseconds: kTimeoutMillisec));
+        .timeout(const Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
       logger.e('DatabaseRepository readConditions() ${queryResult.exception}');
       throw queryResult.exception;
@@ -112,7 +112,7 @@ class DatabaseRepository {
     final GraphQLClient client = _getClient();
     final queryResult = await client
         .query(options)
-        .timeout(Duration(milliseconds: kTimeoutMillisec));
+        .timeout(const Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
       logger.e('DatabaseRepository readCategories() ${queryResult.exception}');
       throw queryResult.exception;
@@ -146,7 +146,7 @@ class DatabaseRepository {
     final GraphQLClient client = _getClient();
     final queryResult = await client
         .query(options)
-        .timeout(Duration(milliseconds: kTimeoutMillisec));
+        .timeout(const Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
       logger.e('DatabaseRepository readBreeds() ${queryResult.exception}');
       throw queryResult.exception;
@@ -187,7 +187,7 @@ class DatabaseRepository {
     );
     final queryResult = await client
         .query(options)
-        .timeout(Duration(milliseconds: kTimeoutMillisec));
+        .timeout(const Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
       logger.e('DatabaseRepository searchPets() ${queryResult.exception}');
       throw queryResult.exception;
@@ -216,11 +216,11 @@ class DatabaseRepository {
       }
     }
     final List<PetModel> result = [];
-    pets.forEach((pet) {
+    for (final pet in pets) {
       final liked = likes.contains(pet.id);
       final petWhithLike = pet.copyWith(liked: liked);
       result.add(petWhithLike);
-    });
+    }
     return result;
   }
 
@@ -238,7 +238,7 @@ class DatabaseRepository {
     final GraphQLClient client = _getClient();
     final queryResult = await client
         .query(options)
-        .timeout(Duration(milliseconds: kTimeoutMillisec));
+        .timeout(const Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
       logger.e('DatabaseRepository readNewestPets() ${queryResult.exception}');
       throw queryResult.exception;
@@ -268,7 +268,7 @@ class DatabaseRepository {
     final GraphQLClient client = _getClient();
     final queryResult = await client
         .query(options)
-        .timeout(Duration(milliseconds: kTimeoutMillisec));
+        .timeout(const Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
       logger.e(
           'DatabaseRepository readNewestPetsWithLikes() ${queryResult.exception}');
@@ -301,11 +301,11 @@ class DatabaseRepository {
       }
     }
     final List<PetModel> result = [];
-    pets.forEach((pet) {
+    for (final pet in pets) {
       final liked = likes.contains(pet.id);
       final petWhithLike = pet.copyWith(liked: liked);
       result.add(petWhithLike);
-    });
+    }
     return result;
   }
 
@@ -319,7 +319,7 @@ class DatabaseRepository {
     final GraphQLClient client = _getClient();
     final queryResult = await client
         .query(options)
-        .timeout(Duration(milliseconds: kTimeoutMillisec));
+        .timeout(const Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
       logger.e('DatabaseRepository readNearestVets() ${queryResult.exception}');
       throw queryResult.exception;
@@ -360,7 +360,7 @@ class DatabaseRepository {
     final GraphQLClient client = _getClient();
     final mutationResult = await client
         .mutate(options)
-        .timeout(Duration(milliseconds: kTimeoutMillisec));
+        .timeout(const Duration(milliseconds: kTimeoutMillisec));
     if (mutationResult.hasException) {
       result = false;
       logger.e(
@@ -393,7 +393,7 @@ class DatabaseRepository {
     final GraphQLClient client = _getClient();
     final mutationResult = await client
         .mutate(options)
-        .timeout(Duration(milliseconds: kTimeoutMillisec));
+        .timeout(const Duration(milliseconds: kTimeoutMillisec));
     if (mutationResult.hasException) {
       logger.e(
           'DatabaseRepository createPet("newPet": ${newPet.toJson()}) ${mutationResult.exception}');
@@ -422,7 +422,7 @@ class DatabaseRepository {
     final GraphQLClient client = _getClient();
     final queryResult = await client
         .query(options)
-        .timeout(Duration(milliseconds: kTimeoutMillisec));
+        .timeout(const Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
       logger.e('DatabaseRepository readUserProfile() ${queryResult.exception}');
       throw queryResult.exception;
@@ -456,7 +456,7 @@ class DatabaseRepository {
     final GraphQLClient client = _getClient();
     final queryResult = await client
         .query(options)
-        .timeout(Duration(milliseconds: kTimeoutMillisec));
+        .timeout(const Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
       logger.e('DatabaseRepository readSysParam() ${queryResult.exception}');
       throw queryResult.exception;

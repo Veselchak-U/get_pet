@@ -24,7 +24,7 @@ class AddPetCubit extends Cubit<AddPetState> {
         conditions: conditions,
         categories: categories,
       ));
-    } catch (error) {
+    } on dynamic catch (error) {
       out(error);
       result = false;
       return Future.error(error);
@@ -50,8 +50,9 @@ class AddPetCubit extends Cubit<AddPetState> {
       breedsByCategory: [],
     ));
     // emit breeds by category
-    final List<BreedModel> breedsByCategory =
-        allBreeds.where((BreedModel e) => e.categoryId == category.id).toList();
+    final List<BreedModel> breedsByCategory = allBreeds
+        .where((breed) => breed.categoryId == category.id)
+        .toList();
     emit(state.copyWith(breedsByCategory: breedsByCategory));
   }
 
@@ -61,7 +62,7 @@ class AddPetCubit extends Cubit<AddPetState> {
     try {
       await repo.createPet(state.newPet);
       result = true;
-    } catch (e) {
+    } on dynamic catch (e) {
       out(e);
     } finally {
       emit(state.copyWith(status: AddPetStatus.ready));
@@ -69,7 +70,7 @@ class AddPetCubit extends Cubit<AddPetState> {
     return result;
   }
 
-  void saveError(dynamic error, StackTrace stackTrace) {
+  void saveError(Object error, StackTrace stackTrace) {
     onError(error, stackTrace);
   }
 }

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_pet/import.dart';
 
@@ -51,22 +50,22 @@ class AppNavigatorCubit extends Cubit<AppNavigatorState> {
     // First, check app update
     if (_appUpdateStatus == AppUpdateStatus.unknown) {
       emit(state.copyWith(
-        status: AppNavigatorStatus.check_update,
+        status: AppNavigatorStatus.checkUpdate,
         statusText: 'Check updates...',
       ));
       return;
     }
-    if (_appUpdateStatus == AppUpdateStatus.need_update) {
+    if (_appUpdateStatus == AppUpdateStatus.needUpdate) {
       emit(state.copyWith(
-        status: AppNavigatorStatus.need_update,
+        status: AppNavigatorStatus.needUpdate,
         statusText: 'Update required',
       ));
       return;
     }
-    if (_appUpdateStatus == AppUpdateStatus.no_update ||
+    if (_appUpdateStatus == AppUpdateStatus.noUpdate ||
         _appUpdateStatus == AppUpdateStatus.error) {
       emit(state.copyWith(
-        status: AppNavigatorStatus.no_update,
+        status: AppNavigatorStatus.noUpdate,
         statusText: 'Update not required',
       ));
       // Second, check user auth
@@ -77,7 +76,7 @@ class AppNavigatorCubit extends Cubit<AppNavigatorState> {
   void _checkAuth() {
     if (_authenticationStatus == AuthenticationStatus.unknown) {
       emit(state.copyWith(
-        status: AppNavigatorStatus.check_auth,
+        status: AppNavigatorStatus.checkAuth,
         statusText: 'Check authentication...',
       ));
       return;
@@ -109,22 +108,22 @@ class AppNavigatorCubit extends Cubit<AppNavigatorState> {
     _isOnLoginScreen = true;
     navigator.pushAndRemoveUntil(
       LoginScreen().getRoute(),
-      (Route route) => false,
+      (route) => false,
     );
   }
 
-  void _goToHomeScreen() async {
+  Future<void> _goToHomeScreen() async {
     _isOnLoginScreen = false;
     _isNeedUpdateCheck = true;
 
     emit(state.copyWith(
-      status: AppNavigatorStatus.read_profile,
+      status: AppNavigatorStatus.readProfile,
       statusText: 'Load user profile...',
     ));
     await _profileCubit.load();
 
     emit(state.copyWith(
-      status: AppNavigatorStatus.read_home,
+      status: AppNavigatorStatus.readHome,
       statusText: 'Load home screen...',
     ));
     await _homeCubit.load();
@@ -132,7 +131,7 @@ class AppNavigatorCubit extends Cubit<AppNavigatorState> {
     // ignore: unawaited_futures
     navigator.pushAndRemoveUntil(
       HomeScreen().getRoute(),
-      (Route route) => false,
+      (route) => false,
     );
   }
 
@@ -146,14 +145,14 @@ class AppNavigatorCubit extends Cubit<AppNavigatorState> {
 
 enum AppNavigatorStatus {
   init,
-  check_update,
-  no_update,
-  need_update,
-  check_auth,
+  checkUpdate,
+  noUpdate,
+  needUpdate,
+  checkAuth,
   unauthenticated,
   authenticated,
-  read_profile,
-  read_home,
+  readProfile,
+  readHome,
 }
 
 @CopyWith()

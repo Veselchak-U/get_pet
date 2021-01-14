@@ -20,6 +20,7 @@ class MemberModel {
   // final String phone;
   final bool isActive;
 
+  // ignore: sort_constructors_first
   factory MemberModel.fromJson(Map<String, dynamic> json) =>
       _$MemberModelFromJson(json);
 

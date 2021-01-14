@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
-      builder: (BuildContext context, HomeState state) {
+      builder: (context, state) {
         final HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
         Widget result;
         if (state.status == HomeStatus.ready ||
@@ -26,7 +26,7 @@ class HomeScreen extends StatelessWidget {
               return homeCubit.load(isReload: true);
             },
             child: BlocBuilder<ProfileCubit, ProfileState>(
-                builder: (BuildContext context, ProfileState state) {
+                builder: (context, state) {
               return Scaffold(
                 key: _scaffoldKey,
                 appBar: _AppBar(),
@@ -51,21 +51,21 @@ class HomeScreen extends StatelessWidget {
         } else if (state.status == HomeStatus.busy) {
           result = Container(
             color: theme.backgroundColor,
-            child: Center(
+            child: const Center(
               child: CircularProgressIndicator(strokeWidth: 2),
             ),
           );
         } else if (state.status == HomeStatus.initial) {
           result = Container(
             color: theme.backgroundColor,
-            child: Center(
+            child: const Center(
               child: Text('HomeStatus.initial'),
             ),
           );
         } else {
           result = Container(
             color: theme.backgroundColor,
-            child: Center(
+            child: const Center(
               child: Text('Unknown HomeStatus'),
             ),
           );
@@ -78,7 +78,7 @@ class HomeScreen extends StatelessWidget {
 
 class _AppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
-  Size get preferredSize => Size.fromHeight(56.0);
+  Size get preferredSize => const Size.fromHeight(56.0);
 
   @override
   Widget build(BuildContext context) {
@@ -88,12 +88,12 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
     final List<Widget> actions = [];
     if (data.notificationCount > 0) {
       actions.add(Stack(
-        alignment: Alignment(1.0, -0.5),
+        alignment: const Alignment(1.0, -0.5),
         children: [
           Center(
             child: IconButton(
               tooltip: 'You have ${data.notificationCount} new notification(s)',
-              icon: Icon(Icons.notifications_none),
+              icon: const Icon(Icons.notifications_none),
               onPressed: () {
                 profileCubit.clearNotifications();
               },
@@ -102,7 +102,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
           Container(
             decoration: BoxDecoration(
               color: theme.backgroundColor,
-              borderRadius: BorderRadius.all(Radius.circular(12.0)),
+              borderRadius: const BorderRadius.all(Radius.circular(12.0)),
             ),
             child: Padding(
               padding: const EdgeInsets.all(2),
@@ -110,7 +110,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
                 // constraints: BoxConstraints(minWidth: 17, minHeight: 17),
                 decoration: BoxDecoration(
                   color: theme.selectedRowColor,
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -119,7 +119,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   child: Text(
                     '${data.notificationCount > 99 ? "99+" : data.notificationCount}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 11,
                     ),
@@ -131,13 +131,13 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ));
     }
-    actions.add(SizedBox(width: kHorizontalPadding));
+    actions.add(const SizedBox(width: kHorizontalPadding));
 
     return AppBar(
       elevation: 0.0,
       leading: IconButton(
         tooltip: 'Menu',
-        icon: Icon(Icons.menu),
+        icon: const Icon(Icons.menu),
         onPressed: () {
           _scaffoldKey.currentState.openDrawer();
         },
@@ -163,7 +163,7 @@ class _DrawerContent extends StatelessWidget {
         //         child: Text('DrawerHeader'),
         //       ),
         LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
+      builder: (context, constraints) {
         // out('constraints.maxHeight = ${constraints.maxHeight}');
         return SingleChildScrollView(
           child: ConstrainedBox(
@@ -199,7 +199,7 @@ class _DrawerBody extends StatelessWidget {
           Icons.restore_page,
           color: Theme.of(context).accentColor,
         ),
-        title: Text('Restore sections visibility'),
+        title: const Text('Restore sections visibility'),
         onTap: () {
           profileCubit.restoreSectionsVisibility();
           navigator.pop();
@@ -212,7 +212,7 @@ class _DrawerBody extends StatelessWidget {
           Icons.policy,
           color: Theme.of(context).accentColor,
         ),
-        title: Text('Privacy policy'),
+        title: const Text('Privacy policy'),
         onTap: () {
           profileCubit.callToPrivacyPolicy();
           navigator.pop();
@@ -256,8 +256,8 @@ class _DrawerButton extends StatelessWidget {
         onPressed: () {
           RepositoryProvider.of<AuthenticationRepository>(context).logOut();
         },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8),
           child: Text('Log Out'),
         ),
       ),
@@ -279,10 +279,10 @@ class _UserProfileCard extends StatelessWidget {
         child: Row(
           children: [
             _UserProfileAvatar(),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             Text(
               profileCubit.state.user.name,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               softWrap: false,
               overflow: TextOverflow.fade,
             ),
@@ -321,14 +321,14 @@ class _Greeting extends StatelessWidget {
   Widget build(BuildContext context) {
     // var theme = Theme.of(context);
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
+      padding: const EdgeInsets.symmetric(horizontal: kHorizontalPadding),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               Text(
                 'Find Your',
                 style: TextStyle(
@@ -336,7 +336,7 @@ class _Greeting extends StatelessWidget {
                     fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Text(
                 'Lovely pet in anywhere',
                 style: TextStyle(
@@ -344,7 +344,7 @@ class _Greeting extends StatelessWidget {
                   fontSize: 20,
                 ),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
             ],
           ),
           ElevatedButton(
@@ -359,7 +359,7 @@ class _Greeting extends StatelessWidget {
                   /* horizontal: kHorizontalPadding */),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
-                children: [
+                children: const [
                   Icon(Icons.pets),
                   SizedBox(width: 8),
                   Text('Or Add'),
@@ -377,20 +377,20 @@ class _StaticSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: kHorizontalPadding, top: 16.0),
+      padding: const EdgeInsets.only(left: kHorizontalPadding, top: 16.0),
       child: GestureDetector(
         onTap: () => _goToSearchScreen(context),
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(32.0),
               bottomLeft: Radius.circular(32.0),
             ),
             color: theme.primaryColorLight,
           ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 4.0, 0.0, 4.0),
+          child: const Padding(
+            padding: EdgeInsets.fromLTRB(16.0, 4.0, 0.0, 4.0),
             child: TextField(
               enabled: false,
               textAlignVertical: TextAlignVertical.center,
@@ -444,7 +444,7 @@ class _ScreenSection extends StatelessWidget {
         ],
       );
     } else {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
   }
 }
@@ -462,7 +462,7 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     final ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
     return Padding(
-      padding: EdgeInsets.fromLTRB(kHorizontalPadding, 4.0, 8.0, 4.0),
+      padding: const EdgeInsets.fromLTRB(kHorizontalPadding, 4.0, 8.0, 4.0),
       child: Row(
         children: [
           Text(
@@ -472,13 +472,13 @@ class _Header extends StatelessWidget {
                 fontSize: 16.0,
                 fontWeight: FontWeight.bold),
           ),
-          Spacer(),
+          const Spacer(),
           PopupMenuButton(
-            icon: Icon(Icons.more_horiz),
-            itemBuilder: (BuildContext context) => [
+            icon: const Icon(Icons.more_horiz),
+            itemBuilder: (context) => [
               PopupMenuItem(
                 value: index,
-                child: Text('Hide section'),
+                child: const Text('Hide section'),
               )
             ],
             onSelected: (value) {
@@ -498,21 +498,21 @@ class _CategoryGrid extends StatelessWidget {
     final HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
     final HomeState data = homeCubit.state;
     final screenWidth = MediaQuery.of(context).size.width;
-    final itemHeight = 60;
+    const itemHeight = 60;
     final itemWidth = (screenWidth - 3 * kHorizontalPadding) / 2;
     final innerPadding = itemWidth > 160 ? 16.0 : 8.0;
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
+      padding: const EdgeInsets.symmetric(horizontal: kHorizontalPadding),
       child: GridView.count(
         crossAxisCount: 2,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         childAspectRatio: itemWidth / itemHeight,
         mainAxisSpacing: kHorizontalPadding,
         crossAxisSpacing: kHorizontalPadding,
         children: data.petCategories
-            .map((CategoryModel element) => _CategoryGridItem(
-                  item: element,
+            .map((category) => _CategoryGridItem(
+                  item: category,
                   innerPadding: innerPadding,
                 ))
             .toList(),
@@ -571,14 +571,16 @@ class _CategoryGridItem extends StatelessWidget {
                   children: [
                     Text(
                       item.name,
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                       softWrap: false,
                       overflow: TextOverflow.fade,
                     ),
                     Text(
                       'Total of ${item.totalOf}',
-                      style: TextStyle(fontSize: 13),
+                      style: const TextStyle(fontSize: 13),
                       softWrap: false,
                       overflow: TextOverflow.fade,
                     ),
@@ -599,7 +601,7 @@ class _NewestPetsCarousel extends StatelessWidget {
     final HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
     final List<PetModel> newestPets = homeCubit.state.newestPets;
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
+      padding: const EdgeInsets.symmetric(horizontal: kHorizontalPadding),
       child: SizedBox(
         height: 255,
         child: ListView.builder(
@@ -634,7 +636,7 @@ class _VetsCarousel extends StatelessWidget {
     final HomeState data = homeCubit.state;
     return Container(
       height: 120,
-      margin: EdgeInsets.only(bottom: kHorizontalPadding),
+      margin: const EdgeInsets.only(bottom: kHorizontalPadding),
       child: PageView.builder(
         itemCount: data.nearestVets.length,
         // controller: PageController(viewportFraction: 1.0),
@@ -651,9 +653,9 @@ class _VetsCarouselItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
-    final borderWidth = 2.0;
+    const borderWidth = 2.0;
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: kHorizontalPadding),
+      margin: const EdgeInsets.symmetric(horizontal: kHorizontalPadding),
       decoration: BoxDecoration(
         border: Border.all(
           color: theme.primaryColorLight,
@@ -677,7 +679,7 @@ class _VetsCarouselItem extends StatelessWidget {
                   fit: BoxFit.scaleDown,
                 ),
               ),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -685,31 +687,31 @@ class _VetsCarouselItem extends StatelessWidget {
                   children: [
                     Text(
                       item.name,
-                      style: TextStyle(
+                      style: const TextStyle(
                           // color: _baseColor,
                           fontSize: 16,
                           fontWeight: FontWeight.bold),
                       softWrap: false,
                       overflow: TextOverflow.fade,
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.phone,
                           size: 20,
                         ),
-                        SizedBox(width: 4.0),
+                        const SizedBox(width: 4.0),
                         Text(
                           item.phone,
-                          style: TextStyle(
+                          style: const TextStyle(
                             // color: _baseColor,
                             fontSize: 14,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Container(
                       decoration: BoxDecoration(
                         color: item.isOpenNow
@@ -718,7 +720,7 @@ class _VetsCarouselItem extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       child: Padding(
-                        padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
+                        padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
                         child: Text(
                           item.timetable,
                           style: TextStyle(

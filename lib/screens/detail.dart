@@ -58,13 +58,13 @@ class _DetailScreenState extends State<DetailScreen> {
           SliverAppBar(
             automaticallyImplyLeading: false,
             leading: RaisedButton(
-              shape: CircleBorder(),
+              shape: const CircleBorder(),
               color: Colors.white.withOpacity(0.3),
               elevation: 0,
               onPressed: () {
                 navigator.pop(context);
               },
-              child: Icon(Icons.arrow_back),
+              child: const Icon(Icons.arrow_back),
             ),
             elevation: 0.0,
             expandedHeight: screenHeight - 20,
@@ -72,7 +72,7 @@ class _DetailScreenState extends State<DetailScreen> {
               children: [
                 PageView(
                   controller: _pageController,
-                  onPageChanged: (int index) {
+                  onPageChanged: (index) {
                     setState(() {
                       item = itemList[index];
                     });
@@ -137,7 +137,7 @@ class _SliderCover extends StatelessWidget {
         height: 40,
         decoration: BoxDecoration(
           color: theme.backgroundColor,
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(40.0),
             topRight: Radius.circular(40.0),
           ),
@@ -148,7 +148,7 @@ class _SliderCover extends StatelessWidget {
             height: 4,
             decoration: BoxDecoration(
               color: theme.textSelectionColor,
-              borderRadius: BorderRadius.all(
+              borderRadius: const BorderRadius.all(
                 Radius.circular(2),
               ),
             ),
@@ -175,24 +175,24 @@ class _Header extends StatelessWidget {
           // mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               item.breed.name,
-              style: TextStyle(
+              style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.0),
               softWrap: false,
               overflow: TextOverflow.fade,
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Row(
               children: [
-                Icon(Icons.location_on_outlined, size: 24),
-                SizedBox(width: 8),
+                const Icon(Icons.location_on_outlined, size: 24),
+                const SizedBox(width: 8),
                 Text(
                   '${item.address} ( ${item.distance} Km )',
-                  style: TextStyle(fontSize: 13),
+                  style: const TextStyle(fontSize: 13),
                   softWrap: false,
                   overflow: TextOverflow.fade,
                 ),
@@ -202,9 +202,8 @@ class _Header extends StatelessWidget {
         ),
         FlatButton(
           height: 48,
-          
           color: item.liked ? theme.selectedRowColor : theme.primaryColorLight,
-          shape: CircleBorder(),
+          shape: const CircleBorder(),
           onPressed: () {
             onTapLike(item);
           },
@@ -232,9 +231,9 @@ class _Details extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _DetailsItem(name: 'Age', value: item.age),
-          SizedBox(width: kHorizontalPadding),
+          const SizedBox(width: kHorizontalPadding),
           _DetailsItem(name: 'Color', value: item.coloring),
-          SizedBox(width: kHorizontalPadding),
+          const SizedBox(width: kHorizontalPadding),
           _DetailsItem(name: 'Weight', value: '${item.weight} Kg'),
         ],
       ),
@@ -264,12 +263,18 @@ class _DetailsItem extends StatelessWidget {
           child: Column(
             children: [
               Text(value,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                   softWrap: false,
                   overflow: TextOverflow.fade),
               const SizedBox(height: 4),
               Text(name,
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal,
+                  ),
                   softWrap: false,
                   overflow: TextOverflow.fade),
             ],
@@ -290,17 +295,17 @@ class _Story extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Pet Story',
           style: TextStyle(
               fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 0.5),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         SizedBox(
           height: 78,
           child: Text(
             item.description,
-            style: TextStyle(
+            style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
                 height: 2,
@@ -339,21 +344,21 @@ class _Contact extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Posted by',
                 style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.5),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
                 item.member.name,
-                style: TextStyle(
+                style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.normal,
                     letterSpacing: 0.5),
@@ -362,14 +367,14 @@ class _Contact extends StatelessWidget {
               ),
             ],
           ),
-          Spacer(),
-          SizedBox(width: 8),
+          const Spacer(),
+          const SizedBox(width: 8),
           ElevatedButton(
             onPressed: () {
               //
             },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text('Contact Me'),
             ),
           ),

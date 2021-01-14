@@ -27,7 +27,7 @@ class PetCard extends StatelessWidget {
             color: theme.primaryColorLight,
             width: 2.0,
           ),
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(16.0),
             topRight: Radius.circular(16.0),
           ),
@@ -42,7 +42,7 @@ class PetCard extends StatelessWidget {
                   child: Container(
                     height: 150,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(14.0),
                         topRight: Radius.circular(14.0),
                       ),
@@ -59,7 +59,7 @@ class PetCard extends StatelessWidget {
                   child: FlatButton(
                     height: 30,
                     color: item.liked ? theme.selectedRowColor : Colors.white,
-                    shape: CircleBorder(),
+                    shape: const CircleBorder(),
                     onPressed: onTapLike,
                     child: Icon(
                       Icons.favorite,
@@ -72,7 +72,7 @@ class PetCard extends StatelessWidget {
               ],
             ),
             Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -96,23 +96,26 @@ class PetCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     item.breed.name,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                     softWrap: false,
                     overflow: TextOverflow.fade,
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.location_on_outlined,
                         size: 16,
                       ),
                       Text(
                         '${item.address} ( ${item.distance} km )',
-                        style: TextStyle(fontSize: 11),
+                        style: const TextStyle(fontSize: 11),
                         softWrap: false,
                         overflow: TextOverflow.fade,
                       ),

@@ -17,6 +17,7 @@ class SysParamModel {
   final String note;
 
 
+  // ignore: sort_constructors_first
   factory SysParamModel.fromJson(Map<String, dynamic> json) =>
       _$SysParamModelFromJson(json);
 

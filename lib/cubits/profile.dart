@@ -25,7 +25,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         notificationCount: notificationCount,
       ));
       result = true;
-    } catch (error) {
+    } on dynamic catch (error) {
       out(error);
       return Future.error(error);
     }
@@ -47,16 +47,16 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   void restoreSectionsVisibility() {
-    final newSectionsVisibility = const [true, true, true];
+    const newSectionsVisibility = [true, true, true];
     emit(state.copyWith(sectionsVisibility: newSectionsVisibility));
   }
 
-  void callToPrivacyPolicy() async {
+  Future<void> callToPrivacyPolicy() async {
     final url = kPrivacyPolicyUrl;
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      throw 'Could not launch $url';
+      out('Could not launch $url');
     }
   }
 }

@@ -17,7 +17,7 @@ class AddPetScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) {
+      create: (context) {
         final addPetCubit = AddPetCubit(
           repo: RepositoryProvider.of<DatabaseRepository>(context),
         );
@@ -37,23 +37,23 @@ class _AddPetBody extends StatelessWidget {
     final isActiveUser =
         BlocProvider.of<ProfileCubit>(context).state.user.isActive;
     return BlocBuilder<AddPetCubit, AddPetState>(
-      builder: (BuildContext context, AddPetState addPetState) {
+      builder: (context, addPetState) {
         if (!isActiveUser) {
           return Scaffold(
             body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Unfortunately, your account is restricted.'),
-                  Text("You can't create a new pet."),
-                  SizedBox(height: 16),
+                  const Text('Unfortunately, your account is restricted.'),
+                  const Text("You can't create a new pet."),
+                  const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => navigator.pop(),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: [
+                        children: const [
                           Icon(Icons.pets),
                           SizedBox(width: 8),
                           Text('Back'),
@@ -74,7 +74,7 @@ class _AddPetBody extends StatelessWidget {
                   SliverAppBar(
                     elevation: 0.0,
                     expandedHeight: screenHeight / 2,
-                    title: Text(
+                    title: const Text(
                       'Add Your Pet',
                       // style: TextStyle(color: theme.primaryColor),
                     ),
@@ -105,7 +105,7 @@ class _AddPetBody extends StatelessWidget {
               ),
             ),
             if (addPetState.status == AddPetStatus.busy)
-              Center(
+              const Center(
                 child: CircularProgressIndicator(strokeWidth: 2),
               ),
           ],
@@ -159,7 +159,7 @@ class _AddPhotoButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: Row(
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children: const [
             Icon(Icons.add_a_photo),
             SizedBox(width: 16),
             Text('Add Photo'),
@@ -194,10 +194,10 @@ class _AddPetFormState extends State<_AddPetForm> {
     final PetModel newPet = addPetCubit.state.newPet;
     // при изменении URL фото "извне" обновляем содержимое соответствующего поля
     return BlocListener<AddPetCubit, AddPetState>(
-      listenWhen: (AddPetState previous, AddPetState current) =>
+      listenWhen: (previous, current) =>
           current.externalUpdate &&
           previous.newPet.photos != current.newPet.photos,
-      listener: (BuildContext context, AddPetState state) {
+      listener: (context, state) {
         addPetCubit.setExternalUpdateFlag(value: false);
         _controller.text = state.newPet.photos ?? '';
       },
@@ -207,7 +207,7 @@ class _AddPetFormState extends State<_AddPetForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFormField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Photo url',
                 helperText: '',
               ),
@@ -235,14 +235,14 @@ class _AddPetFormState extends State<_AddPetForm> {
               },
             ),
             DropdownButtonFormField<CategoryModel>(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Category',
                 helperText: '',
               ),
               value: addPetCubit.state.newPet.category,
               items: _getDropdownItemsFromList(addPetCubit.state.categories),
-              onChanged: (CategoryModel value) {
-                addPetCubit.setCategory(value);
+              onChanged: (category) {
+                addPetCubit.setCategory(category);
                 _breedFocusNode.requestFocus();
               },
               autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -250,7 +250,7 @@ class _AddPetFormState extends State<_AddPetForm> {
                   (value == null) ? 'Select pet category' : null,
             ),
             DropdownButtonFormField<BreedModel>(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Breed',
                 helperText: '',
               ),
@@ -260,23 +260,23 @@ class _AddPetFormState extends State<_AddPetForm> {
                   : addPetCubit.state.newPet.breed,
               items:
                   _getDropdownItemsFromList(addPetCubit.state.breedsByCategory),
-              onChanged: (BreedModel value) {
-                addPetCubit.updateNewPet(newPet.copyWith(breed: value));
+              onChanged: (breed) {
+                addPetCubit.updateNewPet(newPet.copyWith(breed: breed));
                 _conditionFocusNode.requestFocus();
               },
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) => (value == null) ? 'Select pet breed' : null,
             ),
             DropdownButtonFormField<ConditionModel>(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Condition',
                 helperText: '',
               ),
               focusNode: _conditionFocusNode,
               value: addPetCubit.state.newPet.condition,
               items: _getDropdownItemsFromList(addPetCubit.state.conditions),
-              onChanged: (ConditionModel value) {
-                addPetCubit.updateNewPet(newPet.copyWith(condition: value));
+              onChanged: (condition) {
+                addPetCubit.updateNewPet(newPet.copyWith(condition: condition));
                 _coloringFocusNode.requestFocus();
               },
               autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -284,7 +284,7 @@ class _AddPetFormState extends State<_AddPetForm> {
                   (value == null) ? 'Select pet condition' : null,
             ),
             TextFormField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Coloring',
                 helperText: '',
               ),
@@ -300,7 +300,7 @@ class _AddPetFormState extends State<_AddPetForm> {
                   : null,
             ),
             TextFormField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Age',
                 helperText: '',
               ),
@@ -314,7 +314,7 @@ class _AddPetFormState extends State<_AddPetForm> {
                   (value == null || value.isEmpty) ? 'Input pet age' : null,
             ),
             TextFormField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Weight',
                 helperText: '',
               ),
@@ -330,7 +330,7 @@ class _AddPetFormState extends State<_AddPetForm> {
                   (value == null || value.isEmpty) ? 'Input pet weight' : null,
             ),
             TextFormField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Address',
                 helperText: '',
               ),
@@ -344,7 +344,7 @@ class _AddPetFormState extends State<_AddPetForm> {
                   (value == null || value.isEmpty) ? 'Input pet address' : null,
             ),
             TextFormField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Distance',
                 helperText: '',
               ),
@@ -361,7 +361,7 @@ class _AddPetFormState extends State<_AddPetForm> {
                   : null,
             ),
             TextFormField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Pet story',
                 helperText: '',
               ),
@@ -388,8 +388,8 @@ class _AddPetFormState extends State<_AddPetForm> {
                     }
                   }
                 },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
                   child: Text('Add Pet'),
                 ),
               ),

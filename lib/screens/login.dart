@@ -15,7 +15,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<AppNavigatorCubit, AppNavigatorState>(
       listener: (context, state) {
-        if (state.status == AppNavigatorStatus.need_update) {
+        if (state.status == AppNavigatorStatus.needUpdate) {
           forcedUpdate(context);
         }
       },
@@ -24,7 +24,7 @@ class LoginScreen extends StatelessWidget {
           alignment: AlignmentDirectional.bottomCenter,
           children: <Widget>[
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -37,8 +37,8 @@ class LoginScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Spacer(),
-                  Text(
+                  const Spacer(),
+                  const Text(
                     'Get Pet',
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -47,16 +47,16 @@ class LoginScreen extends StatelessWidget {
                         fontFamily: 'Roboto',
                         decoration: TextDecoration.none),
                   ),
-                  SizedBox(height: 32),
+                  const SizedBox(height: 32),
                   if (state.status != AppNavigatorStatus.unauthenticated)
-                    CircularProgressIndicator(strokeWidth: 2)
+                    const CircularProgressIndicator(strokeWidth: 2)
                   else
-                    SizedBox(height: 36),
-                  SizedBox(height: 32),
+                    const SizedBox(height: 36),
+                  const SizedBox(height: 32),
                   Text(
                     state.statusText,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16.0,
                         fontFamily: 'Roboto',
@@ -65,7 +65,7 @@ class LoginScreen extends StatelessWidget {
                   Expanded(
                     child: Column(
                       children: [
-                        SizedBox(height: 32),
+                        const SizedBox(height: 32),
                         ElevatedButton(
                           onPressed:
                               state.status == AppNavigatorStatus.unauthenticated
@@ -77,7 +77,7 @@ class LoginScreen extends StatelessWidget {
                                   : null,
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: [
+                            children: const [
                               FaIcon(FontAwesomeIcons.google),
                               SizedBox(width: 16),
                               Text('Log in with Google'),

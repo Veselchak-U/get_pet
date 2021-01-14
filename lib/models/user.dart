@@ -28,6 +28,7 @@ class UserModel extends Equatable {
     id: '',
   );
 
+  // ignore: sort_constructors_first
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
 

@@ -29,7 +29,7 @@ class SearchCubit extends Cubit<SearchState> {
         conditions: conditions,
       ));
       _searchPet();
-    } catch (error) {
+    } on dynamic catch (error) {
       out(error);
       result = false;
       return Future.error(error);
@@ -58,7 +58,7 @@ class SearchCubit extends Cubit<SearchState> {
     _searchPet();
   }
 
-  void _searchPet() async {
+  Future<void> _searchPet() async {
     emit(state.copyWith(status: SearchStatus.busy));
     final List<PetModel> foundedPets = await dataRepository.searchPets(
       categoryId: state.categoryFilter?.id,
@@ -77,7 +77,7 @@ class SearchCubit extends Cubit<SearchState> {
     }
     out('SEARCHCUBIT onTapLike()');
     // database changes
-    Future<bool> result = dataRepository.updatePetLike(pet);
+    dataRepository.updatePetLike(pet);
     // local changes (optimistic update)
     final List<PetModel> foundedPets = [...state.foundedPets];
     final index = foundedPets.indexOf(pet);

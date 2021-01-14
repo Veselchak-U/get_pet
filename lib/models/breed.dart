@@ -17,6 +17,7 @@ class BreedModel {
   @override
   String toString() => name;
 
+  // ignore: sort_constructors_first
   factory BreedModel.fromJson(Map<String, dynamic> json) =>
       _$BreedModelFromJson(json);
 

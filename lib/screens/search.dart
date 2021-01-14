@@ -17,7 +17,7 @@ class SearchScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) {
+      create: (context) {
         final searchCubit = SearchCubit(
             dataRepository: RepositoryProvider.of<DatabaseRepository>(context),
             category: category);
@@ -37,7 +37,7 @@ class _SearchBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Search Your Pet'),
+        title: const Text('Search Your Pet'),
         centerTitle: true,
         elevation: 0.0,
         // automaticallyImplyLeading: false,
@@ -50,9 +50,9 @@ class _SearchBody extends StatelessWidget {
         // ],
       ),
       body: BlocBuilder<SearchCubit, SearchState>(
-        builder: (BuildContext context, SearchState state) {
+        builder: (context, state) {
           if (state.status == SearchStatus.initial) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(strokeWidth: 2),
             );
           } else {
@@ -76,7 +76,7 @@ class _SearchBody extends StatelessWidget {
                     children: [
                       _PetGrid(),
                       if (state.status == SearchStatus.busy)
-                        Center(
+                        const Center(
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                     ],
@@ -124,7 +124,7 @@ class _SearchBarState extends State<_SearchBar> {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(32.0),
             bottomLeft: Radius.circular(32.0),
           ),
@@ -141,14 +141,12 @@ class _SearchBarState extends State<_SearchBar> {
             decoration: InputDecoration(
               hintText: 'Search',
               border: InputBorder.none,
-              prefixIcon: Icon(Icons.search),
+              prefixIcon: const Icon(Icons.search),
               suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
-                      icon: Icon(Icons.cancel),
+                      icon: const Icon(Icons.cancel),
                       onPressed: () {
-                        setState(() {
-                          _searchController.clear();
-                        });
+                        setState(_searchController.clear);
                       },
                     )
                   : null,
@@ -179,10 +177,10 @@ class _ChipFilter<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (items == null || items.isEmpty) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
     return Container(
-      margin: EdgeInsets.only(bottom: 8.0),
+      margin: const EdgeInsets.only(bottom: 8.0),
       height: 30,
       child: ListView(
         scrollDirection: Axis.horizontal,
@@ -195,7 +193,7 @@ class _ChipFilter<T> extends StatelessWidget {
                     elevation: 2.0,
                     selectedColor: Theme.of(context).accentColor,
                     selected: selected.toString() == items[index].toString(),
-                    onSelected: (bool value) {
+                    onSelected: (value) {
                       onSelected(value ? items[index] : null);
                     },
                   ),
@@ -223,9 +221,9 @@ class _PetGrid extends StatelessWidget {
     }
     final screenWidth = MediaQuery.of(context).size.width;
     final cardWidth = (screenWidth - (kHorizontalPadding * 3)) / 2;
-    final cardHeight = 255.0;
+    const cardHeight = 255.0;
     return Padding(
-      padding: EdgeInsets.fromLTRB(
+      padding: const EdgeInsets.fromLTRB(
           kHorizontalPadding, 0.0, kHorizontalPadding, kHorizontalPadding),
       child: GridView.count(
         crossAxisCount: 2,

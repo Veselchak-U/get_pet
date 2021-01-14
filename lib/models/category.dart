@@ -24,6 +24,7 @@ class CategoryModel {
   @override
   String toString() => name;
 
+  // ignore: sort_constructors_first
   factory CategoryModel.fromJson(Map<String, dynamic> json) =>
       _$CategoryModelFromJson(json);
 

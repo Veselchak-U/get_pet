@@ -26,7 +26,6 @@ class HomeCubit extends Cubit<HomeState> {
           await dataRepository.readConditions(fromCash: isReload);
       final List<CategoryModel> petCategories =
           await dataRepository.readCategories(fromCash: isReload);
-      // final List<PetModel> newestPets = await dataRepository.readNewestPets();
       final List<PetModel> newestPets =
           await dataRepository.readNewestPetsWithLikes();
       final List<VetModel> nearestVets = await dataRepository.readNearestVets();
@@ -37,7 +36,7 @@ class HomeCubit extends Cubit<HomeState> {
         newestPets: newestPets,
         nearestVets: nearestVets,
       ));
-    } catch (error) {
+    } on dynamic catch (error) {
       out(error);
       result = false;
       return Future.error(error);
@@ -53,7 +52,7 @@ class HomeCubit extends Cubit<HomeState> {
       if (await canLaunch(url)) {
         await launch(url);
       } else {
-        throw 'Could not launch $phone';
+        out('Could not launch $phone');
       }
     }
   }
@@ -64,7 +63,7 @@ class HomeCubit extends Cubit<HomeState> {
     }
     out('HOMECUBIT onTapLike()');
     // database changes
-    Future<bool> result = dataRepository.updatePetLike(pet);
+    dataRepository.updatePetLike(pet);
     // local changes (optimistic update)
     final List<PetModel> newestPets = [...state.newestPets];
     final index = newestPets.indexOf(pet);
@@ -72,7 +71,7 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(newestPets: newestPets));
   }
 
-  void addNewPet(PetModel newPet) async {
+  Future<void> addNewPet(PetModel newPet) async {
     if (newPet == null) {
       return;
     }

@@ -9,7 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 final DateFormat dateTimeFormatter = DateFormat('dd.MM.yy HH:mm');
 final DateFormat dateFormatter = DateFormat('dd.MM.yyyy');
 
-void out(dynamic value) {
+void out(Object value) {
   if (kDebugMode) debugPrint('$value');
   // print('$value');
 }
@@ -50,7 +50,7 @@ Future<bool> showYesNoDialog({
           ),
           FlatButton(
             color: Theme.of(context).accentColor,
-            shape: StadiumBorder(),
+            shape: const StadiumBorder(),
             onPressed: () {
               Navigator.of(context).pop(true);
             },

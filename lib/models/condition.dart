@@ -22,6 +22,7 @@ class ConditionModel {
   @override
   String toString() => name;
 
+  // ignore: sort_constructors_first
   factory ConditionModel.fromJson(Map<String, dynamic> json) =>
       _$ConditionModelFromJson(json);
 

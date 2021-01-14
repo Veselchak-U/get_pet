@@ -70,7 +70,7 @@ class NoAnimationCupertinoPageRoute<T> extends CupertinoPageRoute<T> {
     // для первого вызова обнуляю значение, для второго - возвращаю.
     return _isFirstTransitionDuration
         ? Duration.zero
-        : Duration(milliseconds: 300);
+        : const Duration(milliseconds: 300);
   }
 }
 
@@ -99,6 +99,6 @@ class NoAnimationMaterialPageRoute<T> extends MaterialPageRoute<T> {
     // для первого вызова обнуляю значение, для второго - возвращаю.
     return _isFirstTransitionDuration
         ? Duration.zero
-        : Duration(milliseconds: 300);
+        : const Duration(milliseconds: 300);
   }
 }

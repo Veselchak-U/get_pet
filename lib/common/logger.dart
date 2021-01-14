@@ -34,13 +34,13 @@ class AppLogger {
         return;
       }
       final logFolder = Directory('${directory.path}/logs/');
-      if (!await logFolder.exists()) {
+      if (!logFolder.existsSync()) {
         await logFolder.create(recursive: true);
       }
       final fullPath =
           '${logFolder.path}${dateFormatter.format(DateTime.now())}.txt';
       logFile = File(fullPath);
-    } on dynamic catch (error, stackTrace) {
+    } on dynamic catch (error) {
       out(error);
     }
 
@@ -137,9 +137,9 @@ class _PlainPrinter extends LogPrinter {
     return ['$timeStr $messageStr$errorStr'];
   }
 
-  String _stringifyMessage(dynamic message) {
+  String _stringifyMessage(message) {
     if (message is Map || message is Iterable) {
-      final encoder = JsonEncoder.withIndent(null);
+      const encoder = JsonEncoder.withIndent(null);
       return encoder.convert(message);
     } else {
       return message.toString();
@@ -150,16 +150,16 @@ class _PlainPrinter extends LogPrinter {
 // In package:logger/logger.dart:
 // export 'src/log_output.dart' if (dart.io) 'src/outputs/file_output.dart';
 class _FileOutput extends LogOutput {
-  final File file;
-  final bool overrideExisting;
-  final Encoding encoding;
-  IOSink _sink;
-
   _FileOutput({
     this.file,
     this.overrideExisting = false,
     this.encoding = utf8,
   });
+
+  final File file;
+  final bool overrideExisting;
+  final Encoding encoding;
+  IOSink _sink;
 
   @override
   void init() {
@@ -176,7 +176,7 @@ class _FileOutput extends LogOutput {
   }
 
   @override
-  void destroy() async {
+  Future<void> destroy() async {
     await _sink.flush();
     await _sink.close();
   }

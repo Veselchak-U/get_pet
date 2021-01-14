@@ -6,12 +6,12 @@ import 'package:get_pet/import.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppLogger.init();
   try {
     await Firebase.initializeApp();
-  } catch (error) {
+  } on dynamic catch (error) {
     out(error);
   }
   // Force enable Crashlytics collection while doing every day development.
