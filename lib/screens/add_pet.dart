@@ -39,69 +39,74 @@ class _AddPetBody extends StatelessWidget {
     return BlocBuilder<AddPetCubit, AddPetState>(
       builder: (context, addPetState) {
         if (!isActiveUser) {
-          return Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Unfortunately, your account is restricted.'),
-                  const Text("You can't create a new pet."),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => navigator.pop(),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          Icon(Icons.pets),
-                          SizedBox(width: 8),
-                          Text('Back'),
-                        ],
+          return SafeArea(
+            child: Scaffold(
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Unfortunately, your account is restricted.'),
+                    const Text("You can't create a new pet."),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => navigator.pop(),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            Icon(Icons.pets),
+                            SizedBox(width: 8),
+                            Text('Back'),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
         }
         return Stack(
           children: [
-            Scaffold(
-              body: CustomScrollView(
-                slivers: [
-                  SliverAppBar(
-                    elevation: 0.0,
-                    expandedHeight: screenHeight / 2,
-                    title: const Text(
-                      'Add Your Pet',
-                      // style: TextStyle(color: theme.primaryColor),
+            SafeArea(
+              child: Scaffold(
+                body: CustomScrollView(
+                  slivers: [
+                    SliverAppBar(
+                      elevation: 0.0,
+                      expandedHeight: screenHeight / 2,
+                      title: const Text(
+                        'Add Your Pet',
+                        // style: TextStyle(color: theme.primaryColor),
+                      ),
+                      centerTitle: true,
+                      flexibleSpace: (addPetState.newPet.photos == null ||
+                              addPetState.newPet.photos.isEmpty)
+                          ? Center(
+                              child: _AddPhotoButton(),
+                            )
+                          : FadeInImage.assetNetwork(
+                              image: addPetState.newPet.photos,
+                              fit: BoxFit.cover,
+                              placeholder: '${kAssetPath}placeholder_pet.png',
+                              imageErrorBuilder: (context, object, stack) =>
+                                  Image.asset(
+                                      '${kAssetPath}placeholder_pet.png'),
+                            ),
                     ),
-                    centerTitle: true,
-                    flexibleSpace: (addPetState.newPet.photos == null ||
-                            addPetState.newPet.photos.isEmpty)
-                        ? Center(
-                            child: _AddPhotoButton(),
-                          )
-                        : FadeInImage.assetNetwork(
-                            image: addPetState.newPet.photos,
-                            fit: BoxFit.cover,
-                            placeholder: '${kAssetPath}placeholder_pet.png',
-                            imageErrorBuilder: (context, object, stack) =>
-                                Image.asset('${kAssetPath}placeholder_pet.png'),
-                          ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: Container(
-                      color: theme.backgroundColor,
-                      child: Padding(
-                        padding: const EdgeInsets.all(kHorizontalPadding),
-                        child: _AddPetForm(),
+                    SliverToBoxAdapter(
+                      child: Container(
+                        color: theme.backgroundColor,
+                        child: Padding(
+                          padding: const EdgeInsets.all(kHorizontalPadding),
+                          child: _AddPetForm(),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             if (addPetState.status == AddPetStatus.busy)

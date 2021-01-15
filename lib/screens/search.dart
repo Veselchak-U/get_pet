@@ -35,57 +35,59 @@ class _SearchBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search Your Pet'),
-        centerTitle: true,
-        elevation: 0.0,
-        // automaticallyImplyLeading: false,
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(Icons.arrow_back),
-        //     onPressed: () => navigator.pop(),
-        //   ),
-        //   Expanded(child: _SearchBar()),
-        // ],
-      ),
-      body: BlocBuilder<SearchCubit, SearchState>(
-        builder: (context, state) {
-          if (state.status == SearchStatus.initial) {
-            return const Center(
-              child: CircularProgressIndicator(strokeWidth: 2),
-            );
-          } else {
-            final SearchCubit searchCubit =
-                BlocProvider.of<SearchCubit>(context);
-            return Column(
-              children: [
-                _searchBar,
-                _ChipFilter<CategoryModel>(
-                  selected: state.categoryFilter,
-                  items: state.categories,
-                  onSelected: searchCubit.setCategoryFilter,
-                ),
-                _ChipFilter<ConditionModel>(
-                  selected: state.conditionFilter,
-                  items: state.conditions,
-                  onSelected: searchCubit.setConditionFilter,
-                ),
-                Expanded(
-                  child: Stack(
-                    children: [
-                      _PetGrid(),
-                      if (state.status == SearchStatus.busy)
-                        const Center(
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                    ],
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Search Your Pet'),
+          centerTitle: true,
+          elevation: 0.0,
+          // automaticallyImplyLeading: false,
+          // actions: [
+          //   IconButton(
+          //     icon: Icon(Icons.arrow_back),
+          //     onPressed: () => navigator.pop(),
+          //   ),
+          //   Expanded(child: _SearchBar()),
+          // ],
+        ),
+        body: BlocBuilder<SearchCubit, SearchState>(
+          builder: (context, state) {
+            if (state.status == SearchStatus.initial) {
+              return const Center(
+                child: CircularProgressIndicator(strokeWidth: 2),
+              );
+            } else {
+              final SearchCubit searchCubit =
+                  BlocProvider.of<SearchCubit>(context);
+              return Column(
+                children: [
+                  _searchBar,
+                  _ChipFilter<CategoryModel>(
+                    selected: state.categoryFilter,
+                    items: state.categories,
+                    onSelected: searchCubit.setCategoryFilter,
                   ),
-                ),
-              ],
-            );
-          }
-        },
+                  _ChipFilter<ConditionModel>(
+                    selected: state.conditionFilter,
+                    items: state.conditions,
+                    onSelected: searchCubit.setConditionFilter,
+                  ),
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        _PetGrid(),
+                        if (state.status == SearchStatus.busy)
+                          const Center(
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            }
+          },
+        ),
       ),
     );
   }

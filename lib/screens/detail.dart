@@ -52,76 +52,78 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            automaticallyImplyLeading: false,
-            leading: RaisedButton(
-              shape: const CircleBorder(),
-              color: Colors.white.withOpacity(0.3),
-              elevation: 0,
-              onPressed: () {
-                navigator.pop(context);
-              },
-              child: const Icon(Icons.arrow_back),
-            ),
-            elevation: 0.0,
-            expandedHeight: screenHeight - 20,
-            flexibleSpace: Stack(
-              children: [
-                PageView(
-                  controller: _pageController,
-                  onPageChanged: (index) {
-                    setState(() {
-                      item = itemList[index];
-                    });
-                  },
-                  children: List.generate(
-                    itemList.length,
-                    (index) => FlexibleSpaceBar(
-                      background: Hero(
-                        tag: itemList[index].id,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: NetworkImage(itemList[index].photos),
-                              fit: BoxFit.cover,
+    return SafeArea(
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              automaticallyImplyLeading: false,
+              leading: RaisedButton(
+                shape: const CircleBorder(),
+                color: Colors.white.withOpacity(0.3),
+                elevation: 0,
+                onPressed: () {
+                  navigator.pop(context);
+                },
+                child: const Icon(Icons.arrow_back),
+              ),
+              elevation: 0.0,
+              expandedHeight: screenHeight - 20,
+              flexibleSpace: Stack(
+                children: [
+                  PageView(
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      setState(() {
+                        item = itemList[index];
+                      });
+                    },
+                    children: List.generate(
+                      itemList.length,
+                      (index) => FlexibleSpaceBar(
+                        background: Hero(
+                          tag: itemList[index].id,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: NetworkImage(itemList[index].photos),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                _SliderCover(),
-              ],
+                  _SliderCover(),
+                ],
+              ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Container(
-              color: theme.backgroundColor,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: kHorizontalPadding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _Header(
-                      item: item,
-                      onTapLike: onTapLikeInner,
-                    ),
-                    _Details(item),
-                    _Story(item),
-                    _Contact(item),
-                  ],
+            SliverToBoxAdapter(
+              child: Container(
+                color: theme.backgroundColor,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: kHorizontalPadding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _Header(
+                        item: item,
+                        onTapLike: onTapLikeInner,
+                      ),
+                      _Details(item),
+                      _Story(item),
+                      _Contact(item),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
+        // ),
       ),
-      // ),
     );
   }
 }

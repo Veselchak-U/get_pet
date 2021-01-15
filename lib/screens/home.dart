@@ -27,23 +27,25 @@ class HomeScreen extends StatelessWidget {
             },
             child: BlocBuilder<ProfileCubit, ProfileState>(
                 builder: (context, state) {
-              return Scaffold(
-                key: _scaffoldKey,
-                appBar: _AppBar(),
-                body: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _Greeting(),
-                      _StaticSearchBar(),
-                      _ScreenSection(index: 0, text: 'Pet Category'),
-                      _ScreenSection(index: 1, text: 'Newest Pet'),
-                      _ScreenSection(index: 2, text: 'Vets Near You'),
-                    ],
+              return SafeArea(
+                child: Scaffold(
+                  key: _scaffoldKey,
+                  appBar: _AppBar(),
+                  body: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _Greeting(),
+                        _StaticSearchBar(),
+                        _ScreenSection(index: 0, text: 'Pet Category'),
+                        _ScreenSection(index: 1, text: 'Newest Pet'),
+                        _ScreenSection(index: 2, text: 'Vets Near You'),
+                      ],
+                    ),
                   ),
-                ),
-                drawer: Drawer(
-                  child: _DrawerContent(),
+                  drawer: Drawer(
+                    child: _DrawerContent(),
+                  ),
                 ),
               );
             }),
