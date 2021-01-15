@@ -82,17 +82,17 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
-    final ProfileState data = profileCubit.state;
+    final profileCubit = BlocProvider.of<ProfileCubit>(context);
+    final count = profileCubit.state.notificationCount;
     final theme = Theme.of(context);
     final List<Widget> actions = [];
-    if (data.notificationCount > 0) {
+    if (count > 0) {
       actions.add(Stack(
         alignment: const Alignment(1.0, -0.5),
         children: [
           Center(
             child: IconButton(
-              tooltip: 'You have ${data.notificationCount} new notification(s)',
+              tooltip: 'You have $count new notification(s)',
               icon: const Icon(Icons.notifications_none),
               onPressed: () {
                 profileCubit.clearNotifications();
@@ -118,7 +118,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
                     vertical: 2,
                   ),
                   child: Text(
-                    '${data.notificationCount > 99 ? "99+" : data.notificationCount}',
+                    '${count > 99 ? "99+" : count}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 11,

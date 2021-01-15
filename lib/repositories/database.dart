@@ -54,8 +54,8 @@ class DatabaseRepository {
         .timeout(const Duration(milliseconds: kTimeoutMillisec));
     if (mutationResult.hasException) {
       result = false;
-      logger.e(
-          'DatabaseRepository upsertMember(${user.toJson()}) ${mutationResult.exception}');
+      logger.e('DatabaseRepository upsertMember(${user.toJson()}) '
+          '${mutationResult.exception}');
       throw mutationResult.exception;
     }
     return result;
@@ -270,12 +270,12 @@ class DatabaseRepository {
         .query(options)
         .timeout(const Duration(milliseconds: kTimeoutMillisec));
     if (queryResult.hasException) {
-      logger.e(
-          'DatabaseRepository readNewestPetsWithLikes() ${queryResult.exception}');
+      logger.e('DatabaseRepository readNewestPetsWithLikes() '
+          '${queryResult.exception}');
       throw queryResult.exception;
     }
-    logger
-        .v('DatabaseRepository readNewestPetsWithLikes() ${queryResult.data}');
+    logger.v('DatabaseRepository readNewestPetsWithLikes() '
+        '${queryResult.data}');
     final petItems =
         (queryResult.data['pets'] as List).cast<Map<String, dynamic>>();
     final List<PetModel> pets = [];
@@ -363,12 +363,13 @@ class DatabaseRepository {
         .timeout(const Duration(milliseconds: kTimeoutMillisec));
     if (mutationResult.hasException) {
       result = false;
-      logger.e(
-          'DatabaseRepository updatePetLike("pet_id": $petId, "member_id": $memberId) ${mutationResult.exception}');
+      logger.e('DatabaseRepository updatePetLike'
+          '("pet_id": $petId, "member_id": $memberId) '
+          '${mutationResult.exception}');
       throw mutationResult.exception;
     }
-    logger.i(
-        'DatabaseRepository updatePetLike("pet_id": $petId, "member_id": $memberId ${mutationResult.data}');
+    logger.i('DatabaseRepository updatePetLike'
+        '("pet_id": $petId, "member_id": $memberId ${mutationResult.data}');
     return result;
   }
 
@@ -395,8 +396,8 @@ class DatabaseRepository {
         .mutate(options)
         .timeout(const Duration(milliseconds: kTimeoutMillisec));
     if (mutationResult.hasException) {
-      logger.e(
-          'DatabaseRepository createPet("newPet": ${newPet.toJson()}) ${mutationResult.exception}');
+      logger.e('DatabaseRepository createPet'
+          '("newPet": ${newPet.toJson()}) ${mutationResult.exception}');
       throw mutationResult.exception;
     }
     logger.i('DatabaseRepository createPet() ${mutationResult.data}');
@@ -461,8 +462,8 @@ class DatabaseRepository {
       logger.e('DatabaseRepository readSysParam() ${queryResult.exception}');
       throw queryResult.exception;
     }
-    logger.i(
-        'DatabaseRepository readSysParam(label = "$label") ${queryResult.data}');
+    logger.i('DatabaseRepository readSysParam'
+        '(label = "$label") ${queryResult.data}');
     final dataItem =
         queryResult.data['sys_param_by_pk'] as Map<String, dynamic>;
     SysParamModel result;
