@@ -105,7 +105,7 @@ class _DetailScreenState extends State<DetailScreen> {
             ),
             SliverToBoxAdapter(
               child: Container(
-                color: theme.backgroundColor,
+                color: Theme.of(context).backgroundColor,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: kHorizontalPadding),
@@ -135,6 +135,7 @@ class _DetailScreenState extends State<DetailScreen> {
 class _SliderCover extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Positioned(
       left: 0.0,
       right: 0.0,
@@ -255,6 +256,7 @@ class _DetailsItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
@@ -333,6 +335,7 @@ class _Contact extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24),
       child: Row(
@@ -344,9 +347,23 @@ class _Contact extends StatelessWidget {
             child: CircleAvatar(
               radius: 26.0,
               backgroundColor: theme.backgroundColor,
-              backgroundImage: getNetworkOrAssetImage(
-                url: item.member.photo,
-                asset: '${kAssetPath}placeholder_avatar.png',
+              child: ClipRRect(
+                borderRadius: const BorderRadius.all(Radius.circular(26)),
+                child: CachedNetworkImage(
+                  fit: BoxFit.cover,
+                  imageUrl: item.member.photo,
+                  placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => CircleAvatar(
+                    radius: 26.0,
+                    backgroundColor: theme.backgroundColor,
+                    backgroundImage:
+                        const AssetImage('${kAssetPath}placeholder_avatar.png'),
+                  ),
+                ),
               ),
             ),
           ),

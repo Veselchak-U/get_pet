@@ -121,6 +121,7 @@ class _SearchBarState extends State<_SearchBar> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(kHorizontalPadding, 0.0, 0.0, 8.0),
       child: Container(

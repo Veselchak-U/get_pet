@@ -65,12 +65,12 @@ Future<bool> showYesNoDialog({
   );
 }
 
-ImageProvider<Object> getNetworkOrAssetImage({String url, String asset}) {
-  ImageProvider<Object> result;
-  if (url != null && url.isNotEmpty) {
-    result = NetworkImage(url);
-  } else {
-    result = AssetImage(asset);
-  }
-  return result;
-}
+// ImageProvider<Object> getNetworkOrAssetImage({String url, String asset}) {
+//   ImageProvider<Object> result;
+//   if (url != null && url.isNotEmpty) {
+//     result = NetworkImage(url);
+//   } else {
+//     result = AssetImage(asset);
+//   }
+//   return result;
+// }

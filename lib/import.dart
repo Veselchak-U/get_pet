@@ -2,7 +2,6 @@ export 'common/const.dart';
 export 'common/helper.dart';
 export 'common/logger.dart';
 export 'common/route.dart';
-export 'common/theme.dart';
 export 'cubits/add_pet.dart';
 export 'cubits/app_navigator.dart';
 export 'cubits/app_observer.dart';

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:get_pet/import.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +15,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
         final HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
@@ -84,9 +86,9 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final profileCubit = BlocProvider.of<ProfileCubit>(context);
     final count = profileCubit.state.notificationCount;
-    final theme = Theme.of(context);
     final List<Widget> actions = [];
     if (count > 0) {
       actions.add(Stack(
@@ -298,6 +300,7 @@ class _UserProfileCard extends StatelessWidget {
 class _UserProfileAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     // final AuthenticationCubit authenticationCubit =
     //     BlocProvider.of<AuthenticationCubit>(context);
     final ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
@@ -309,9 +312,21 @@ class _UserProfileAvatar extends StatelessWidget {
       child: CircleAvatar(
         radius: 26.0,
         backgroundColor: theme.backgroundColor,
-        backgroundImage: getNetworkOrAssetImage(
-          url: profileCubit.state.user.photo,
-          asset: '${kAssetPath}placeholder_avatar.png',
+        child: ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(26)),
+          child: CachedNetworkImage(
+            fit: BoxFit.cover,
+            imageUrl: profileCubit.state.user.photo,
+            placeholder: (context, url) => const Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+              ),
+            ),
+            errorWidget: (context, url, error) => const CircleAvatar(
+              backgroundImage:
+                  AssetImage('${kAssetPath}placeholder_avatar.png'),
+            ),
+          ),
         ),
       ),
     );
@@ -321,7 +336,7 @@ class _UserProfileAvatar extends StatelessWidget {
 class _Greeting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // var theme = Theme.of(context);
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: kHorizontalPadding),
       child: Row(
@@ -378,6 +393,7 @@ class _Greeting extends StatelessWidget {
 class _StaticSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(left: kHorizontalPadding, top: 16.0),
       child: GestureDetector(
@@ -462,6 +478,7 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final ProfileCubit profileCubit = BlocProvider.of<ProfileCubit>(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(kHorizontalPadding, 4.0, 8.0, 4.0),
@@ -531,6 +548,7 @@ class _CategoryGridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return InkWell(
       borderRadius: BorderRadius.circular(16.0),
       onTap: () => _goToSearchScreen(context, item),
@@ -657,9 +675,12 @@ class _VetsCarousel extends StatelessWidget {
 
 class _VetsCarouselItem extends StatelessWidget {
   const _VetsCarouselItem({Key key, this.item}) : super(key: key);
+
   final VetModel item;
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
     const borderWidth = 2.0;
     return Container(

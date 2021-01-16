@@ -34,6 +34,7 @@ class AddPetScreen extends StatelessWidget {
 class _AddPetBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final screenHeight = MediaQuery.of(context).size.height;
     final isActiveUser =
         BlocProvider.of<ProfileCubit>(context).state.user.isActive;
