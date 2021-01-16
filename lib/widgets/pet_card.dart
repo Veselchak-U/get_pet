@@ -1,35 +1,42 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get_pet/import.dart';
 
 class PetCard extends StatelessWidget {
   const PetCard({
     Key key,
+    this.cardWidth,
+    this.cardHeight,
     this.item,
     this.onTap,
     this.onTapLike,
   }) : super(key: key);
 
+  final double cardWidth; // = 172;
+  final double cardHeight; // = 278;
   final PetModel item;
   final VoidCallback onTap;
   final VoidCallback onTapLike;
 
+  static const borderWidth = 2.0;
+  static const borderRadius = 16.0;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth = (screenWidth - (kHorizontalPadding * 4)) / 2;
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: cardWidth < 200 ? cardWidth : 200,
+        width: cardWidth,
+        height: cardHeight,
         decoration: BoxDecoration(
           border: Border.all(
             color: theme.primaryColorLight,
-            width: 2.0,
+            width: borderWidth,
           ),
           borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(16.0),
-            topRight: Radius.circular(16.0),
+            topLeft: Radius.circular(borderRadius),
+            topRight: Radius.circular(borderRadius),
           ),
         ),
         child: Column(
@@ -39,25 +46,32 @@ class PetCard extends StatelessWidget {
               children: [
                 Hero(
                   tag: item.id,
-                  child: Container(
-                    height: 150,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(14.0),
-                        topRight: Radius.circular(14.0),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(borderRadius - borderWidth),
+                      topRight: Radius.circular(borderRadius - borderWidth),
+                    ),
+                    child: CachedNetworkImage(
+                      width: cardWidth - borderWidth * 2,
+                      height: cardHeight - 85, // TODO: calc exact height
+                      fit: BoxFit.cover,
+                      imageUrl: item.photos,
+                      placeholder: (context, url) => const Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                        ),
                       ),
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage(item.photos),
-                      ),
+                      errorWidget: (context, url, error) => const Placeholder(),
                     ),
                   ),
                 ),
                 Positioned(
-                  top: 7,
-                  right: -11,
+                  top: 4,
+                  right: 4,
                   child: FlatButton(
                     height: 30,
+                    minWidth: 30,
+                    padding: const EdgeInsets.all(8),
                     color: item.liked ? theme.selectedRowColor : Colors.white,
                     shape: const CircleBorder(),
                     onPressed: onTapLike,
@@ -113,11 +127,13 @@ class PetCard extends StatelessWidget {
                         Icons.location_on_outlined,
                         size: 16,
                       ),
-                      Text(
-                        '${item.address} ( ${item.distance} km )',
-                        style: const TextStyle(fontSize: 11),
-                        softWrap: false,
-                        overflow: TextOverflow.fade,
+                      Expanded(
+                        child: Text(
+                          '${item.address} ( ${item.distance} km )',
+                          style: const TextStyle(fontSize: 11),
+                          softWrap: false,
+                          overflow: TextOverflow.fade,
+                        ),
                       ),
                     ],
                   ),

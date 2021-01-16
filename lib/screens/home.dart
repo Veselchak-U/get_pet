@@ -602,16 +602,22 @@ class _NewestPetsCarousel extends StatelessWidget {
   Widget build(BuildContext context) {
     final HomeCubit homeCubit = BlocProvider.of<HomeCubit>(context);
     final List<PetModel> newestPets = homeCubit.state.newestPets;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth = (screenWidth - (kHorizontalPadding * 3)) / 2;
+    final cardHeight = cardWidth * kGoldenRatio;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: kHorizontalPadding),
       child: SizedBox(
-        height: 255,
+        height: cardHeight,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
+          // itemExtent: cardWidth,
           itemCount: newestPets.length,
           itemBuilder: (context, index) => Padding(
-            padding: const EdgeInsets.all(kHorizontalPadding / 2),
+            padding: const EdgeInsets.only(right: kHorizontalPadding),
             child: PetCard(
+              cardWidth: cardWidth,
+              cardHeight: cardHeight,
               item: newestPets[index],
               onTap: () {
                 navigator.push(DetailScreen(

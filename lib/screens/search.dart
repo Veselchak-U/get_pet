@@ -223,7 +223,7 @@ class _PetGrid extends StatelessWidget {
     }
     final screenWidth = MediaQuery.of(context).size.width;
     final cardWidth = (screenWidth - (kHorizontalPadding * 3)) / 2;
-    const cardHeight = 255.0;
+    final cardHeight = cardWidth * kGoldenRatio;
     return Padding(
       padding: const EdgeInsets.fromLTRB(
           kHorizontalPadding, 0.0, kHorizontalPadding, kHorizontalPadding),
@@ -236,6 +236,8 @@ class _PetGrid extends StatelessWidget {
         children: List.generate(
             foundedPets.length,
             (index) => PetCard(
+                  cardWidth: cardWidth,
+                  cardHeight: cardHeight,
                   item: foundedPets[index],
                   onTap: () {
                     navigator.push(DetailScreen(

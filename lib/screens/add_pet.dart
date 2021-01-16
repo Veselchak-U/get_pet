@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get_pet/import.dart';
 import 'package:flutter/material.dart';
@@ -87,14 +88,25 @@ class _AddPetBody extends StatelessWidget {
                           ? Center(
                               child: _AddPhotoButton(),
                             )
-                          : FadeInImage.assetNetwork(
-                              image: addPetState.newPet.photos,
+                          : CachedNetworkImage(
                               fit: BoxFit.cover,
-                              placeholder: '${kAssetPath}placeholder_pet.png',
-                              imageErrorBuilder: (context, object, stack) =>
-                                  Image.asset(
-                                      '${kAssetPath}placeholder_pet.png'),
+                              imageUrl: addPetState.newPet.photos,
+                              placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                              errorWidget: (context, url, error) => Image.asset(
+                                  '${kAssetPath}placeholder_pet.png'),
                             ),
+                      // FadeInImage.assetNetwork(
+                      //     image: addPetState.newPet.photos,
+                      //     fit: BoxFit.cover,
+                      //     placeholder: '${kAssetPath}placeholder_pet.png',
+                      //     imageErrorBuilder: (context, object, stack) =>
+                      //         Image.asset(
+                      //             '${kAssetPath}placeholder_pet.png'),
+                      //   ),
                     ),
                     SliverToBoxAdapter(
                       child: Container(

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:get_pet/import.dart';
 import 'package:flutter/material.dart';
 
@@ -83,13 +84,16 @@ class _DetailScreenState extends State<DetailScreen> {
                       (index) => FlexibleSpaceBar(
                         background: Hero(
                           tag: itemList[index].id,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: NetworkImage(itemList[index].photos),
-                                fit: BoxFit.cover,
+                          child: CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            imageUrl: itemList[index].photos,
+                            placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
                               ),
                             ),
+                            errorWidget: (context, url, error) =>
+                                const Placeholder(),
                           ),
                         ),
                       ),
