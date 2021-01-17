@@ -55,6 +55,7 @@ class PetModel extends Equatable {
         photos,
         description,
         member,
+        updatedAt,
       ];
 
   // ignore: sort_constructors_first
