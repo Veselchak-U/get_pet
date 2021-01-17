@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-// import 'package:flutter/foundation.dart'; // with it does'n works toString() - https://github.com/rrousselGit/freezed/issues/221
+// with foundation doesn't works method toString() - https://github.com/rrousselGit/freezed/issues/221
+// import 'package:flutter/foundation.dart';
 
 part 'breed.freezed.dart';
 part 'breed.g.dart';
@@ -15,7 +16,7 @@ abstract class BreedModel implements _$BreedModel {
   factory BreedModel.fromJson(Map<String, dynamic> json) =>
       _$BreedModelFromJson(json);
 
-  // need to work the overrided method toString()
+  // required for the overridden method toString()
   BreedModel._();
 
   @override
