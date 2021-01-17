@@ -38,6 +38,7 @@ _FILEZ
 .pub/
 /build/
 *.g.dart
+*.freezed.dart
 apollo.config.js
 schema.json
 

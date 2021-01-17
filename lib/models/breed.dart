@@ -1,25 +1,23 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+// import 'package:flutter/foundation.dart'; // with it does'n works toString() - https://github.com/rrousselGit/freezed/issues/221
 
+part 'breed.freezed.dart';
 part 'breed.g.dart';
 
-@JsonSerializable()
-class BreedModel {
-  BreedModel({
-    this.id,
-    this.categoryId,
-    this.name,
-  });
+@freezed
+abstract class BreedModel implements _$BreedModel {
+  factory BreedModel({
+    String id,
+    String categoryId,
+    String name,
+  }) = _BreedModel;
 
-  final String id;
-  final String categoryId;
-  final String name;
-
-  @override
-  String toString() => name;
-
-  // ignore: sort_constructors_first
   factory BreedModel.fromJson(Map<String, dynamic> json) =>
       _$BreedModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$BreedModelToJson(this);
+  // need to work the overrided method toString()
+  BreedModel._();
+
+  @override
+  String toString() => name;
 }
