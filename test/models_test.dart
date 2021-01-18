@@ -4,6 +4,7 @@ import 'package:get_pet/models/category.dart';
 import 'package:get_pet/models/condition.dart';
 import 'package:get_pet/models/member.dart';
 import 'package:get_pet/models/pet.dart';
+import 'package:get_pet/models/sys_param.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -105,6 +106,20 @@ void main() {
         'There are many variations of passages of Lorem Ipsum available',
     'member': _memberSample.toJson(),
     'updated_at': DateTime(2021, 01, 17, 21, 59).toIso8601String(),
+  };
+
+  final _sysParamSample = SysParamModel(
+    label: 'min_version',
+    value: '42',
+    valueTxt: '1.0.42',
+    note: 'Minimum app version',
+  );
+
+  final Map<String, dynamic> _sysParamSampleJson = {
+    'label': 'min_version',
+    'value': '42',
+    'value_txt': '1.0.42',
+    'note': 'Minimum app version',
   };
 
   group('BreedModel', () {
@@ -233,8 +248,6 @@ void main() {
       expect(categoryOne.assetImage == categoryTwo.assetImage, isTrue);
       expect(
           categoryOne.backgroundColor == categoryTwo.backgroundColor, isTrue);
-      // TODO must be isTrue after freezed
-      expect(categoryOne == categoryTwo, isFalse);
     });
 
     test('fromJson() nullable', () {
@@ -323,8 +336,6 @@ void main() {
       expect(conditionOne.textColor == conditionTwo.textColor, isTrue);
       expect(
           conditionOne.backgroundColor == conditionTwo.backgroundColor, isTrue);
-      // TODO must be isTrue after freezed
-      expect(conditionOne == conditionTwo, isFalse);
     });
   });
 
@@ -385,8 +396,6 @@ void main() {
       expect(memberTwo.name == _memberSample.name, isTrue);
       expect(memberTwo.photo == _memberSample.photo, isTrue);
       expect(memberTwo.isActive == _memberSample.isActive, isTrue);
-      // TODO must be isTrue after freezed
-      expect(memberTwo == _memberSample, isFalse);
     });
   });
 
@@ -511,8 +520,65 @@ void main() {
       // TODO must be isTrue after freezed
       expect(petTwo.member == _petSample.member, isFalse);
       expect(petTwo.updatedAt, _petSample.updatedAt);
+    });
+  });
+
+  group('SysParamModel', () {
+    // final String label;
+    // final String value;
+    // final String valueTxt;
+    // final String note;
+
+    final model = _sysParamSample;
+    final modelJson = _sysParamSampleJson;
+
+    test('copyWith()', () {
+      final unitOne = model.copyWith();
+      const newFieldValue = 'New value';
+      final unitTwo = unitOne.copyWith(label: newFieldValue);
+      expect(unitOne.label, model.label);
+      expect(unitTwo.label, newFieldValue);
+      expect(unitTwo.value, model.value);
+      expect(unitTwo.valueTxt, model.valueTxt);
+      expect(unitTwo.note, model.note);
+      final unitThree = unitOne.copyWith(label: null);
+      // TODO null assignment - must be null after freezed
+      expect(unitThree.label, model.label);
+    });
+
+    test('operator =', () {
+      final unitOne = model.copyWith();
+      var unitTwo = unitOne.copyWith(label: 'New label');
+      expect(unitOne == unitTwo, isFalse);
+      unitTwo = unitOne.copyWith(value: 'New value');
+      expect(unitOne == unitTwo, isFalse);
+      unitTwo = unitOne.copyWith(valueTxt: 'New valueTxt');
+      expect(unitOne == unitTwo, isFalse);
+      unitTwo = unitOne.copyWith(note: 'New note');
+      expect(unitOne == unitTwo, isFalse);
+      // copy of unitSample()
+      unitTwo = SysParamModel(
+        label: 'min_version',
+        value: '42',
+        valueTxt: '1.0.42',
+        note: 'Minimum app version',
+      );
       // TODO must be isTrue after freezed
-      expect(petTwo == _petSample, isFalse);
+      expect(unitTwo == model, isFalse);
+    });
+
+    test('toJson()', () {
+      final Map<String, dynamic> json = model.toJson();
+      final Map<String, dynamic> stub = modelJson;
+      expect(json.toString(), stub.toString());
+    });
+
+    test('fromJson()', () {
+      final unitOne = SysParamModel.fromJson(modelJson);
+      expect(unitOne.label, model.label);
+      expect(unitOne.value, model.value);
+      expect(unitOne.valueTxt, model.valueTxt);
+      expect(unitOne.note, model.note);
     });
   });
 }
