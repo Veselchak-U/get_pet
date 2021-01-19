@@ -410,70 +410,42 @@ void main() {
     // final double distance; // расстояние до  double
     // final ConditionModel condition; // действие
     // final bool liked; // понравилось
-    // final String photos; // TODO список фотографий
+    // final String photos; // фото
     // final String description; // описание
     // final MemberModel member; // контактное лицо
     // final DateTime updatedAt; // дата обновления
 
+    final model = _petSample;
+    final modelJson = _petSampleJson;
+
     test('copyWith()', () {
-      final petOne = _petSample.copyWith();
-      const newId = '11';
-      final petTwo = petOne.copyWith(id: newId);
-      expect(petOne.id, _petSample.id);
-      expect(petTwo.id, newId);
-      expect(petTwo.category, _petSample.category);
-      expect(petTwo.breed, _petSample.breed);
-      expect(petTwo.age, _petSample.age);
-      expect(petTwo.coloring, _petSample.coloring);
-      expect(petTwo.weight, _petSample.weight);
-      expect(petTwo.address, _petSample.address);
-      expect(petTwo.distance, _petSample.distance);
-      expect(petTwo.condition, _petSample.condition);
-      expect(petTwo.liked, _petSample.liked);
-      expect(petTwo.photos, _petSample.photos);
-      expect(petTwo.description, _petSample.description);
-      expect(petTwo.member, _petSample.member);
-      expect(petTwo.updatedAt, _petSample.updatedAt);
-      final petThree = petOne.copyWith(description: null);
-      // TODO null assignment - must be null after freezed
-      expect(petThree.description, _petSample.description);
+      final unitOne = model.copyWith();
+      const newFieldValue = 'New value';
+      final unitTwo = unitOne.copyWith(id: newFieldValue);
+      // comparing any field
+      expect(unitOne.id, model.id);
+      expect(unitTwo.id, newFieldValue);
+      expect(unitTwo.category, model.category);
+      expect(unitTwo.breed, model.breed);
+      expect(unitTwo.age, model.age);
+      expect(unitTwo.coloring, model.coloring);
+      expect(unitTwo.weight, model.weight);
+      expect(unitTwo.address, model.address);
+      expect(unitTwo.distance, model.distance);
+      expect(unitTwo.condition, model.condition);
+      expect(unitTwo.liked, model.liked);
+      expect(unitTwo.photos, model.photos);
+      expect(unitTwo.description, model.description);
+      expect(unitTwo.member, model.member);
+      expect(unitTwo.updatedAt, model.updatedAt);
+      // null assignment TODO - must be null after freezed
+      final unitThree = unitOne.copyWith(description: null);
+      expect(unitThree.description, model.description);
     });
 
     test('operator =', () {
-      final petOne = _petSample.copyWith();
-      var petTwo = petOne.copyWith(id: '11');
-      expect(petOne == petTwo, isFalse);
-      petTwo =
-          petOne.copyWith(category: _categorySample.copyWith(name: 'New name'));
-      expect(petOne == petTwo, isFalse);
-      petTwo = petOne.copyWith(breed: _breedSample.copyWith(name: 'New name'));
-      expect(petOne == petTwo, isFalse);
-      petTwo = petOne.copyWith(age: 'New age');
-      expect(petOne == petTwo, isFalse);
-      petTwo = petOne.copyWith(coloring: 'New coloring');
-      expect(petOne == petTwo, isFalse);
-      petTwo = petOne.copyWith(weight: 0.33);
-      expect(petOne == petTwo, isFalse);
-      petTwo = petOne.copyWith(address: 'New address');
-      expect(petOne == petTwo, isFalse);
-      petTwo = petOne.copyWith(distance: 4.44);
-      expect(petOne == petTwo, isFalse);
-      petTwo = petOne.copyWith(
-          condition: _conditionSample.copyWith(name: 'New name'));
-      expect(petOne == petTwo, isFalse);
-      petTwo = petOne.copyWith(liked: !_petSample.liked);
-      expect(petOne == petTwo, isFalse);
-      petTwo = petOne.copyWith(photos: 'New photos');
-      expect(petOne == petTwo, isFalse);
-      petTwo = petOne.copyWith(description: 'New description');
-      expect(petOne == petTwo, isFalse);
-      petTwo =
-          petOne.copyWith(member: _memberSample.copyWith(name: 'New name'));
-      expect(petOne == petTwo, isFalse);
-      petTwo = petOne.copyWith(updatedAt: DateTime.now());
-      expect(petOne == petTwo, isFalse);
-      // copy of _petSample()
-      petTwo = PetModel(
+      // comparing objects after new Object()
+      var newUnit = PetModel(
         id: 'a78aa439-b1c6-49a1-a405-59b023536485',
         category: _categorySample.copyWith(),
         breed: _breedSample.copyWith(),
@@ -492,34 +464,70 @@ void main() {
         updatedAt: DateTime(2021, 01, 17, 21, 59),
       );
       // TODO must be isTrue after freezed
-      expect(petTwo == _petSample, isFalse);
+      expect(newUnit == model, isFalse);
+      // comparing objects after copyWith()
+      newUnit = model.copyWith();
+      // TODO must be isTrue after freezed
+      expect(newUnit == model, isTrue);
+      // comparing objects after changing any field
+      newUnit = model.copyWith(id: 'New id');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(
+          category: _categorySample.copyWith(name: 'New category name'));
+      expect(newUnit == model, isFalse);
+      newUnit =
+          model.copyWith(breed: _breedSample.copyWith(name: 'New breed name'));
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(age: 'New age');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(coloring: 'New coloring');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(weight: 0.33);
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(address: 'New address');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(distance: 4.44);
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(
+          condition: _conditionSample.copyWith(name: 'New condition name'));
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(liked: !model.liked);
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(photos: 'New photos');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(description: 'New description');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(
+          member: _memberSample.copyWith(name: 'New member name'));
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(updatedAt: DateTime.now());
+      expect(newUnit == model, isFalse);
     });
 
     test('toJson()', () {
-      final Map<String, dynamic> json = _petSample.toJson();
-      final Map<String, dynamic> stub = _petSampleJson;
-      expect(json.toString() == stub.toString(), isTrue);
+      final Map<String, dynamic> newJson = model.toJson();
+      expect(newJson.toString(), modelJson.toString());
     });
 
     test('fromJson()', () {
-      final petTwo = PetModel.fromJson(_petSampleJson);
-      expect(petTwo.id, _petSample.id);
+      final newUnit = PetModel.fromJson(modelJson);
+      expect(newUnit.id, model.id);
       // TODO must be isTrue after freezed
-      expect(petTwo.category == _petSample.category, isFalse);
-      expect(petTwo.breed, _petSample.breed);
-      expect(petTwo.age, _petSample.age);
-      expect(petTwo.coloring, _petSample.coloring);
-      expect(petTwo.weight, _petSample.weight);
-      expect(petTwo.address, _petSample.address);
-      expect(petTwo.distance, _petSample.distance);
+      expect(newUnit.category == model.category, isFalse);
+      expect(newUnit.breed, model.breed);
+      expect(newUnit.age, model.age);
+      expect(newUnit.coloring, model.coloring);
+      expect(newUnit.weight, model.weight);
+      expect(newUnit.address, model.address);
+      expect(newUnit.distance, model.distance);
       // TODO must be isTrue after freezed
-      expect(petTwo.condition == _petSample.condition, isFalse);
-      expect(petTwo.liked, _petSample.liked);
-      expect(petTwo.photos, _petSample.photos);
-      expect(petTwo.description, _petSample.description);
+      expect(newUnit.condition == model.condition, isFalse);
+      expect(newUnit.liked, model.liked);
+      expect(newUnit.photos, model.photos);
+      expect(newUnit.description, model.description);
       // TODO must be isTrue after freezed
-      expect(petTwo.member == _petSample.member, isFalse);
-      expect(petTwo.updatedAt, _petSample.updatedAt);
+      expect(newUnit.member == model.member, isFalse);
+      expect(newUnit.updatedAt, model.updatedAt);
     });
   });
 
@@ -536,49 +544,53 @@ void main() {
       final unitOne = model.copyWith();
       const newFieldValue = 'New value';
       final unitTwo = unitOne.copyWith(label: newFieldValue);
+      // comparing any field
       expect(unitOne.label, model.label);
       expect(unitTwo.label, newFieldValue);
       expect(unitTwo.value, model.value);
       expect(unitTwo.valueTxt, model.valueTxt);
       expect(unitTwo.note, model.note);
+      // null assignment TODO - must be null after freezed
       final unitThree = unitOne.copyWith(label: null);
-      // TODO null assignment - must be null after freezed
       expect(unitThree.label, model.label);
     });
 
     test('operator =', () {
-      final unitOne = model.copyWith();
-      var unitTwo = unitOne.copyWith(label: 'New label');
-      expect(unitOne == unitTwo, isFalse);
-      unitTwo = unitOne.copyWith(value: 'New value');
-      expect(unitOne == unitTwo, isFalse);
-      unitTwo = unitOne.copyWith(valueTxt: 'New valueTxt');
-      expect(unitOne == unitTwo, isFalse);
-      unitTwo = unitOne.copyWith(note: 'New note');
-      expect(unitOne == unitTwo, isFalse);
-      // copy of unitSample()
-      unitTwo = SysParamModel(
+      // comparing objects after new Object()
+      var newUnit = SysParamModel(
         label: 'min_version',
         value: '42',
         valueTxt: '1.0.42',
         note: 'Minimum app version',
       );
       // TODO must be isTrue after freezed
-      expect(unitTwo == model, isFalse);
+      expect(newUnit == model, isFalse);
+      // comparing objects after copyWith()
+      newUnit = model.copyWith();
+      // TODO must be isTrue after freezed
+      expect(newUnit == model, isFalse);
+      // comparing objects after changing any field
+      newUnit = model.copyWith(label: 'New label');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(value: 'New value');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(valueTxt: 'New valueTxt');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(note: 'New note');
+      expect(newUnit == model, isFalse);
     });
 
     test('toJson()', () {
-      final Map<String, dynamic> json = model.toJson();
-      final Map<String, dynamic> stub = modelJson;
-      expect(json.toString(), stub.toString());
+      final Map<String, dynamic> newJson = model.toJson();
+      expect(newJson.toString(), modelJson.toString());
     });
 
     test('fromJson()', () {
-      final unitOne = SysParamModel.fromJson(modelJson);
-      expect(unitOne.label, model.label);
-      expect(unitOne.value, model.value);
-      expect(unitOne.valueTxt, model.valueTxt);
-      expect(unitOne.note, model.note);
+      final newUnit = SysParamModel.fromJson(modelJson);
+      expect(newUnit.label, model.label);
+      expect(newUnit.value, model.value);
+      expect(newUnit.valueTxt, model.valueTxt);
+      expect(newUnit.note, model.note);
     });
   });
 }
