@@ -5,6 +5,8 @@ import 'package:get_pet/models/condition.dart';
 import 'package:get_pet/models/member.dart';
 import 'package:get_pet/models/pet.dart';
 import 'package:get_pet/models/sys_param.dart';
+import 'package:get_pet/models/user.dart';
+import 'package:get_pet/models/vet.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -122,56 +124,96 @@ void main() {
     'note': 'Minimum app version',
   };
 
+  final _userModelSample = UserModel(
+    id: '86a076ed-a761-402a-ae95-00c2d1ea5732',
+    name: 'Jon Doe',
+    photo: 'https://lh3.googleusercontent.com',
+    email: 'Jon_Doe@gmail.com',
+    phone: '911',
+    isActive: true,
+  );
+
+  final Map<String, dynamic> _userModelSampleJson = {
+    'id': '86a076ed-a761-402a-ae95-00c2d1ea5732',
+    'name': 'Jon Doe',
+    'photo': 'https://lh3.googleusercontent.com',
+    'email': 'Jon_Doe@gmail.com',
+    'phone': '911',
+    'is_active': true,
+  };
+
+  final _vetModelSample = VetModel(
+    id: '5b08256a-0da0-4bc5-a5f3-bb8bb2207e25',
+    name: 'РИмонт ЖЫвотных',
+    phone: '(8634) 222-333',
+    timetable: 'TOMORROW AT 8:00',
+    isOpenNow: true,
+    logoImage: 'http://animalservice.ru',
+  );
+
+  final Map<String, dynamic> _vetModelSampleJson = {
+    'id': '5b08256a-0da0-4bc5-a5f3-bb8bb2207e25',
+    'name': 'РИмонт ЖЫвотных',
+    'phone': '(8634) 222-333',
+    'timetable': 'TOMORROW AT 8:00',
+    'is_open_now': true,
+    'logo_image': 'http://animalservice.ru',
+  };
+
   group('BreedModel', () {
     // String id,
     // String categoryId,
     // String name,
 
+    final model = _breedSample;
+    final modelJson = _breedSampleJson;
+
     test('copyWith()', () {
-      final breedOne = _breedSample.copyWith();
-      final breedTwo = breedOne.copyWith(id: '11');
-      expect(breedOne.id, _breedSample.id);
-      expect(breedTwo.id, '11');
-      expect(breedTwo.categoryId, _breedSample.categoryId);
-      expect(breedTwo.name, _breedSample.name);
-      final breedThree = breedOne.copyWith(name: null);
-      expect(breedThree.name, null);
+      final unitOne = model.copyWith();
+      const newFieldValue = 'New value';
+      final unitTwo = unitOne.copyWith(id: newFieldValue);
+      // comparing any field
+      expect(unitOne.id, model.id);
+      expect(unitTwo.id, newFieldValue);
+      expect(unitTwo.categoryId, model.categoryId);
+      expect(unitTwo.name, model.name);
+      // null assignment
+      final unitThree = unitOne.copyWith(name: null);
+      expect(unitThree.name, null);
     });
 
     test('toString()', () {
-      expect(_breedSample.toString(), _breedSample.name);
+      expect(model.toString(), model.name);
     });
 
     test('operator =', () {
-      final breedOne = _breedSample.copyWith();
-      final breedTwo = breedOne.copyWith(id: '11');
-      expect(breedOne == breedTwo, isFalse);
-      final breedThree = breedOne.copyWith(categoryId: '22');
-      expect(breedOne == breedThree, isFalse);
-      final breedFour = breedOne.copyWith(name: 'New name');
-      expect(breedOne == breedFour, isFalse);
-      // copy of _breedSample()
-      final breedFive = BreedModel(
+      // comparing objects after new Object()
+      var newUnit = BreedModel(
         id: 'c8305d81-19df-4ddb-8111-0c3d2aea88c5',
         categoryId: 'abe09048-c1dc-4f4b-87e3-421b7f34e07d',
         name: 'Maine Coon',
       );
-      expect(breedOne.id == breedFive.id, isTrue);
-      expect(breedOne.categoryId == breedFive.categoryId, isTrue);
-      expect(breedOne.name == breedFive.name, isTrue);
-      expect(breedOne == breedFive, isTrue);
+      expect(newUnit, model);
+      // comparing objects after copyWith()
+      newUnit = model.copyWith();
+      expect(newUnit, model);
+      // comparing objects after changing any field
+      newUnit = model.copyWith(id: 'New id');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(categoryId: 'New categoryId');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(name: 'New name');
+      expect(newUnit == model, isFalse);
     });
 
     test('toJson()', () {
-      final Map<String, dynamic> json = _breedSample.toJson();
-      final Map<String, dynamic> stub = _breedSampleJson;
-      expect(json.toString() == stub.toString(), isTrue);
+      final Map<String, dynamic> newJson = model.toJson();
+      expect(newJson.toString(), modelJson.toString());
     });
 
     test('fromJson()', () {
-      final breedOne = _breedSample;
-      final breedTwo = BreedModel.fromJson(_breedSampleJson);
-      expect(breedOne == breedTwo, isTrue);
+      final newUnit = BreedModel.fromJson(modelJson);
+      expect(newUnit, model);
     });
   });
 
@@ -184,74 +226,73 @@ void main() {
     // @JsonKey(fromJson: _colorFromString, toJson: _colorToString)
     // Color backgroundColor;
 
+    final model = _categorySample;
+    final modelJson = _categorySampleJson;
+
     test('copyWith()', () {
-      final categoryOne = _categorySample.copyWith();
-      final categoryTwo = categoryOne.copyWith(id: '11');
-      expect(categoryOne.id, _categorySample.id);
-      expect(categoryTwo.id, '11');
-      expect(categoryTwo.name, _categorySample.name);
-      expect(categoryTwo.totalOf, _categorySample.totalOf);
-      expect(categoryTwo.assetImage, _categorySample.assetImage);
-      expect(categoryTwo.backgroundColor, _categorySample.backgroundColor);
-      final categoryThree = categoryOne.copyWith(assetImage: null);
-      // must be null after freezed
-      expect(categoryThree.assetImage, _categorySample.assetImage);
+      final unitOne = model.copyWith();
+      const newFieldValue = 'New value';
+      final unitTwo = unitOne.copyWith(id: newFieldValue);
+      // comparing any field
+      expect(unitOne.id, model.id);
+      expect(unitTwo.id, newFieldValue);
+      expect(unitTwo.name, model.name);
+      expect(unitTwo.totalOf, model.totalOf);
+      expect(unitTwo.assetImage, model.assetImage);
+      expect(unitTwo.backgroundColor, model.backgroundColor);
+      // null assignment TODO - must be null after freezed
+      final unitThree = unitOne.copyWith(assetImage: null);
+      expect(unitThree.assetImage, model.assetImage);
     });
 
     test('toString()', () {
-      expect(_categorySample.toString(), _categorySample.name);
+      expect(model.toString(), model.name);
     });
 
     test('operator =', () {
-      final categoryOne = _categorySample.copyWith();
-      final categoryTwo = categoryOne.copyWith(id: '11');
-      expect(categoryOne == categoryTwo, isFalse);
-      final categoryThree = categoryOne.copyWith(name: 'New name');
-      expect(categoryOne == categoryThree, isFalse);
-      final categoryFour = categoryOne.copyWith(totalOf: 4);
-      expect(categoryOne == categoryFour, isFalse);
-      final categoryFive =
-          categoryOne.copyWith(assetImage: 'https://new_image.url');
-      expect(categoryOne == categoryFive, isFalse);
-      final categorySix = categoryOne.copyWith(backgroundColor: Colors.black);
-      expect(categoryOne == categorySix, isFalse);
-      // copy of _categorySample()
-      final categorySeven = CategoryModel(
+      // comparing objects after new Object()
+      var newUnit = CategoryModel(
         id: '75fe6ef0-80b4-4ef0-9fb9-5f53d25ee166',
         name: 'Hamsters',
         totalOf: 56,
         assetImage: 'hamster.png',
         backgroundColor: _colorFromString('0xFFFCEBD3'),
       );
-      expect(categoryOne.id == categorySeven.id, isTrue);
-      expect(categoryOne.name == categorySeven.name, isTrue);
-      expect(categoryOne.totalOf == categorySeven.totalOf, isTrue);
-      expect(categoryOne.assetImage == categorySeven.assetImage, isTrue);
-      expect(
-          categoryOne.backgroundColor == categorySeven.backgroundColor, isTrue);
       // TODO must be isTrue after freezed
-      expect(categoryOne == categorySeven, isFalse);
+      expect(newUnit == model, isFalse);
+      // comparing objects after copyWith()
+      newUnit = model.copyWith();
+      // TODO must be isTrue after freezed
+      expect(newUnit == model, isFalse);
+      // comparing objects after changing any field
+      newUnit = model.copyWith(id: 'New id');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(name: 'New name');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(totalOf: 44);
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(assetImage: 'New assetImage');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(backgroundColor: Colors.black);
+      expect(newUnit == model, isFalse);
     });
 
     test('toJson()', () {
-      final Map<String, dynamic> json = _categorySample.toJson();
-      final Map<String, dynamic> stub = _categorySampleJson;
-      expect(json.toString() == stub.toString(), isTrue);
+      final Map<String, dynamic> newJson = model.toJson();
+      expect(newJson.toString(), modelJson.toString());
     });
 
     test('fromJson()', () {
-      final categoryOne = _categorySample.copyWith();
-      final categoryTwo = CategoryModel.fromJson(_categorySampleJson);
-      expect(categoryOne.id == categoryTwo.id, isTrue);
-      expect(categoryOne.name == categoryTwo.name, isTrue);
-      expect(categoryOne.totalOf == categoryTwo.totalOf, isTrue);
-      expect(categoryOne.assetImage == categoryTwo.assetImage, isTrue);
-      expect(
-          categoryOne.backgroundColor == categoryTwo.backgroundColor, isTrue);
+      final newUnit = CategoryModel.fromJson(modelJson);
+      expect(newUnit.id, model.id);
+      expect(newUnit.name, model.name);
+      expect(newUnit.totalOf, model.totalOf);
+      expect(newUnit.assetImage, model.assetImage);
+      expect(newUnit.backgroundColor, model.backgroundColor);
     });
 
     test('fromJson() nullable', () {
-      final categoryOne = CategoryModel(
+      final unitOne = CategoryModel(
         id: '1',
         name: '2',
         assetImage: '4',
@@ -264,9 +305,10 @@ void main() {
         'asset_image': '4',
         'background_color': _colorToString(_colorFromString('5')),
       };
-      final categoryTwo = CategoryModel.fromJson(json);
-      expect(categoryOne.totalOf == categoryTwo.totalOf, isTrue);
-      expect(categoryOne == categoryTwo, isFalse);
+      final unitTwo = CategoryModel.fromJson(json);
+      expect(unitOne.totalOf == unitTwo.totalOf, isTrue);
+      // TODO must be isTrue after freezed
+      expect(unitOne == unitTwo, isFalse);
     });
   });
 
@@ -278,64 +320,64 @@ void main() {
     // @JsonKey(fromJson: _colorFromString, toJson: _colorToString)
     // final Color backgroundColor;
 
+    final model = _conditionSample;
+    final modelJson = _conditionSampleJson;
+
     test('copyWith()', () {
-      final conditionOne = _conditionSample.copyWith();
-      final conditionTwo = conditionOne.copyWith(id: '11');
-      expect(conditionOne.id, _conditionSample.id);
-      expect(conditionTwo.id, '11');
-      expect(conditionTwo.name, _conditionSample.name);
-      expect(conditionTwo.textColor, _conditionSample.textColor);
-      expect(conditionTwo.backgroundColor, _conditionSample.backgroundColor);
-      final conditionThree = conditionOne.copyWith(name: null);
-      // must be null after freezed
-      expect(conditionThree.name, _conditionSample.name);
+      final unitOne = model.copyWith();
+      const newFieldValue = 'New value';
+      final unitTwo = unitOne.copyWith(id: newFieldValue);
+      // comparing any field
+      expect(unitOne.id, model.id);
+      expect(unitTwo.id, newFieldValue);
+      expect(unitTwo.name, model.name);
+      expect(unitTwo.textColor, model.textColor);
+      expect(unitTwo.backgroundColor, model.backgroundColor);
+      // null assignment TODO - must be null after freezed
+      final unitThree = unitOne.copyWith(name: null);
+      expect(unitThree.name, model.name);
     });
 
     test('toString()', () {
-      expect(_conditionSample.toString(), _conditionSample.name);
+      expect(model.toString(), model.name);
     });
 
     test('operator =', () {
-      final conditionOne = _conditionSample.copyWith();
-      final conditionTwo = conditionOne.copyWith(id: '11');
-      expect(conditionOne == conditionTwo, isFalse);
-      final conditionThree = conditionOne.copyWith(name: 'New name');
-      expect(conditionOne == conditionThree, isFalse);
-      final conditionFour = conditionOne.copyWith(textColor: Colors.green);
-      expect(conditionOne == conditionFour, isFalse);
-      final conditionFive =
-          conditionOne.copyWith(backgroundColor: Colors.yellow);
-      expect(conditionOne == conditionFive, isFalse);
-      // copy of _conditionSample()
-      final conditionSix = ConditionModel(
+      // comparing objects after new Object()
+      var newUnit = ConditionModel(
         id: '58d691e4-0e75-47ad-8a37-95dfa08ee639',
         name: 'Adoption',
         textColor: _colorFromString('0xFFE3B774'),
         backgroundColor: _colorFromString('0xFFFCEBD3'),
       );
-      expect(conditionOne.id == conditionSix.id, isTrue);
-      expect(conditionOne.name == conditionSix.name, isTrue);
-      expect(conditionOne.textColor == conditionSix.textColor, isTrue);
-      expect(
-          conditionOne.backgroundColor == conditionSix.backgroundColor, isTrue);
       // TODO must be isTrue after freezed
-      expect(conditionOne == conditionSix, isFalse);
+      expect(newUnit == model, isFalse);
+      // comparing objects after copyWith()
+      newUnit = model.copyWith();
+      // TODO must be isTrue after freezed
+      expect(newUnit == model, isFalse);
+      // comparing objects after changing any field
+      newUnit = model.copyWith(id: 'New id');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(name: 'New name');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(textColor: Colors.green);
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(backgroundColor: Colors.yellow);
+      expect(newUnit == model, isFalse);
     });
 
     test('toJson()', () {
-      final Map<String, dynamic> json = _conditionSample.toJson();
-      final Map<String, dynamic> stub = _conditionSampleJson;
-      expect(json.toString() == stub.toString(), isTrue);
+      final Map<String, dynamic> newJson = model.toJson();
+      expect(newJson.toString(), modelJson.toString());
     });
 
     test('fromJson()', () {
-      final conditionOne = _conditionSample.copyWith();
-      final conditionTwo = ConditionModel.fromJson(_conditionSampleJson);
-      expect(conditionOne.id == conditionTwo.id, isTrue);
-      expect(conditionOne.name == conditionTwo.name, isTrue);
-      expect(conditionOne.textColor == conditionTwo.textColor, isTrue);
-      expect(
-          conditionOne.backgroundColor == conditionTwo.backgroundColor, isTrue);
+      final newUnit = ConditionModel.fromJson(modelJson);
+      expect(newUnit.id, model.id);
+      expect(newUnit.name, model.name);
+      expect(newUnit.textColor, model.textColor);
+      expect(newUnit.backgroundColor, model.backgroundColor);
     });
   });
 
@@ -345,57 +387,61 @@ void main() {
     // final String photo;
     // final bool isActive;
 
+    final model = _memberSample;
+    final modelJson = _memberSampleJson;
+
     test('copyWith()', () {
-      final memberOne = _memberSample.copyWith();
-      final memberTwo = memberOne.copyWith(id: '11');
-      expect(memberOne.id, _memberSample.id);
-      expect(memberTwo.id, '11');
-      expect(memberTwo.name, _memberSample.name);
-      expect(memberTwo.photo, _memberSample.photo);
-      expect(memberTwo.isActive, _memberSample.isActive);
-      final memberThree = memberOne.copyWith(name: null);
-      // TODO must be null after freezed
-      expect(memberThree.name, _memberSample.name);
+      final unitOne = model.copyWith();
+      const newFieldValue = 'New value';
+      final unitTwo = unitOne.copyWith(id: newFieldValue);
+      // comparing any field
+      expect(unitOne.id, model.id);
+      expect(unitTwo.id, newFieldValue);
+      expect(unitTwo.name, model.name);
+      expect(unitTwo.photo, model.photo);
+      expect(unitTwo.isActive, model.isActive);
+      // null assignment TODO - must be null after freezed
+      final unitThree = unitOne.copyWith(name: null);
+      expect(unitThree.name, model.name);
     });
 
     test('operator =', () {
-      final memberOne = _memberSample.copyWith();
-      final memberTwo = memberOne.copyWith(id: '11');
-      expect(memberOne == memberTwo, isFalse);
-      final memberThree = memberOne.copyWith(name: 'New name');
-      expect(memberOne == memberThree, isFalse);
-      final memberFour = memberOne.copyWith(photo: 'https://new_photo.url');
-      expect(memberOne == memberFour, isFalse);
-      final memberFive = memberOne.copyWith(isActive: false);
-      expect(memberOne == memberFive, isFalse);
-      // copy of _memberSample()
-      final memberSix = MemberModel(
+      // comparing objects after new Object()
+      var newUnit = MemberModel(
         id: '86a076ed-a761-402a-ae95-00c2d1ea5732',
         name: 'John Doe',
         photo:
             'https://lh3.googleusercontent.com/a-/AOh14Gh_kVNWSsdfsdfec9EvKgm751Pq5l4qTd_LK-Ydgag=s96-c',
         isActive: true,
       );
-      expect(memberOne.id == memberSix.id, isTrue);
-      expect(memberOne.name == memberSix.name, isTrue);
-      expect(memberOne.photo == memberSix.photo, isTrue);
-      expect(memberOne.isActive == memberSix.isActive, isTrue);
       // TODO must be isTrue after freezed
-      expect(memberOne == memberSix, isFalse);
+      expect(newUnit == model, isFalse);
+      // comparing objects after copyWith()
+      newUnit = model.copyWith();
+      // TODO must be isTrue after freezed
+      expect(newUnit == model, isFalse);
+      // comparing objects after changing any field
+      newUnit = model.copyWith(id: 'New id');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(name: 'New name');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(photo: 'New photo');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(isActive: !model.isActive);
+      expect(newUnit == model, isFalse);
     });
 
     test('toJson()', () {
-      final Map<String, dynamic> json = _memberSample.toJson();
-      final Map<String, dynamic> stub = _memberSampleJson;
-      expect(json.toString() == stub.toString(), isTrue);
+      final Map<String, dynamic> newJson = model.toJson();
+      expect(newJson.toString(), modelJson.toString());
     });
 
     test('fromJson()', () {
-      final memberTwo = MemberModel.fromJson(_memberSampleJson);
-      expect(memberTwo.id == _memberSample.id, isTrue);
-      expect(memberTwo.name == _memberSample.name, isTrue);
-      expect(memberTwo.photo == _memberSample.photo, isTrue);
-      expect(memberTwo.isActive == _memberSample.isActive, isTrue);
+      final newUnit = MemberModel.fromJson(modelJson);
+      expect(newUnit.id == model.id, isTrue);
+      expect(newUnit.name == model.name, isTrue);
+      expect(newUnit.photo == model.photo, isTrue);
+      expect(newUnit.isActive == model.isActive, isTrue);
     });
   });
 
@@ -591,6 +637,155 @@ void main() {
       expect(newUnit.value, model.value);
       expect(newUnit.valueTxt, model.valueTxt);
       expect(newUnit.note, model.note);
+    });
+  });
+
+  group('UserModel', () {
+    // final String id;
+    // final String name;
+    // final String photo;
+    // final String email;
+    // final String phone;
+    // final bool  isActive;
+
+    final model = _userModelSample;
+    final modelJson = _userModelSampleJson;
+
+    test('copyWith()', () {
+      final unitOne = model.copyWith();
+      const newFieldValue = 'New value';
+      final unitTwo = unitOne.copyWith(id: newFieldValue);
+      // comparing any field
+      expect(unitOne.id, model.id);
+      expect(unitTwo.id, newFieldValue);
+      expect(unitTwo.name, model.name);
+      expect(unitTwo.photo, model.photo);
+      expect(unitTwo.email, model.email);
+      expect(unitTwo.phone, model.phone);
+      expect(unitTwo.isActive, model.isActive);
+      // null assignment TODO - must be null after freezed
+      final unitThree = unitOne.copyWith(id: null);
+      expect(unitThree.id, model.id);
+    });
+
+    test('operator =', () {
+      // comparing objects after new Object()
+      var newUnit = UserModel(
+        id: '86a076ed-a761-402a-ae95-00c2d1ea5732',
+        name: 'Jon Doe',
+        photo: 'https://lh3.googleusercontent.com',
+        email: 'Jon_Doe@gmail.com',
+        phone: '911',
+        isActive: true,
+      );
+      expect(newUnit, model);
+      // comparing objects after copyWith()
+      newUnit = model.copyWith();
+      expect(newUnit, model);
+      // comparing objects after changing any field
+      newUnit = model.copyWith(id: 'New id');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(name: 'New name');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(photo: 'New photo');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(email: 'New email');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(phone: 'New phone');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(isActive: !model.isActive);
+      expect(newUnit == model, isFalse);
+    });
+
+    test('toJson()', () {
+      final Map<String, dynamic> newJson = model.toJson();
+      expect(newJson.toString(), modelJson.toString());
+    });
+
+    test('fromJson()', () {
+      final newUnit = UserModel.fromJson(modelJson);
+      expect(newUnit.id, model.id);
+      expect(newUnit.name, model.name);
+      expect(newUnit.photo, model.photo);
+      expect(newUnit.email, model.email);
+      expect(newUnit.phone, model.phone);
+      expect(newUnit.isActive, model.isActive);
+    });
+  });
+
+  group('VetModel', () {
+    // final String id; // id
+    // final String name; // наименование
+    // final String phone; // телефон
+    // final String timetable; // режим работы
+    // @JsonKey(nullable: true)
+    // final bool isOpenNow; // сейчас открыто
+    // final String logoImage; // логотип
+
+    final model = _vetModelSample;
+    final modelJson = _vetModelSampleJson;
+
+    test('copyWith()', () {
+      final unitOne = model.copyWith();
+      const newFieldValue = 'New value';
+      final unitTwo = unitOne.copyWith(id: newFieldValue);
+      // comparing any field
+      expect(unitOne.id, model.id);
+      expect(unitTwo.id, newFieldValue);
+      expect(unitTwo.name, model.name);
+      expect(unitTwo.phone, model.phone);
+      expect(unitTwo.timetable, model.timetable);
+      expect(unitTwo.isOpenNow, model.isOpenNow);
+      expect(unitTwo.logoImage, model.logoImage);
+      // null assignment TODO - must be null after freezed
+      final unitThree = unitOne.copyWith(id: null);
+      expect(unitThree.id, model.id);
+    });
+
+    test('operator =', () {
+      // comparing objects after new Object()
+      var newUnit = VetModel(
+        id: '5b08256a-0da0-4bc5-a5f3-bb8bb2207e25',
+        name: 'РИмонт ЖЫвотных',
+        phone: '(8634) 222-333',
+        timetable: 'TOMORROW AT 8:00',
+        isOpenNow: true,
+        logoImage: 'http://animalservice.ru',
+      );
+      // TODO must be isTrue after freezed
+      expect(newUnit == model, isFalse);
+      // comparing objects after copyWith()
+      newUnit = model.copyWith();
+      // TODO must be isTrue after freezed
+      expect(newUnit == model, isFalse);
+      // comparing objects after changing any field
+      newUnit = model.copyWith(id: 'New id');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(name: 'New name');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(phone: 'New phone');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(timetable: 'New timetable');
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(isOpenNow: !model.isOpenNow);
+      expect(newUnit == model, isFalse);
+      newUnit = model.copyWith(logoImage: 'New logoImage');
+      expect(newUnit == model, isFalse);
+    });
+
+    test('toJson()', () {
+      final Map<String, dynamic> newJson = model.toJson();
+      expect(newJson.toString(), modelJson.toString());
+    });
+
+    test('fromJson()', () {
+      final newUnit = VetModel.fromJson(modelJson);
+      expect(newUnit.id, model.id);
+      expect(newUnit.name, model.name);
+      expect(newUnit.phone, model.phone);
+      expect(newUnit.timetable, model.timetable);
+      expect(newUnit.isOpenNow, model.isOpenNow);
+      expect(newUnit.logoImage, model.logoImage);
     });
   });
 }
