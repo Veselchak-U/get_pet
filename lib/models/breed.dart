@@ -7,7 +7,7 @@ part 'breed.g.dart';
 
 @freezed
 abstract class BreedModel implements _$BreedModel {
-  factory BreedModel({
+  const factory BreedModel({
     String id,
     String categoryId,
     String name,
@@ -17,7 +17,7 @@ abstract class BreedModel implements _$BreedModel {
       _$BreedModelFromJson(json);
 
   // required for the overridden method toString()
-  BreedModel._();
+  const BreedModel._();
 
   @override
   String toString() => name;

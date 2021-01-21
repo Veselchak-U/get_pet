@@ -124,7 +124,7 @@ void main() {
     'note': 'Minimum app version',
   };
 
-  final _userModelSample = UserModel(
+  const _userModelSample = UserModel(
     id: '86a076ed-a761-402a-ae95-00c2d1ea5732',
     name: 'Jon Doe',
     photo: 'https://lh3.googleusercontent.com',
@@ -240,9 +240,9 @@ void main() {
       expect(unitTwo.totalOf, model.totalOf);
       expect(unitTwo.assetImage, model.assetImage);
       expect(unitTwo.backgroundColor, model.backgroundColor);
-      // null assignment TODO - must be null after freezed
+      // null assignment
       final unitThree = unitOne.copyWith(assetImage: null);
-      expect(unitThree.assetImage, model.assetImage);
+      expect(unitThree.assetImage, null);
     });
 
     test('toString()', () {
@@ -258,12 +258,10 @@ void main() {
         assetImage: 'hamster.png',
         backgroundColor: _colorFromString('0xFFFCEBD3'),
       );
-      // TODO must be isTrue after freezed
-      expect(newUnit == model, isFalse);
+      expect(newUnit, model);
       // comparing objects after copyWith()
       newUnit = model.copyWith();
-      // TODO must be isTrue after freezed
-      expect(newUnit == model, isFalse);
+      expect(newUnit, model);
       // comparing objects after changing any field
       newUnit = model.copyWith(id: 'New id');
       expect(newUnit == model, isFalse);
@@ -307,8 +305,7 @@ void main() {
       };
       final unitTwo = CategoryModel.fromJson(json);
       expect(unitOne.totalOf == unitTwo.totalOf, isTrue);
-      // TODO must be isTrue after freezed
-      expect(unitOne == unitTwo, isFalse);
+      expect(unitOne, unitTwo);
     });
   });
 
@@ -333,9 +330,9 @@ void main() {
       expect(unitTwo.name, model.name);
       expect(unitTwo.textColor, model.textColor);
       expect(unitTwo.backgroundColor, model.backgroundColor);
-      // null assignment TODO - must be null after freezed
+      // null assignment
       final unitThree = unitOne.copyWith(name: null);
-      expect(unitThree.name, model.name);
+      expect(unitThree.name, null);
     });
 
     test('toString()', () {
@@ -350,12 +347,10 @@ void main() {
         textColor: _colorFromString('0xFFE3B774'),
         backgroundColor: _colorFromString('0xFFFCEBD3'),
       );
-      // TODO must be isTrue after freezed
-      expect(newUnit == model, isFalse);
+      expect(newUnit, model);
       // comparing objects after copyWith()
       newUnit = model.copyWith();
-      // TODO must be isTrue after freezed
-      expect(newUnit == model, isFalse);
+      expect(newUnit, model);
       // comparing objects after changing any field
       newUnit = model.copyWith(id: 'New id');
       expect(newUnit == model, isFalse);
@@ -400,9 +395,9 @@ void main() {
       expect(unitTwo.name, model.name);
       expect(unitTwo.photo, model.photo);
       expect(unitTwo.isActive, model.isActive);
-      // null assignment TODO - must be null after freezed
+      // null assignment
       final unitThree = unitOne.copyWith(name: null);
-      expect(unitThree.name, model.name);
+      expect(unitThree.name, null);
     });
 
     test('operator =', () {
@@ -414,12 +409,10 @@ void main() {
             'https://lh3.googleusercontent.com/a-/AOh14Gh_kVNWSsdfsdfec9EvKgm751Pq5l4qTd_LK-Ydgag=s96-c',
         isActive: true,
       );
-      // TODO must be isTrue after freezed
-      expect(newUnit == model, isFalse);
+      expect(newUnit, model);
       // comparing objects after copyWith()
       newUnit = model.copyWith();
-      // TODO must be isTrue after freezed
-      expect(newUnit == model, isFalse);
+      expect(newUnit, model);
       // comparing objects after changing any field
       newUnit = model.copyWith(id: 'New id');
       expect(newUnit == model, isFalse);
@@ -484,9 +477,9 @@ void main() {
       expect(unitTwo.description, model.description);
       expect(unitTwo.member, model.member);
       expect(unitTwo.updatedAt, model.updatedAt);
-      // null assignment TODO - must be null after freezed
+      // null assignment
       final unitThree = unitOne.copyWith(description: null);
-      expect(unitThree.description, model.description);
+      expect(unitThree.description, null);
     });
 
     test('operator =', () {
@@ -509,12 +502,10 @@ void main() {
         member: _memberSample.copyWith(),
         updatedAt: DateTime(2021, 01, 17, 21, 59),
       );
-      // TODO must be isTrue after freezed
-      expect(newUnit == model, isFalse);
+      expect(newUnit, model);
       // comparing objects after copyWith()
       newUnit = model.copyWith();
-      // TODO must be isTrue after freezed
-      expect(newUnit == model, isTrue);
+      expect(newUnit, model);
       // comparing objects after changing any field
       newUnit = model.copyWith(id: 'New id');
       expect(newUnit == model, isFalse);
@@ -558,21 +549,18 @@ void main() {
     test('fromJson()', () {
       final newUnit = PetModel.fromJson(modelJson);
       expect(newUnit.id, model.id);
-      // TODO must be isTrue after freezed
-      expect(newUnit.category == model.category, isFalse);
+      expect(newUnit.category, model.category);
       expect(newUnit.breed, model.breed);
       expect(newUnit.age, model.age);
       expect(newUnit.coloring, model.coloring);
       expect(newUnit.weight, model.weight);
       expect(newUnit.address, model.address);
       expect(newUnit.distance, model.distance);
-      // TODO must be isTrue after freezed
-      expect(newUnit.condition == model.condition, isFalse);
+      expect(newUnit.condition, model.condition);
       expect(newUnit.liked, model.liked);
       expect(newUnit.photos, model.photos);
       expect(newUnit.description, model.description);
-      // TODO must be isTrue after freezed
-      expect(newUnit.member == model.member, isFalse);
+      expect(newUnit.member, model.member);
       expect(newUnit.updatedAt, model.updatedAt);
     });
   });
@@ -596,9 +584,9 @@ void main() {
       expect(unitTwo.value, model.value);
       expect(unitTwo.valueTxt, model.valueTxt);
       expect(unitTwo.note, model.note);
-      // null assignment TODO - must be null after freezed
+      // null assignment
       final unitThree = unitOne.copyWith(label: null);
-      expect(unitThree.label, model.label);
+      expect(unitThree.label, null);
     });
 
     test('operator =', () {
@@ -609,12 +597,10 @@ void main() {
         valueTxt: '1.0.42',
         note: 'Minimum app version',
       );
-      // TODO must be isTrue after freezed
-      expect(newUnit == model, isFalse);
+      expect(newUnit, model);
       // comparing objects after copyWith()
       newUnit = model.copyWith();
-      // TODO must be isTrue after freezed
-      expect(newUnit == model, isFalse);
+      expect(newUnit, model);
       // comparing objects after changing any field
       newUnit = model.copyWith(label: 'New label');
       expect(newUnit == model, isFalse);
@@ -648,7 +634,7 @@ void main() {
     // final String phone;
     // final bool  isActive;
 
-    final model = _userModelSample;
+    const model = _userModelSample;
     final modelJson = _userModelSampleJson;
 
     test('copyWith()', () {
@@ -663,14 +649,14 @@ void main() {
       expect(unitTwo.email, model.email);
       expect(unitTwo.phone, model.phone);
       expect(unitTwo.isActive, model.isActive);
-      // null assignment TODO - must be null after freezed
+      // null assignment
       final unitThree = unitOne.copyWith(id: null);
-      expect(unitThree.id, model.id);
+      expect(unitThree.id, null);
     });
 
     test('operator =', () {
       // comparing objects after new Object()
-      var newUnit = UserModel(
+      var newUnit = const UserModel(
         id: '86a076ed-a761-402a-ae95-00c2d1ea5732',
         name: 'Jon Doe',
         photo: 'https://lh3.googleusercontent.com',
@@ -737,9 +723,8 @@ void main() {
       expect(unitTwo.timetable, model.timetable);
       expect(unitTwo.isOpenNow, model.isOpenNow);
       expect(unitTwo.logoImage, model.logoImage);
-      // null assignment TODO - must be null after freezed
       final unitThree = unitOne.copyWith(id: null);
-      expect(unitThree.id, model.id);
+      expect(unitThree.id, null);
     });
 
     test('operator =', () {
@@ -752,12 +737,10 @@ void main() {
         isOpenNow: true,
         logoImage: 'http://animalservice.ru',
       );
-      // TODO must be isTrue after freezed
-      expect(newUnit == model, isFalse);
+      expect(newUnit, model);
       // comparing objects after copyWith()
       newUnit = model.copyWith();
-      // TODO must be isTrue after freezed
-      expect(newUnit == model, isFalse);
+      expect(newUnit, model);
       // comparing objects after changing any field
       newUnit = model.copyWith(id: 'New id');
       expect(newUnit == model, isFalse);

@@ -1,31 +1,21 @@
-import 'package:copy_with_extension/copy_with_extension.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/foundation.dart';
 
+part 'vet.freezed.dart';
 part 'vet.g.dart';
 
-@CopyWith()
-@JsonSerializable()
-class VetModel {
-  VetModel({
-    this.id,
-    this.name,
-    this.phone,
-    this.timetable,
-    this.isOpenNow,
-    this.logoImage,
-  });
+@freezed
+abstract class VetModel with _$VetModel {
+  const factory VetModel({
+    String id, // id
+    String name, // наименование
+    String phone, // телефон
+    String timetable, // режим работы
+    @JsonKey(nullable: true)
+    bool isOpenNow, // сейчас открыто
+    String logoImage, // логотип
+  }) = _VetModel;
 
-  final String id; // id
-  final String name; // наименование
-  final String phone; // телефон
-  final String timetable; // режим работы
-  @JsonKey(nullable: true)
-  final bool isOpenNow; // сейчас открыто
-  final String logoImage; // логотип
-
-  // ignore: sort_constructors_first
   factory VetModel.fromJson(Map<String, dynamic> json) =>
       _$VetModelFromJson(json);
-
-  Map<String, dynamic> toJson() => _$VetModelToJson(this);
 }

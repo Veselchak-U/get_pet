@@ -1,34 +1,30 @@
-import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+// with foundation doesn't works method toString() - https://github.com/rrousselGit/freezed/issues/221
+// import 'package:flutter/foundation.dart';
 
+part 'condition.freezed.dart';
 part 'condition.g.dart';
 
-@CopyWith()
-@JsonSerializable()
-class ConditionModel {
-  ConditionModel({
-    this.id,
-    this.name,
-    this.textColor,
-    this.backgroundColor,
-  });
+@freezed
+abstract class ConditionModel implements _$ConditionModel {
+  const factory ConditionModel({
+    String id,
+    String name,
+    @JsonKey(fromJson: ConditionModel._colorFromString, toJson: ConditionModel._colorToString)
+        Color textColor,
+    @JsonKey(fromJson: ConditionModel._colorFromString, toJson: ConditionModel._colorToString)
+        Color backgroundColor,
+  }) = _ConditionModel;
 
-  final String id;
-  final String name;
-  @JsonKey(fromJson: _colorFromString, toJson: _colorToString)
-  final Color textColor;
-  @JsonKey(fromJson: _colorFromString, toJson: _colorToString)
-  final Color backgroundColor;
-
-  @override
-  String toString() => name;
-
-  // ignore: sort_constructors_first
   factory ConditionModel.fromJson(Map<String, dynamic> json) =>
       _$ConditionModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ConditionModelToJson(this);
+  // required for the overridden method toString()
+  const ConditionModel._();
+
+  @override
+  String toString() => name;
 
   static Color _colorFromString(String value) => Color(int.parse(value));
 

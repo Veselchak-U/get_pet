@@ -1,27 +1,18 @@
-import 'package:copy_with_extension/copy_with_extension.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/foundation.dart';
 
+part 'sys_param.freezed.dart';
 part 'sys_param.g.dart';
 
-@CopyWith()
-@JsonSerializable()
-class SysParamModel {
-  SysParamModel({
-    this.label,
-    this.value,
-    this.valueTxt,
-    this.note,
-  });
+@freezed
+abstract class SysParamModel with _$SysParamModel {
+  const factory SysParamModel({
+    String label,
+    String value,
+    String valueTxt,
+    String note,
+  }) = _SysParamModel;
 
-  final String label;
-  final String value;
-  final String valueTxt;
-  final String note;
-
-
-  // ignore: sort_constructors_first
   factory SysParamModel.fromJson(Map<String, dynamic> json) =>
       _$SysParamModelFromJson(json);
-
-  Map<String, dynamic> toJson() => _$SysParamModelToJson(this);
 }

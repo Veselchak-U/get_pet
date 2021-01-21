@@ -1,36 +1,30 @@
-import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+// with foundation doesn't works method toString() - https://github.com/rrousselGit/freezed/issues/221
+// import 'package:flutter/foundation.dart';
 
+part 'category.freezed.dart';
 part 'category.g.dart';
 
-@CopyWith()
-@JsonSerializable()
-class CategoryModel {
-  CategoryModel({
-    this.id,
-    this.name,
-    this.totalOf,
-    this.assetImage,
-    this.backgroundColor,
-  });
+@freezed
+abstract class CategoryModel implements _$CategoryModel {
+  const factory CategoryModel({
+    String id,
+    String name,
+    int totalOf,
+    @JsonKey(nullable: true) String assetImage,
+    @JsonKey(fromJson: CategoryModel._colorFromString, toJson: CategoryModel._colorToString)
+        Color backgroundColor,
+  }) = _CategoryModel;
 
-  final String id;
-  final String name;
-  final int totalOf;
-  @JsonKey(nullable: true)
-  final String assetImage;
-  @JsonKey(fromJson: _colorFromString, toJson: _colorToString)
-  Color backgroundColor;
-
-  @override
-  String toString() => name;
-
-  // ignore: sort_constructors_first
   factory CategoryModel.fromJson(Map<String, dynamic> json) =>
       _$CategoryModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$CategoryModelToJson(this);
+  // required for the overridden method toString()
+  const CategoryModel._();
+
+  @override
+  String toString() => name;
 
   static Color _colorFromString(String value) => Color(int.parse(value));
 

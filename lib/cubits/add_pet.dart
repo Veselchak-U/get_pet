@@ -84,7 +84,7 @@ class AddPetState extends Equatable {
     this.categories = const [],
     this.conditions = const [],
     this.breedsByCategory = const [],
-    this.newPet = const PetModel(id: '2020', liked: false),
+    this.newPet = const PetModel(),
     this.externalUpdate = false,
   });
 
