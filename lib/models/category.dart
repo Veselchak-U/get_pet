@@ -13,8 +13,9 @@ abstract class CategoryModel implements _$CategoryModel {
     String name,
     int totalOf,
     @JsonKey(nullable: true) String assetImage,
-    @JsonKey(fromJson: CategoryModel._colorFromString, toJson: CategoryModel._colorToString)
-        Color backgroundColor,
+    @JsonKey(fromJson: CategoryModel._colorFromString,
+             toJson: CategoryModel._colorToString)
+    Color backgroundColor,
   }) = _CategoryModel;
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) =>

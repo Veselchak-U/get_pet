@@ -46,14 +46,14 @@ class SearchCubit extends Cubit<SearchState> {
 
   void setCategoryFilter(CategoryModel category) {
     emit(state.copyWith(
-      categoryFilter: category ?? CategoryModel(),
+      categoryFilter: category ?? const CategoryModel(),
     ));
     _searchPet();
   }
 
   void setConditionFilter(ConditionModel condition) {
     emit(state.copyWith(
-      conditionFilter: condition ?? ConditionModel(),
+      conditionFilter: condition ?? const ConditionModel(),
     ));
     _searchPet();
   }

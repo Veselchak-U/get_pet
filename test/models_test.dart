@@ -14,7 +14,7 @@ void main() {
 
   String _colorToString(Color color) => color.value.toString();
 
-  final _breedSample = BreedModel(
+  const _breedSample = BreedModel(
     id: 'c8305d81-19df-4ddb-8111-0c3d2aea88c5',
     categoryId: 'abe09048-c1dc-4f4b-87e3-421b7f34e07d',
     name: 'Maine Coon',
@@ -56,7 +56,7 @@ void main() {
     'background_color': _colorToString(_colorFromString('0xFFFCEBD3')),
   };
 
-  final _memberSample = MemberModel(
+  const _memberSample = MemberModel(
     id: '86a076ed-a761-402a-ae95-00c2d1ea5732',
     name: 'John Doe',
     photo:
@@ -110,7 +110,7 @@ void main() {
     'updated_at': DateTime(2021, 01, 17, 21, 59).toIso8601String(),
   };
 
-  final _sysParamSample = SysParamModel(
+  const _sysParamSample = SysParamModel(
     label: 'min_version',
     value: '42',
     valueTxt: '1.0.42',
@@ -142,7 +142,7 @@ void main() {
     'is_active': true,
   };
 
-  final _vetModelSample = VetModel(
+  const _vetModelSample = VetModel(
     id: '5b08256a-0da0-4bc5-a5f3-bb8bb2207e25',
     name: 'РИмонт ЖЫвотных',
     phone: '(8634) 222-333',
@@ -165,7 +165,7 @@ void main() {
     // String categoryId,
     // String name,
 
-    final model = _breedSample;
+    const model = _breedSample;
     final modelJson = _breedSampleJson;
 
     test('copyWith()', () {
@@ -188,7 +188,7 @@ void main() {
 
     test('operator =', () {
       // comparing objects after new Object()
-      var newUnit = BreedModel(
+      var newUnit = const BreedModel(
         id: 'c8305d81-19df-4ddb-8111-0c3d2aea88c5',
         categoryId: 'abe09048-c1dc-4f4b-87e3-421b7f34e07d',
         name: 'Maine Coon',
@@ -382,7 +382,7 @@ void main() {
     // final String photo;
     // final bool isActive;
 
-    final model = _memberSample;
+    const model = _memberSample;
     final modelJson = _memberSampleJson;
 
     test('copyWith()', () {
@@ -402,7 +402,7 @@ void main() {
 
     test('operator =', () {
       // comparing objects after new Object()
-      var newUnit = MemberModel(
+      var newUnit = const MemberModel(
         id: '86a076ed-a761-402a-ae95-00c2d1ea5732',
         name: 'John Doe',
         photo:
@@ -571,7 +571,7 @@ void main() {
     // final String valueTxt;
     // final String note;
 
-    final model = _sysParamSample;
+    const model = _sysParamSample;
     final modelJson = _sysParamSampleJson;
 
     test('copyWith()', () {
@@ -591,7 +591,7 @@ void main() {
 
     test('operator =', () {
       // comparing objects after new Object()
-      var newUnit = SysParamModel(
+      var newUnit = const SysParamModel(
         label: 'min_version',
         value: '42',
         valueTxt: '1.0.42',
@@ -708,7 +708,7 @@ void main() {
     // final bool isOpenNow; // сейчас открыто
     // final String logoImage; // логотип
 
-    final model = _vetModelSample;
+    const model = _vetModelSample;
     final modelJson = _vetModelSampleJson;
 
     test('copyWith()', () {
@@ -729,7 +729,7 @@ void main() {
 
     test('operator =', () {
       // comparing objects after new Object()
-      var newUnit = VetModel(
+      var newUnit = const VetModel(
         id: '5b08256a-0da0-4bc5-a5f3-bb8bb2207e25',
         name: 'РИмонт ЖЫвотных',
         phone: '(8634) 222-333',

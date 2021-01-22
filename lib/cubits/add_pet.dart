@@ -45,7 +45,7 @@ class AddPetCubit extends Cubit<AddPetState> {
     emit(state.copyWith(
       newPet: state.newPet.copyWith(
         category: category,
-        breed: BreedModel(), // set breed.name to null
+        breed: const BreedModel(), // set breed.name to null
       ),
       breedsByCategory: [],
     ));

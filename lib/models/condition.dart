@@ -11,9 +11,11 @@ abstract class ConditionModel implements _$ConditionModel {
   const factory ConditionModel({
     String id,
     String name,
-    @JsonKey(fromJson: ConditionModel._colorFromString, toJson: ConditionModel._colorToString)
+    @JsonKey(fromJson: ConditionModel._colorFromString,
+    toJson: ConditionModel._colorToString)
         Color textColor,
-    @JsonKey(fromJson: ConditionModel._colorFromString, toJson: ConditionModel._colorToString)
+    @JsonKey(fromJson: ConditionModel._colorFromString,
+    toJson: ConditionModel._colorToString)
         Color backgroundColor,
   }) = _ConditionModel;
 
