@@ -20,8 +20,8 @@ void main() {
       build: () => AddPetCubit(repo: mockDatabaseRepository),
       act: (cubit) => cubit.init(),
       expect: const [
-        AddPetState(status: AddPetStatus.busy),
-        AddPetState(status: AddPetStatus.ready),
+        AddPetState.busy(),
+        AddPetState.ready(AddPetStateData()),
       ],
     );
 
@@ -30,8 +30,10 @@ void main() {
       build: () => AddPetCubit(repo: mockDatabaseRepository),
       act: (cubit) => cubit.addPet(),
       expect: const [
-        AddPetState(status: AddPetStatus.busy),
-        AddPetState(status: AddPetStatus.ready),
+        AddPetState.busy(),
+        AddPetState.ready(AddPetStateData()),
+        // AddPetState(status: AddPetStatus.busy),
+        // AddPetState(status: AddPetStatus.ready),
       ],
     );
   });

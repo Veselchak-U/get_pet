@@ -1,72 +1,94 @@
 import 'package:bloc/bloc.dart';
-import 'package:copy_with_extension/copy_with_extension.dart';
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get_pet/import.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-part 'add_pet.g.dart';
+part 'add_pet.freezed.dart';
 
 class AddPetCubit extends Cubit<AddPetState> {
-  AddPetCubit({this.repo}) : super(const AddPetState());
+  AddPetCubit({
+    this.repo,
+    this.profileCubit,
+  }) : super(const AddPetState.initial());
 
   final DatabaseRepository repo;
-  List<BreedModel> allBreeds;
+  final ProfileCubit profileCubit;
+  List<BreedModel> _allBreeds;
+  AddPetStateData _stateData = const AddPetStateData();
 
   Future<bool> init() async {
-    var result = true;
-    emit(state.copyWith(status: AddPetStatus.busy));
+    var result = false;
+    final isActiveUser = profileCubit.state.user.isActive;
+    if (!isActiveUser) {
+      emit(const AddPetState.inactive());
+      return true;
+    }
+    emit(const AddPetState.busy());
     try {
       final List<ConditionModel> conditions = await repo.readConditions();
       final List<CategoryModel> categories = await repo.readCategories();
-      allBreeds = await repo.readBreeds();
-      emit(state.copyWith(
-        status: AddPetStatus.ready,
+      _allBreeds = await repo.readBreeds();
+      _stateData = _stateData.copyWith(
         conditions: conditions,
         categories: categories,
-      ));
-    } on dynamic catch (error) {
-      out(error);
-      result = false;
-      return Future.error(error);
+      );
+      emit(AddPetState.ready(_stateData));
+      result = true;
+    } on dynamic catch (error, stackTrace) {
+      saveError(error, stackTrace);
+      emit(AddPetState.error(error, DateTime.now()));
     }
     return result;
   }
 
   void updateNewPet(PetModel newPet) {
-    emit(state.copyWith(newPet: newPet));
-  }
-
-  void setExternalUpdateFlag({bool value}) {
-    emit(state.copyWith(externalUpdate: value));
+    _stateData = _stateData.copyWith(
+      newPet: newPet,
+    );
+    emit(AddPetState.ready(_stateData));
   }
 
   void setCategory(CategoryModel category) {
     // emit empty breeds
-    emit(state.copyWith(
-      newPet: state.newPet.copyWith(
-        category: category,
-        breed: const BreedModel(), // set breed.name to null
-      ),
+    final newPet = _stateData.newPet.copyWith(
+      category: category,
+      breed: null, //const BreedModel(), // set breed.name to null
+    );
+    _stateData = _stateData.copyWith(
+      newPet: newPet,
       breedsByCategory: [],
-    ));
+    );
+    emit(AddPetState.ready(_stateData));
     // emit breeds by category
-    final List<BreedModel> breedsByCategory = allBreeds
-        .where((breed) => breed.categoryId == category.id)
-        .toList();
-    emit(state.copyWith(breedsByCategory: breedsByCategory));
+    final List<BreedModel> breedsByCategory =
+        _allBreeds.where((breed) => breed.categoryId == category.id).toList();
+    _stateData = _stateData.copyWith(
+      breedsByCategory: breedsByCategory,
+    );
+    emit(AddPetState.ready(_stateData));
   }
 
   Future<bool> addPet() async {
     bool result = false;
-    emit(state.copyWith(status: AddPetStatus.busy));
-    try {
-      await repo.createPet(state.newPet);
-      result = true;
-    } on dynamic catch (e) {
-      out(e);
-    } finally {
-      emit(state.copyWith(status: AddPetStatus.ready));
+    if (_stateData.newPet.photos == null) {
+      emit(AddPetState.error('Add a photo', DateTime.now()));
+      return result;
     }
+    emit(const AddPetState.busy());
+    try {
+      out('================================');
+      out(_stateData.newPet);
+      out('================================');
+      await repo.createPet(_stateData.newPet);
+      result = true;
+    } on dynamic catch (error, stackTrace) {
+      saveError(error, stackTrace);
+      emit(AddPetState.error(error, DateTime.now()));
+    }
+    // finally {
+    //   emit(AddPetState.ready(_stateData));
+    // }
     return result;
   }
 
@@ -75,36 +97,28 @@ class AddPetCubit extends Cubit<AddPetState> {
   }
 }
 
-enum AddPetStatus { initial, busy, ready }
+@freezed
+abstract class AddPetStateData with _$AddPetStateData {
+  const factory AddPetStateData({
+    @Default([]) List<CategoryModel> categories,
+    @Default([]) List<ConditionModel> conditions,
+    @Default([]) List<BreedModel> breedsByCategory,
+    @Default(PetModel(id: '2020', liked: false)) PetModel newPet,
+  }) = _AddPetStateData;
+}
 
-@CopyWith()
-class AddPetState extends Equatable {
-  const AddPetState({
-    this.status = AddPetStatus.initial,
-    this.categories = const [],
-    this.conditions = const [],
-    this.breedsByCategory = const [],
-    this.newPet = const PetModel(),
-    this.externalUpdate = false,
-  });
+@freezed
+abstract class AddPetState with _$AddPetState {
+  const factory AddPetState.initial() = _Initial;
 
-  final AddPetStatus status;
-  final List<CategoryModel> categories;
-  final List<ConditionModel> conditions;
-  final List<BreedModel> breedsByCategory;
-  final PetModel newPet;
-  final bool externalUpdate;
+  const factory AddPetState.inactive() = _Inactive;
 
-  @override
-  List<Object> get props => [
-        status,
-        categories,
-        conditions,
-        breedsByCategory,
-        newPet,
-        externalUpdate,
-      ];
+  const factory AddPetState.busy() = _Busy;
 
-  @override
-  String toString() => status.toString();
+  const factory AddPetState.ready(AddPetStateData data) = _Ready;
+
+  const factory AddPetState.error(
+    Object error,
+    DateTime timestamp, // for alwais new state
+  ) = _ErrorState;
 }
